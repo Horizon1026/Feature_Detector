@@ -12,6 +12,10 @@ public:
     explicit FastFeature() = default;
     virtual ~FastFeature() = default;
 
+    float ComputeResponse(const Image *image,
+                          const int32_t row,
+                          const int32_t col);
+
 private:
 
 };
