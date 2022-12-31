@@ -1,29 +1,37 @@
-# cmake工程最低版本为3.1
 cmake_minimum_required( VERSION 3.10 )
 
-# cmake工程名
-project( featureDetector )
+project( feature_detector )
 
-# 设置编译类型为发布
-set(CMAKE_BUILD_TYPE "Release")
+set( CMAKE_BUILD_TYPE "Release" )
+set( CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall" )
+set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
-# 添加c++ 11标准的支持
-set(CMAKE_CXX_FLAGS "-std=c++11 -O2")
-
-# 寻找OpenCV库并添加其路径
 find_package( OpenCV REQUIRED )
-include_directories( ${OpenCV_INCLUDE_DIRS} )
+find_package( Eigen3 REQUIRED )
 
-# 添加路径
-include_directories( ${PROJECT_SOURCE_DIR}/include )
+set( SLAM_UTILITY_PATH ${PROJECT_SOURCE_DIR}/../Slam_Utility )
 
-# 添加可执行文件
-add_executable( featureDetector
-    src/main.cpp
-    include/FASTFeatureDetector.cpp
+# include_directories( "/usr/include/eigen3" )
+include_directories( ${SLAM_UTILITY_PATH}/src/datatype )
+include_directories( ${SLAM_UTILITY_PATH}/src/log )
+include_directories( ${SLAM_UTILITY_PATH}/src/math )
+include_directories( ${PROJECT_SOURCE_DIR}/src )
+include_directories( ${PROJECT_SOURCE_DIR}/test )
+
+aux_source_directory( ${SLAM_UTILITY_PATH}/src/datatype     SLAM_UTILITY_DATATYPE )
+aux_source_directory( ${SLAM_UTILITY_PATH}/src/log          SLAM_UTILITY_LOG )
+aux_source_directory( ${SLAM_UTILITY_PATH}/src/math         SLAM_UTILITY_MATH )
+aux_source_directory( ${PROJECT_SOURCE_DIR}/src             FEATURE_DETECTOR )
+
+add_executable( test_feature_detector
+    ${SLAM_UTILITY_DATATYPE}
+    ${SLAM_UTILITY_LOG}
+    ${SLAM_UTILITY_MATH}
+    ${FEATURE_DETECTOR}
+    test/test_feature_detector.cpp
 )
 
-# 链接库到可执行文件
-target_link_libraries( featureDetector
+target_link_libraries( test_feature_detector
+    # TBB::tbb
     ${OpenCV_LIBS}
 )
