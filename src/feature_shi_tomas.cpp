@@ -1,8 +1,8 @@
-#include "feature_harris.h"
+#include "feature_shi_tomas.h"
 
 namespace FEATURE_DETECTOR {
 
-bool HarrisFeature::ComputeGradient(const Image *image) {
+bool ShiTomasFeature::ComputeGradient(const Image *image) {
     if (image == nullptr) {
         return false;
     }
@@ -23,10 +23,9 @@ bool HarrisFeature::ComputeGradient(const Image *image) {
     return true;
 }
 
-float HarrisFeature::ComputeResponse(const Image *image,
-                                     const int32_t row,
-                                     const int32_t col) {
-
+float ShiTomasFeature::ComputeResponse(const Image *image,
+                                       const int32_t row,
+                                       const int32_t col) {
     Mat2 M = Mat2::Zero();
     int32_t cnt = 0;
     for (int32_t drow = - options_.kHalfPatchSize; drow <= options_.kHalfPatchSize; ++drow) {
@@ -44,13 +43,9 @@ float HarrisFeature::ComputeResponse(const Image *image,
     M(1, 0) = M(0, 1);
     M /= cnt;
 
-    const float det = M.determinant();
-    const float trace = M.trace();
-    return det - options_.k * trace * trace;
-
-    // Eigen::SelfAdjointEigenSolver<Mat2> saes(M);
-    // Vec2 eig = saes.eigenvalues();
-    // return std::max(eig(0), eig(1));
+    Eigen::SelfAdjointEigenSolver<Mat2> saes(M);
+    Vec2 eig = saes.eigenvalues();
+    return std::max(eig(0), eig(1));
 }
 
 }

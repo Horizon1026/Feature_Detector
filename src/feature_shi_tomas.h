@@ -1,22 +1,21 @@
-#ifndef _FEATURE_HARRIS_H_
-#define _FEATURE_HARRIS_H_
+#ifndef _FEATURE_SHI_TOMAS_H_
+#define _FEATURE_SHI_TOMAS_H_
 
 #include "datatype_basic.h"
 #include "datatype_image.h"
 
 namespace FEATURE_DETECTOR {
 
-class HarrisFeature {
+class ShiTomasFeature {
 
 public:
     struct HarrisOptions {
-        float k = 0.0f;
         int32_t kHalfPatchSize = 1;
     };
 
 public:
-    explicit HarrisFeature() = default;
-    virtual ~HarrisFeature() = default;
+    explicit ShiTomasFeature() = default;
+    virtual ~ShiTomasFeature() = default;
 
     bool ComputeGradient(const Image *image);
 
@@ -38,4 +37,4 @@ private:
 
 }
 
-#endif // end of _FEATURE_HARRIS_H_
+#endif // end of _FEATURE_SHI_TOMAS_H_
