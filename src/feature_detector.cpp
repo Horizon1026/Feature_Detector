@@ -1,6 +1,6 @@
 #include "feature_detector.h"
 
-#include "log_api.h"
+#include "slam_operations.h"
 
 namespace FEATURE_DETECTOR {
 
