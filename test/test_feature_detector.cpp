@@ -16,7 +16,7 @@ void test_harris_detector(Image *image, int32_t feature_num_need) {
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
 
-    cv::Mat cv_image(image->rows(), image->cols(), CV_8UC1, image->image_data());
+    cv::Mat cv_image(image->rows(), image->cols(), CV_8UC1, image->data());
     cv::Mat show_image(cv_image.rows, cv_image.cols, CV_8UC3);
     cv::cvtColor(cv_image, show_image, cv::COLOR_GRAY2BGR);
     for (unsigned long i = 0; i < features.size(); i++) {
@@ -39,7 +39,7 @@ void test_shi_tomas_detector(Image *image, int32_t feature_num_need) {
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
 
-    cv::Mat cv_image(image->rows(), image->cols(), CV_8UC1, image->image_data());
+    cv::Mat cv_image(image->rows(), image->cols(), CV_8UC1, image->data());
     cv::Mat show_image(cv_image.rows, cv_image.cols, CV_8UC3);
     cv::cvtColor(cv_image, show_image, cv::COLOR_GRAY2BGR);
     for (unsigned long i = 0; i < features.size(); i++) {
@@ -62,7 +62,7 @@ void test_fast_detector(Image *image, int32_t feature_num_need) {
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
 
-    cv::Mat cv_image(image->rows(), image->cols(), CV_8UC1, image->image_data());
+    cv::Mat cv_image(image->rows(), image->cols(), CV_8UC1, image->data());
     cv::Mat show_image(cv_image.rows, cv_image.cols, CV_8UC3);
     cv::cvtColor(cv_image, show_image, cv::COLOR_GRAY2BGR);
     for (unsigned long i = 0; i < features.size(); i++) {
@@ -75,7 +75,7 @@ void test_fast_detector(Image *image, int32_t feature_num_need) {
 
 void test_cv_good_feature(Image *image, int32_t feature_num_need) {
     LogInfo("test_cv_good_feature.");
-    cv::Mat cv_image(image->rows(), image->cols(), CV_8UC1, image->image_data());
+    cv::Mat cv_image(image->rows(), image->cols(), CV_8UC1, image->data());
 
     std::vector<cv::Point2f> features;
     cv::goodFeaturesToTrack(cv_image, features, feature_num_need, 0.01, 20);

@@ -6,7 +6,7 @@ bool HarrisFeature::ComputeGradient(const Image *image) {
     if (image == nullptr) {
         return false;
     }
-    if (image->image_data() == nullptr) {
+    if (image->data() == nullptr) {
         return false;
     }
 

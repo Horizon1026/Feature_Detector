@@ -9,7 +9,7 @@ bool FeatureDetector::DetectGoodFeatures(const Image *image,
                                          std::vector<Vec2> &features) {
     if (image == nullptr) {
         return false;
-    } else if (image->image_data() == nullptr) {
+    } else if (image->data() == nullptr) {
         return false;
     }
 
