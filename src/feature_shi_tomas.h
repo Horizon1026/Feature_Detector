@@ -17,9 +17,9 @@ public:
     explicit ShiTomasFeature() = default;
     virtual ~ShiTomasFeature() = default;
 
-    bool ComputeGradient(const Image *image);
+    bool ComputeGradient(const Image &image);
 
-    float ComputeResponse(const Image *image,
+    float ComputeResponse(const Image &image,
                           const int32_t row,
                           const int32_t col);
 

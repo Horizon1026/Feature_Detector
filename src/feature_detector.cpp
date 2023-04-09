@@ -1,34 +1,35 @@
 #include "feature_detector.h"
-
 #include "slam_operations.h"
 
 namespace FEATURE_DETECTOR {
 
-bool FeatureDetector::DetectGoodFeatures(const Image *image,
+bool FeatureDetector::DetectGoodFeatures(const Image &image,
                                          const uint32_t needed_feature_num,
                                          std::vector<Vec2> &features) {
-    if (image == nullptr) {
-        return false;
-    } else if (image->data() == nullptr) {
+    // Check input image.
+    if (image.data() == nullptr) {
         return false;
     }
 
+    // Detect all features to be candidates.
     candidates_.clear();
     if (SelectCandidates(image) == false) {
         return false;
     }
 
-    features.clear();
-    features.reserve(needed_feature_num);
-    mask_.setConstant(image->rows(), image->cols(), 1);
-    if (SelectGoodFeatures(image, needed_feature_num, features) == false) {
-        return false;
+    // If there are already some detected features, do not detect new features besiding them.
+    if (features.empty()) {
+        mask_.setConstant(image.rows(), image.cols(), 1);
+    } else {
+        UpdateMaskByFeatures(image, features);
     }
 
+    // Select good features by score from candidates.
+    RETURN_FALSE_IF_FALSE(SelectGoodFeatures(image, needed_feature_num, features));
     return true;
 }
 
-bool FeatureDetector::SelectCandidates(const Image *image) {
+bool FeatureDetector::SelectCandidates(const Image &image) {
     switch (options_.kMethod) {
         case HARRIS: {
             if (harris_.ComputeGradient(image) == false) {
@@ -36,8 +37,8 @@ bool FeatureDetector::SelectCandidates(const Image *image) {
             }
 
             const int32_t bound = harris_.options().kHalfPatchSize;
-            for (int32_t row = bound; row < image->rows() - bound; ++row) {
-                for (int32_t col = bound; col < image->cols() - bound; ++col) {
+            for (int32_t row = bound; row < image.rows() - bound; ++row) {
+                for (int32_t col = bound; col < image.cols() - bound; ++col) {
                     const float response = harris_.ComputeResponse(image, row, col);
                     if (response > options_.kMinValidResponse) {
                         candidates_.insert(std::make_pair(response, Eigen::Matrix<int32_t, 2, 1>(col, row)));
@@ -53,8 +54,8 @@ bool FeatureDetector::SelectCandidates(const Image *image) {
             }
 
             const int32_t bound = shi_tomas_.options().kHalfPatchSize;
-            for (int32_t row = bound; row < image->rows() - bound; ++row) {
-                for (int32_t col = bound; col < image->cols() - bound; ++col) {
+            for (int32_t row = bound; row < image.rows() - bound; ++row) {
+                for (int32_t col = bound; col < image.cols() - bound; ++col) {
                     const float response = shi_tomas_.ComputeResponse(image, row, col);
                     if (response > options_.kMinValidResponse) {
                         candidates_.insert(std::make_pair(response, Eigen::Matrix<int32_t, 2, 1>(col, row)));
@@ -67,8 +68,8 @@ bool FeatureDetector::SelectCandidates(const Image *image) {
         case FAST: {
             const int32_t bound = fast_.options().kHalfPatchSize;
             float offset = 1e-5f;
-            for (int32_t row = bound; row < image->rows() - bound; ++row) {
-                for (int32_t col = bound; col < image->cols() - bound; ++col) {
+            for (int32_t row = bound; row < image.rows() - bound; ++row) {
+                for (int32_t col = bound; col < image.cols() - bound; ++col) {
                     const float response = fast_.ComputeResponse(image, row, col) + offset;
                     if (response > options_.kMinValidResponse) {
                         candidates_.insert(std::make_pair(response, Eigen::Matrix<int32_t, 2, 1>(col, row)));
@@ -87,10 +88,10 @@ bool FeatureDetector::SelectCandidates(const Image *image) {
     return true;
 }
 
-bool FeatureDetector::SelectGoodFeatures(const Image *image,
+bool FeatureDetector::SelectGoodFeatures(const Image &image,
                                          const uint32_t needed_feature_num,
                                          std::vector<Vec2> &features) {
-    for (auto it = candidates_.rbegin(); it != candidates_.rend(); ++it) {
+    for (auto it = candidates_.crbegin(); it != candidates_.crend(); ++it) {
         const Pixel pixel = it->second;
         const int32_t row = pixel.y();
         const int32_t col = pixel.x();
@@ -114,12 +115,23 @@ void FeatureDetector::DrawRectangleInMask(const int32_t row,
         for (int32_t dcol = - options_.kMinFeatureDistance; dcol <= options_.kMinFeatureDistance; ++dcol) {
             const int32_t sub_row = drow + row;
             const int32_t sub_col = dcol + col;
-            if (sub_row < 0 || sub_col < 0 || sub_row > mask_.rows() - 2 || sub_col > mask_.cols() - 2) {
+            if (sub_row < 0 || sub_col < 0 || sub_row > mask_.rows() - 1 || sub_col > mask_.cols() - 1) {
                 continue;
             }
 
             mask_(sub_row, sub_col) = 0;
         }
+    }
+}
+
+void FeatureDetector::UpdateMaskByFeatures(const Image &image,
+                                           const std::vector<Vec2> &features) {
+    mask_.setConstant(image.rows(), image.cols(), 1);
+
+    for (const auto &feature : features) {
+        const int32_t row = feature.y();
+        const int32_t col = feature.x();
+        DrawRectangleInMask(row, col);
     }
 }
 

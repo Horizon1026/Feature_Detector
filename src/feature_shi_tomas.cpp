@@ -2,28 +2,21 @@
 
 namespace FEATURE_DETECTOR {
 
-bool ShiTomasFeature::ComputeGradient(const Image *image) {
-    if (image == nullptr) {
-        return false;
-    }
-    if (image->data() == nullptr) {
-        return false;
-    }
+bool ShiTomasFeature::ComputeGradient(const Image &image) {
+    Ix_.setZero(image.rows(), image.cols());
+    Iy_.setZero(image.rows(), image.cols());
 
-    Ix_.setZero(image->rows(), image->cols());
-    Iy_.setZero(image->rows(), image->cols());
-
-    for (int32_t row = options_.kHalfPatchSize; row < image->rows() - options_.kHalfPatchSize; ++row) {
-        for (int32_t col = options_.kHalfPatchSize; col < image->cols() - options_.kHalfPatchSize; ++col) {
-            Ix_(row, col) = image->GetPixelValueNoCheck<float>(row, col + 1) - image->GetPixelValueNoCheck<float>(row, col - 1);
-            Iy_(row, col) = image->GetPixelValueNoCheck<float>(row + 1, col) - image->GetPixelValueNoCheck<float>(row - 1, col);
+    for (int32_t row = options_.kHalfPatchSize; row < image.rows() - options_.kHalfPatchSize; ++row) {
+        for (int32_t col = options_.kHalfPatchSize; col < image.cols() - options_.kHalfPatchSize; ++col) {
+            Ix_(row, col) = image.GetPixelValueNoCheck<float>(row, col + 1) - image.GetPixelValueNoCheck<float>(row, col - 1);
+            Iy_(row, col) = image.GetPixelValueNoCheck<float>(row + 1, col) - image.GetPixelValueNoCheck<float>(row - 1, col);
         }
     }
 
     return true;
 }
 
-float ShiTomasFeature::ComputeResponse(const Image *image,
+float ShiTomasFeature::ComputeResponse(const Image &image,
                                        const int32_t row,
                                        const int32_t col) {
     Mat2 M = Mat2::Zero();

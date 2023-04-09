@@ -6,11 +6,11 @@ constexpr int32_t fast_indice[][2] = {
     {0, -3}, {1, -3}, {2, -2}, {3, -1}, {3, 0}, {3, 1}, {2, 2}, {1, 3},
     {0, 3}, {-1, 3}, {-2, 2}, {-3, 1}, {-3, 0}, {-3, -1}, {-2, -2}, {-1, -3} };
 
-float FastFeature::ComputeResponse(const Image *image,
+float FastFeature::ComputeResponse(const Image &image,
                                    const int32_t row,
                                    const int32_t col) {
 
-    int32_t pixel_value = image->GetPixelValueNoCheck<int32_t>(row, col);
+    int32_t pixel_value = image.GetPixelValueNoCheck<int32_t>(row, col);
     int32_t max_pixel_value = pixel_value + options_.kMinPixelDiffValue;
     int32_t min_pixel_value = pixel_value - options_.kMinPixelDiffValue;
 
@@ -22,7 +22,7 @@ float FastFeature::ComputeResponse(const Image *image,
         int32_t idx[4] = {0, 4, 8, 12};
 
         for (uint32_t i = 0; i < 4; ++i) {
-            int32_t pixel_arounded_value = image->GetPixelValueNoCheck<int32_t>(row + fast_indice[idx[i]][1], col + fast_indice[idx[i]][0]);
+            int32_t pixel_arounded_value = image.GetPixelValueNoCheck<int32_t>(row + fast_indice[idx[i]][1], col + fast_indice[idx[i]][0]);
 
             if (pixel_arounded_value > max_pixel_value) {
                 ++larger_cnt;
@@ -44,7 +44,7 @@ float FastFeature::ComputeResponse(const Image *image,
 
     std::vector<int32_t> compare_results(16, 0);
     for (uint32_t i = 0; i < 16; ++i) {
-        int32_t pixel_arounded_value = image->GetPixelValueNoCheck<int32_t>(row + fast_indice[i][1], col + fast_indice[i][0]);
+        int32_t pixel_arounded_value = image.GetPixelValueNoCheck<int32_t>(row + fast_indice[i][1], col + fast_indice[i][0]);
         if (pixel_arounded_value > max_pixel_value) {
             compare_results[i] = 1;
         } else if (pixel_arounded_value < min_pixel_value) {

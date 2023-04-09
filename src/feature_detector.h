@@ -22,7 +22,7 @@ public:
 
     struct FeatureDetectOptions {
         float kMinValidResponse = 0.1f;
-        int32_t kMinFeatureDistance = 20;
+        int32_t kMinFeatureDistance = 15;
         FeatureDetectMethod kMethod = HARRIS;
     };
 
@@ -32,24 +32,27 @@ public:
 
     FeatureDetectOptions &options() { return options_; }
 
-    bool DetectGoodFeatures(const Image *image,
+    bool DetectGoodFeatures(const Image &image,
                             const uint32_t needed_feature_num,
                             std::vector<Vec2> &features);
 
 private:
-    bool SelectCandidates(const Image *image);
+    bool SelectCandidates(const Image &image);
 
-    bool SelectGoodFeatures(const Image *image,
+    bool SelectGoodFeatures(const Image &image,
                             const uint32_t needed_feature_num,
                             std::vector<Vec2> &features);
 
     void DrawRectangleInMask(const int32_t row,
                              const int32_t col);
 
+    void UpdateMaskByFeatures(const Image &image,
+                              const std::vector<Vec2> &features);
+
 private:
     std::map<float, Pixel> candidates_;
     FeatureDetectOptions options_;
-    Mat mask_;
+    MatInt mask_;
 
     HarrisFeature harris_;
     ShiTomasFeature shi_tomas_;
