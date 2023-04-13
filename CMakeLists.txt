@@ -8,15 +8,15 @@ set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 
 find_package( OpenCV REQUIRED )
 
-# Add slam utility
-set( SLAM_UTILITY_PATH ${PROJECT_SOURCE_DIR}/../Slam_Utility )
-if ( NOT TARGET lib_slam_utility )
-    add_subdirectory( ${SLAM_UTILITY_PATH}/src ${PROJECT_SOURCE_DIR}/build/lib_slam_utility )
-endif()
-
-# Add feature detector
+# Add feature detector.
 if ( NOT TARGET lib_feature_detector )
 add_subdirectory( src ${PROJECT_SOURCE_DIR}/build/lib_feature_detector )
+endif()
+
+# Add slam utility log.
+set( SLAM_UTILITY_PATH ${PROJECT_SOURCE_DIR}/../Slam_Utility/src )
+if ( NOT TARGET lib_slam_utility_log )
+    add_subdirectory( ${SLAM_UTILITY_PATH}/log ${PROJECT_SOURCE_DIR}/build/lib_slam_utility_log )
 endif()
 
 add_executable( test_feature_detector
@@ -25,6 +25,6 @@ add_executable( test_feature_detector
 
 target_link_libraries( test_feature_detector
     ${OpenCV_LIBS}
-    lib_slam_utility
     lib_feature_detector
+    lib_slam_utility_log
 )
