@@ -29,6 +29,34 @@ bool FeatureDetector::DetectGoodFeatures(const Image &image,
     return true;
 }
 
+
+void FeatureDetector::SparsifyFeatures(const std::vector<Vec2> &features,
+                                       const int32_t image_rows,
+                                       const int32_t image_cols,
+                                       const uint8_t status_need_filter,
+                                       const uint8_t status_after_filter,
+                                       std::vector<uint8_t> &status) {
+    if (features.size() != status.size()) {
+        status.resize(features.size(), 1);
+    }
+
+    // Grid filter to make points sparsely.
+    const float grid_row_step = image_rows / (options_.kGridFilterRowDivideNumber - 1);
+    const float grid_col_step = image_cols / (options_.kGridFilterColDivideNumber - 1);
+    mask_.setConstant(options_.kGridFilterRowDivideNumber,
+                      options_.kGridFilterColDivideNumber,
+                      1);
+    for (uint32_t i = 0; i < features.size(); ++i) {
+        const int32_t row = static_cast<int32_t>(features[i].y() / grid_row_step);
+        const int32_t col = static_cast<int32_t>(features[i].x() / grid_col_step);
+        if (mask_(row, col) && status[i] == status_need_filter) {
+            mask_(row, col) = 0;
+        } else if (!mask_(row, col) && status[i] == status_need_filter) {
+            status[i] = status_after_filter;
+        }
+    }
+}
+
 bool FeatureDetector::SelectCandidates(const Image &image) {
     switch (options_.kMethod) {
         case HARRIS: {

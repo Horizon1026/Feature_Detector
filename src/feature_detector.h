@@ -24,6 +24,8 @@ public:
         float kMinValidResponse = 0.1f;
         int32_t kMinFeatureDistance = 15;
         FeatureDetectMethod kMethod = HARRIS;
+        int32_t kGridFilterRowDivideNumber = 12;
+        int32_t kGridFilterColDivideNumber = 12;
     };
 
 public:
@@ -35,6 +37,13 @@ public:
     bool DetectGoodFeatures(const Image &image,
                             const uint32_t needed_feature_num,
                             std::vector<Vec2> &features);
+
+    void SparsifyFeatures(const std::vector<Vec2> &features,
+                          const int32_t image_rows,
+                          const int32_t image_cols,
+                          const uint8_t status_need_filter,
+                          const uint8_t status_after_filter,
+                          std::vector<uint8_t> &status);
 
 private:
     bool SelectCandidates(const Image &image);
