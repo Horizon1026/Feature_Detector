@@ -1,5 +1,5 @@
-#ifndef _FEATURE_DETECTOR_H_
-#define _FEATURE_DETECTOR_H_
+#ifndef _FEATURE_POINT_DETECTOR_H_
+#define _FEATURE_POINT_DETECTOR_H_
 
 #include "datatype_basic.h"
 #include "datatype_image.h"
@@ -10,7 +10,7 @@
 
 namespace FEATURE_DETECTOR {
 
-class FeatureDetector {
+class FeaturePointDetector {
 
 public:
     enum FeatureDetectMethod: uint8_t {
@@ -29,8 +29,8 @@ public:
     };
 
 public:
-    explicit FeatureDetector() = default;
-    virtual ~FeatureDetector() = default;
+    explicit FeaturePointDetector() = default;
+    virtual ~FeaturePointDetector() = default;
 
     FeatureDetectOptions &options() { return options_; }
 
@@ -71,4 +71,4 @@ private:
 
 }
 
-#endif // end of _FEATURE_DETECTOR_H_
+#endif // end of _FEATURE_POINT_DETECTOR_H_

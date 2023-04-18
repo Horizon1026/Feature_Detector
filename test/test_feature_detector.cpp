@@ -1,5 +1,5 @@
 #include "log_api.h"
-#include "feature_detector.h"
+#include "feature_point_detector.h"
 
 #include "opencv2/opencv.hpp"
 
@@ -8,8 +8,8 @@ std::string image_file_path = "../examples/image.png";
 void test_harris_detector(Image &image, int32_t feature_num_need) {
     LogInfo("test_harris_detector.");
 
-    FEATURE_DETECTOR::FeatureDetector detector;
-    detector.options().kMethod = FEATURE_DETECTOR::FeatureDetector::HARRIS;
+    FEATURE_DETECTOR::FeaturePointDetector detector;
+    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::HARRIS;
     detector.options().kMinValidResponse = 20.0f;
     detector.options().kMinFeatureDistance = 20;
 
@@ -31,8 +31,8 @@ void test_harris_detector(Image &image, int32_t feature_num_need) {
 void test_harris_detector_with_detected_features(Image &image, int32_t feature_num_need) {
     LogInfo("test_harris_detector, but some features has been detected.");
 
-    FEATURE_DETECTOR::FeatureDetector detector;
-    detector.options().kMethod = FEATURE_DETECTOR::FeatureDetector::HARRIS;
+    FEATURE_DETECTOR::FeaturePointDetector detector;
+    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::HARRIS;
     detector.options().kMinValidResponse = 20.0f;
     detector.options().kMinFeatureDistance = 20;
 
@@ -60,8 +60,8 @@ void test_harris_detector_with_detected_features(Image &image, int32_t feature_n
 void test_shi_tomas_detector(Image &image, int32_t feature_num_need) {
     LogInfo("test_shi_tomas_detector.");
 
-    FEATURE_DETECTOR::FeatureDetector detector;
-    detector.options().kMethod = FEATURE_DETECTOR::FeatureDetector::SHI_TOMAS;
+    FEATURE_DETECTOR::FeaturePointDetector detector;
+    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::SHI_TOMAS;
     detector.options().kMinValidResponse = 40.0f;
     detector.options().kMinFeatureDistance = 20;
 
@@ -83,8 +83,8 @@ void test_shi_tomas_detector(Image &image, int32_t feature_num_need) {
 void test_fast_detector(Image &image, int32_t feature_num_need) {
     LogInfo("test_fast_detector.");
 
-    FEATURE_DETECTOR::FeatureDetector detector;
-    detector.options().kMethod = FEATURE_DETECTOR::FeatureDetector::FAST;
+    FEATURE_DETECTOR::FeaturePointDetector detector;
+    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::FAST;
     detector.options().kMinValidResponse = 10.0f;
     detector.options().kMinFeatureDistance = 20;
 

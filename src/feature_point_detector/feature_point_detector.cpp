@@ -1,9 +1,9 @@
-#include "feature_detector.h"
+#include "feature_point_detector.h"
 #include "slam_operations.h"
 
 namespace FEATURE_DETECTOR {
 
-bool FeatureDetector::DetectGoodFeatures(const Image &image,
+bool FeaturePointDetector::DetectGoodFeatures(const Image &image,
                                          const uint32_t needed_feature_num,
                                          std::vector<Vec2> &features) {
     // Check input image.
@@ -30,7 +30,7 @@ bool FeatureDetector::DetectGoodFeatures(const Image &image,
 }
 
 
-void FeatureDetector::SparsifyFeatures(const std::vector<Vec2> &features,
+void FeaturePointDetector::SparsifyFeatures(const std::vector<Vec2> &features,
                                        const int32_t image_rows,
                                        const int32_t image_cols,
                                        const uint8_t status_need_filter,
@@ -57,7 +57,7 @@ void FeatureDetector::SparsifyFeatures(const std::vector<Vec2> &features,
     }
 }
 
-bool FeatureDetector::SelectCandidates(const Image &image) {
+bool FeaturePointDetector::SelectCandidates(const Image &image) {
     switch (options_.kMethod) {
         case HARRIS: {
             if (harris_.ComputeGradient(image) == false) {
@@ -116,7 +116,7 @@ bool FeatureDetector::SelectCandidates(const Image &image) {
     return true;
 }
 
-bool FeatureDetector::SelectGoodFeatures(const Image &image,
+bool FeaturePointDetector::SelectGoodFeatures(const Image &image,
                                          const uint32_t needed_feature_num,
                                          std::vector<Vec2> &features) {
     for (auto it = candidates_.crbegin(); it != candidates_.crend(); ++it) {
@@ -137,7 +137,7 @@ bool FeatureDetector::SelectGoodFeatures(const Image &image,
     return true;
 }
 
-void FeatureDetector::DrawRectangleInMask(const int32_t row,
+void FeaturePointDetector::DrawRectangleInMask(const int32_t row,
                                           const int32_t col) {
     for (int32_t drow = - options_.kMinFeatureDistance; drow <= options_.kMinFeatureDistance; ++drow) {
         for (int32_t dcol = - options_.kMinFeatureDistance; dcol <= options_.kMinFeatureDistance; ++dcol) {
@@ -152,7 +152,7 @@ void FeatureDetector::DrawRectangleInMask(const int32_t row,
     }
 }
 
-void FeatureDetector::UpdateMaskByFeatures(const Image &image,
+void FeaturePointDetector::UpdateMaskByFeatures(const Image &image,
                                            const std::vector<Vec2> &features) {
     mask_.setConstant(image.rows(), image.cols(), 1);
 

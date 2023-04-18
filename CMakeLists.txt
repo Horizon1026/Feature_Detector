@@ -9,9 +9,10 @@ set( CMAKE_CXX_STANDARD 17 )
 
 find_package( OpenCV REQUIRED )
 
-# Add feature detector.
-if ( NOT TARGET lib_feature_detector )
-add_subdirectory( src ${PROJECT_SOURCE_DIR}/build/lib_feature_detector )
+# Add feature point detector.
+set( FEATURE_DETECTOR_PATH ${PROJECT_SOURCE_DIR}/../Feature_Detector )
+if ( NOT TARGET lib_feature_point_detector )
+add_subdirectory( ${FEATURE_DETECTOR_PATH}/src/feature_point_detector ${PROJECT_SOURCE_DIR}/build/lib_feature_point_detector )
 endif()
 
 # Add slam utility log.
@@ -26,6 +27,6 @@ add_executable( test_feature_detector
 
 target_link_libraries( test_feature_detector
     ${OpenCV_LIBS}
-    lib_feature_detector
+    lib_feature_point_detector
     lib_slam_utility_log
 )
