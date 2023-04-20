@@ -117,7 +117,7 @@ void test_cv_good_feature(Image &image, int32_t feature_num_need) {
     cv::imshow("opencv detected features", show_image);
 }
 
-int main() {
+int main(int argc, char **argv) {
     LogInfo("Test feature detector.");
     int32_t feature_num_need = 200;
 
