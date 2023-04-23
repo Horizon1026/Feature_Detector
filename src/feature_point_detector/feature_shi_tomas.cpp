@@ -37,7 +37,7 @@ float ShiTomasFeature::ComputeResponse(const Image &image,
     M /= cnt;
 
     Eigen::SelfAdjointEigenSolver<Mat2> saes(M);
-    Vec2 eig = saes.eigenvalues();
+    const Vec2 eig = saes.eigenvalues();
     return std::max(eig(0), eig(1));
 }
 

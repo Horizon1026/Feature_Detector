@@ -5,8 +5,8 @@
 
 std::string image_file_path = "../examples/image.png";
 
-void test_harris_detector(Image &image, int32_t feature_num_need) {
-    LogInfo("test_harris_detector.");
+void TestHarrisFeatureDetector(Image &image, int32_t feature_num_need) {
+    LogInfo("TestHarrisFeatureDetector.");
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::HARRIS;
@@ -28,8 +28,8 @@ void test_harris_detector(Image &image, int32_t feature_num_need) {
 
 }
 
-void test_harris_detector_with_detected_features(Image &image, int32_t feature_num_need) {
-    LogInfo("test_harris_detector, but some features has been detected.");
+void TestUpdateMaskWithDetectedFeatures(Image &image, int32_t feature_num_need) {
+    LogInfo("TestHarrisFeatureDetector, but some features has been detected.");
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::HARRIS;
@@ -57,8 +57,8 @@ void test_harris_detector_with_detected_features(Image &image, int32_t feature_n
 
 }
 
-void test_shi_tomas_detector(Image &image, int32_t feature_num_need) {
-    LogInfo("test_shi_tomas_detector.");
+void TestShiTomasFeatureDetector(Image &image, int32_t feature_num_need) {
+    LogInfo("TestShiTomasFeatureDetector.");
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::SHI_TOMAS;
@@ -80,8 +80,8 @@ void test_shi_tomas_detector(Image &image, int32_t feature_num_need) {
 
 }
 
-void test_fast_detector(Image &image, int32_t feature_num_need) {
-    LogInfo("test_fast_detector.");
+void TestFastFeatureDetector(Image &image, int32_t feature_num_need) {
+    LogInfo("TestFastFeatureDetector.");
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::FAST;
@@ -102,8 +102,8 @@ void test_fast_detector(Image &image, int32_t feature_num_need) {
     LogInfo("fast detected " << features.size());
 }
 
-void test_cv_good_feature(Image &image, int32_t feature_num_need) {
-    LogInfo("test_cv_good_feature.");
+void TestOpencvDetectGoodFeatures(Image &image, int32_t feature_num_need) {
+    LogInfo("TestOpencvDetectGoodFeatures.");
     cv::Mat cv_image(image.rows(), image.cols(), CV_8UC1, image.data());
 
     std::vector<cv::Point2f> features;
@@ -124,11 +124,11 @@ int main(int argc, char **argv) {
     cv::Mat raw_image = cv::imread(image_file_path, 0);
     Image image(raw_image.data, raw_image.rows, raw_image.cols);
 
-    test_cv_good_feature(image, feature_num_need);
-    test_fast_detector(image, feature_num_need);
-    test_harris_detector(image, feature_num_need);
-    test_shi_tomas_detector(image, feature_num_need);
-    test_harris_detector_with_detected_features(image, feature_num_need);
+    TestOpencvDetectGoodFeatures(image, feature_num_need);
+    TestFastFeatureDetector(image, feature_num_need);
+    TestHarrisFeatureDetector(image, feature_num_need);
+    TestShiTomasFeatureDetector(image, feature_num_need);
+    TestUpdateMaskWithDetectedFeatures(image, feature_num_need);
 
     cv::waitKey(0);
 

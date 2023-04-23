@@ -73,7 +73,7 @@ bool FeaturePointDetector::SelectCandidates(const Image &image) {
                     }
                 }
             }
-            return true;;
+            return true;
         }
 
         case SHI_TOMAS: {
@@ -90,7 +90,7 @@ bool FeaturePointDetector::SelectCandidates(const Image &image) {
                     }
                 }
             }
-            return true;;
+            return true;
         }
 
         case FAST: {

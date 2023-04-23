@@ -40,10 +40,6 @@ float HarrisFeature::ComputeResponse(const Image &image,
     const float det = M.determinant();
     const float trace = M.trace();
     return det - options_.k * trace * trace;
-
-    // Eigen::SelfAdjointEigenSolver<Mat2> saes(M);
-    // Vec2 eig = saes.eigenvalues();
-    // return std::max(eig(0), eig(1));
 }
 
 }
