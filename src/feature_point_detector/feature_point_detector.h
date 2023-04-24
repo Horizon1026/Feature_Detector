@@ -4,6 +4,8 @@
 #include "datatype_basic.h"
 #include "datatype_image.h"
 
+#include "feature_point.h"
+
 #include "feature_harris.h"
 #include "feature_shi_tomas.h"
 #include "feature_fast.h"
@@ -29,10 +31,9 @@ public:
     };
 
 public:
-    explicit FeaturePointDetector() = default;
+    FeaturePointDetector() = default;
     virtual ~FeaturePointDetector() = default;
-
-    FeatureDetectOptions &options() { return options_; }
+    FeaturePointDetector(const FeaturePointDetector &detecor) = delete;
 
     bool DetectGoodFeatures(const Image &image,
                             const uint32_t needed_feature_num,
@@ -44,6 +45,8 @@ public:
                           const uint8_t status_need_filter,
                           const uint8_t status_after_filter,
                           std::vector<uint8_t> &status);
+
+    FeatureDetectOptions &options() { return options_; }
 
 private:
     bool SelectCandidates(const Image &image);
