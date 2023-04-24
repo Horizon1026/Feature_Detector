@@ -7,15 +7,7 @@ bool FeaturePointDetector::DetectGoodFeatures(const Image &image,
                                          const uint32_t needed_feature_num,
                                          std::vector<Vec2> &features) {
     // Check input image.
-    if (image.data() == nullptr) {
-        return false;
-    }
-
-    // Detect all features to be candidates.
-    candidates_.clear();
-    if (SelectCandidates(image) == false) {
-        return false;
-    }
+    RETURN_FALSE_IF(image.data() == nullptr);
 
     // If there are already some detected features, do not detect new features besiding them.
     if (features.empty()) {
@@ -23,6 +15,10 @@ bool FeaturePointDetector::DetectGoodFeatures(const Image &image,
     } else {
         UpdateMaskByFeatures(image, features);
     }
+
+    // Detect all features to be candidates.
+    candidates_.clear();
+    RETURN_FALSE_IF_FALSE(SelectCandidates(image));
 
     // Select good features by score from candidates.
     RETURN_FALSE_IF_FALSE(SelectGoodFeatures(image, needed_feature_num, features));
@@ -59,61 +55,15 @@ void FeaturePointDetector::SparsifyFeatures(const std::vector<Vec2> &features,
 
 bool FeaturePointDetector::SelectCandidates(const Image &image) {
     switch (options_.kMethod) {
-        case HARRIS: {
-            if (harris_.ComputeGradient(image) == false) {
-                return false;
-            }
-
-            const int32_t bound = harris_.options().kHalfPatchSize;
-            for (int32_t row = bound; row < image.rows() - bound; ++row) {
-                for (int32_t col = bound; col < image.cols() - bound; ++col) {
-                    const float response = harris_.ComputeResponse(image, row, col);
-                    if (response > options_.kMinValidResponse) {
-                        candidates_.insert(std::make_pair(response, Eigen::Matrix<int32_t, 2, 1>(col, row)));
-                    }
-                }
-            }
-            return true;
-        }
-
-        case SHI_TOMAS: {
-            if (shi_tomas_.ComputeGradient(image) == false) {
-                return false;
-            }
-
-            const int32_t bound = shi_tomas_.options().kHalfPatchSize;
-            for (int32_t row = bound; row < image.rows() - bound; ++row) {
-                for (int32_t col = bound; col < image.cols() - bound; ++col) {
-                    const float response = shi_tomas_.ComputeResponse(image, row, col);
-                    if (response > options_.kMinValidResponse) {
-                        candidates_.insert(std::make_pair(response, Eigen::Matrix<int32_t, 2, 1>(col, row)));
-                    }
-                }
-            }
-            return true;
-        }
-
-        case FAST: {
-            const int32_t bound = fast_.options().kHalfPatchSize;
-            float offset = 1e-5f;
-            for (int32_t row = bound; row < image.rows() - bound; ++row) {
-                for (int32_t col = bound; col < image.cols() - bound; ++col) {
-                    const float response = fast_.ComputeResponse(image, row, col) + offset;
-                    if (response > options_.kMinValidResponse) {
-                        candidates_.insert(std::make_pair(response, Eigen::Matrix<int32_t, 2, 1>(col, row)));
-                    }
-
-                    offset += 1e-5;
-                }
-            }
-            return true;;
-        }
-
+        case HARRIS:
+            return harris_.SelectAllCandidates(image, mask_, candidates_);
+        case SHI_TOMAS:
+            return shi_tomas_.SelectAllCandidates(image, mask_, candidates_);
+        case FAST:
+            return fast_.SelectAllCandidates(image, mask_, candidates_);
         default:
-            break;
+            return false;
     }
-
-    return true;
 }
 
 bool FeaturePointDetector::SelectGoodFeatures(const Image &image,

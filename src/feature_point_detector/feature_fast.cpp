@@ -11,14 +11,14 @@ float FastFeature::ComputeResponse(const Image &image,
                                    const int32_t col) {
 
     int32_t pixel_value = image.GetPixelValueNoCheck<int32_t>(row, col);
-    int32_t max_pixel_value = pixel_value + options_.kMinPixelDiffValue;
-    int32_t min_pixel_value = pixel_value - options_.kMinPixelDiffValue;
+    int32_t max_pixel_value = pixel_value + options().kMinPixelDiffValue;
+    int32_t min_pixel_value = pixel_value - options().kMinPixelDiffValue;
 
     int32_t larger_cnt = 0;
     int32_t smaller_cnt = 0;
 
     // If Fast-12 or more, it can be precheck if it can be FAST corner.
-    if (options_.kN >= 12) {
+    if (options().kN >= 12) {
         int32_t idx[4] = {0, 4, 8, 12};
 
         for (uint32_t i = 0; i < 4; ++i) {
@@ -78,8 +78,26 @@ float FastFeature::ComputeResponse(const Image &image,
         }
     }
 
-    response_ = static_cast<float>(best_cnt);
-    return response_;
+    return static_cast<float>(best_cnt);
+}
+
+bool FastFeature::SelectAllCandidates(const Image &image,
+                                      const MatInt &mask,
+                                      std::map<float, Pixel> &candidates) {
+    const int32_t &bound = options().kHalfPatchSize;
+    float offset = 1e-5f;
+    for (int32_t row = bound; row < image.rows() - bound; ++row) {
+        for (int32_t col = bound; col < image.cols() - bound; ++col) {
+            if (mask(row, col)) {
+                const float response = ComputeResponse(image, row, col) + offset;
+                if (response > options().kMinValidResponse) {
+                    candidates.insert(std::make_pair(response, Eigen::Matrix<int32_t, 2, 1>(col, row)));
+                }
+                offset += 1e-5f;
+            }
+        }
+    }
+    return true;
 }
 
 }

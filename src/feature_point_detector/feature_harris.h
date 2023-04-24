@@ -3,34 +3,33 @@
 
 #include "datatype_basic.h"
 #include "datatype_image.h"
+#include "feature_point.h"
 
 namespace FEATURE_DETECTOR {
 
-class HarrisFeature {
+struct HarrisOptions {
+    float k = 0.0f;
+    int32_t kHalfPatchSize = 1;
+    float kMinValidResponse = 0.1f;
+};
+
+class HarrisFeature : public Feature<HarrisOptions> {
 
 public:
-    struct HarrisOptions {
-        float k = 0.0f;
-        int32_t kHalfPatchSize = 1;
-    };
-
-public:
-    explicit HarrisFeature() = default;
+    HarrisFeature() : Feature<HarrisOptions>() {}
     virtual ~HarrisFeature() = default;
 
     bool ComputeGradient(const Image &image);
 
-    float ComputeResponse(const Image &image,
-                          const int32_t row,
-                          const int32_t col);
+    virtual bool SelectAllCandidates(const Image &image,
+                                     const MatInt &mask,
+                                     std::map<float, Pixel> &candidates) override;
 
-    HarrisOptions &options() { return options_; }
-
-    float response() const { return response_; }
+    virtual float ComputeResponse(const Image &image,
+                                  const int32_t row,
+                                  const int32_t col) override;
 
 private:
-    HarrisOptions options_;
-    float response_ = 0.0f;
     Mat Ix_;
     Mat Iy_;
 

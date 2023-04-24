@@ -3,32 +3,30 @@
 
 #include "datatype_basic.h"
 #include "datatype_image.h"
+#include "feature_point.h"
 
 namespace FEATURE_DETECTOR {
 
-class FastFeature {
+struct FastOptions {
+    int32_t kN = 12;        // Fast-12 default.
+    int32_t kHalfPatchSize = 3;
+    uint8_t kMinPixelDiffValue = 15;
+    float kMinValidResponse = 0.1f;
+};
+
+class FastFeature : public Feature<FastOptions> {
 
 public:
-    struct FastOptions {
-        int32_t kN = 12;        // Fast-12 default.
-        int32_t kHalfPatchSize = 3;
-        uint8_t kMinPixelDiffValue = 15;
-    };
-
-public:
-    explicit FastFeature() = default;
+    FastFeature() : Feature<FastOptions>() {}
     virtual ~FastFeature() = default;
 
-    float ComputeResponse(const Image &image,
-                          const int32_t row,
-                          const int32_t col);
+    virtual bool SelectAllCandidates(const Image &image,
+                                     const MatInt &mask,
+                                     std::map<float, Pixel> &candidates) override;
 
-    float response() const { return response_; }
-    FastOptions &options() { return options_; }
-
-private:
-    float response_ = 0.0f;
-    FastOptions options_;
+    virtual float ComputeResponse(const Image &image,
+                                  const int32_t row,
+                                  const int32_t col) override;
 
 };
 
