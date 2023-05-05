@@ -54,7 +54,7 @@ bool ShiTomasFeature::SelectAllCandidates(const Image &image,
             if (mask(row, col)) {
                 const float response = ComputeResponse(image, row, col);
                 if (response > options().kMinValidResponse) {
-                    candidates.insert(std::make_pair(response, Eigen::Matrix<int32_t, 2, 1>(col, row)));
+                    candidates.insert(std::make_pair(response, Pixel(col, row)));
                 }
             }
         }
