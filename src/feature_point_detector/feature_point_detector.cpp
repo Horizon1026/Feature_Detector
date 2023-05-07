@@ -4,8 +4,8 @@
 namespace FEATURE_DETECTOR {
 
 bool FeaturePointDetector::DetectGoodFeatures(const Image &image,
-                                         const uint32_t needed_feature_num,
-                                         std::vector<Vec2> &features) {
+                                              const uint32_t needed_feature_num,
+                                              std::vector<Vec2> &features) {
     // Check input image.
     RETURN_FALSE_IF(image.data() == nullptr);
 
@@ -27,11 +27,11 @@ bool FeaturePointDetector::DetectGoodFeatures(const Image &image,
 
 
 void FeaturePointDetector::SparsifyFeatures(const std::vector<Vec2> &features,
-                                       const int32_t image_rows,
-                                       const int32_t image_cols,
-                                       const uint8_t status_need_filter,
-                                       const uint8_t status_after_filter,
-                                       std::vector<uint8_t> &status) {
+                                            const int32_t image_rows,
+                                            const int32_t image_cols,
+                                            const uint8_t status_need_filter,
+                                            const uint8_t status_after_filter,
+                                            std::vector<uint8_t> &status) {
     if (features.size() != status.size()) {
         status.resize(features.size(), 1);
     }
@@ -67,8 +67,8 @@ bool FeaturePointDetector::SelectCandidates(const Image &image) {
 }
 
 bool FeaturePointDetector::SelectGoodFeatures(const Image &image,
-                                         const uint32_t needed_feature_num,
-                                         std::vector<Vec2> &features) {
+                                              const uint32_t needed_feature_num,
+                                              std::vector<Vec2> &features) {
     for (auto it = candidates_.crbegin(); it != candidates_.crend(); ++it) {
         const Pixel pixel = it->second;
         const int32_t row = pixel.y();
@@ -88,7 +88,7 @@ bool FeaturePointDetector::SelectGoodFeatures(const Image &image,
 }
 
 void FeaturePointDetector::DrawRectangleInMask(const int32_t row,
-                                          const int32_t col) {
+                                               const int32_t col) {
     for (int32_t drow = - options_.kMinFeatureDistance; drow <= options_.kMinFeatureDistance; ++drow) {
         for (int32_t dcol = - options_.kMinFeatureDistance; dcol <= options_.kMinFeatureDistance; ++dcol) {
             const int32_t sub_row = drow + row;
@@ -103,7 +103,7 @@ void FeaturePointDetector::DrawRectangleInMask(const int32_t row,
 }
 
 void FeaturePointDetector::UpdateMaskByFeatures(const Image &image,
-                                           const std::vector<Vec2> &features) {
+                                                const std::vector<Vec2> &features) {
     mask_.setConstant(image.rows(), image.cols(), 1);
 
     for (const auto &feature : features) {

@@ -6,7 +6,7 @@
 std::string image_file_path = "../examples/image.png";
 
 void TestHarrisFeatureDetector(Image &image, int32_t feature_num_need) {
-    LogInfo("TestHarrisFeatureDetector.");
+    LogInfo(YELLOW ">> Test Harris Feature Detector." RESET_COLOR);
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::HARRIS;
@@ -29,7 +29,7 @@ void TestHarrisFeatureDetector(Image &image, int32_t feature_num_need) {
 }
 
 void TestUpdateMaskWithDetectedFeatures(Image &image, int32_t feature_num_need) {
-    LogInfo("TestHarrisFeatureDetector, but some features has been detected.");
+    LogInfo(YELLOW ">> Test Harris Feature Detector, but some features has been detected." RESET_COLOR);
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::HARRIS;
@@ -58,7 +58,7 @@ void TestUpdateMaskWithDetectedFeatures(Image &image, int32_t feature_num_need) 
 }
 
 void TestShiTomasFeatureDetector(Image &image, int32_t feature_num_need) {
-    LogInfo("TestShiTomasFeatureDetector.");
+    LogInfo(YELLOW ">> Test Shi-Tomas Feature Detector." RESET_COLOR);
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::SHI_TOMAS;
@@ -81,7 +81,7 @@ void TestShiTomasFeatureDetector(Image &image, int32_t feature_num_need) {
 }
 
 void TestFastFeatureDetector(Image &image, int32_t feature_num_need) {
-    LogInfo("TestFastFeatureDetector.");
+    LogInfo(YELLOW ">> Test Fast Feature Detector." RESET_COLOR);
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::FAST;
@@ -103,7 +103,7 @@ void TestFastFeatureDetector(Image &image, int32_t feature_num_need) {
 }
 
 void TestOpencvDetectGoodFeatures(Image &image, int32_t feature_num_need) {
-    LogInfo("TestOpencvDetectGoodFeatures.");
+    LogInfo(YELLOW ">>Test Opencv Detect Good Features." RESET_COLOR);
     cv::Mat cv_image(image.rows(), image.cols(), CV_8UC1, image.data());
 
     std::vector<cv::Point2f> features;
@@ -118,7 +118,7 @@ void TestOpencvDetectGoodFeatures(Image &image, int32_t feature_num_need) {
 }
 
 int main(int argc, char **argv) {
-    LogInfo("Test feature detector.");
+    LogInfo(YELLOW ">> Test feature detector." RESET_COLOR);
     int32_t feature_num_need = 200;
 
     cv::Mat raw_image = cv::imread(image_file_path, 0);
