@@ -1,5 +1,5 @@
 #include "descriptor_brief.h"
-#include "log_api.h"
+#include "log_report.h"
 
 namespace FEATURE_DETECTOR {
 

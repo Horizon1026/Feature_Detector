@@ -1,4 +1,4 @@
-#include "log_api.h"
+#include "log_report.h"
 #include "feature_point_detector.h"
 #include "descriptor_brief.h"
 
@@ -7,7 +7,7 @@
 std::string image_file_path = "../examples/image.png";
 
 std::vector<Vec2> TestHarrisFeatureDetector(const Image &image, const int32_t feature_num_need) {
-    LogInfo(">> Test Harris Feature Detector.");
+    ReportInfo(">> Test Harris Feature Detector.");
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::HARRIS;
@@ -25,12 +25,12 @@ std::vector<Vec2> TestHarrisFeatureDetector(const Image &image, const int32_t fe
     }
     cv::imshow("harris detected features", show_image);
 
-    LogInfo("harris detected " << features.size());
+    ReportInfo("harris detected " << features.size());
     return features;
 }
 
 void TestBriefDescriptor(const Image &image, const std::vector<Vec2> &features) {
-    LogInfo(">> Test Brief Feature Descriptor.");
+    ReportInfo(">> Test Brief Feature Descriptor.");
 
     FEATURE_DETECTOR::BriefDescriptor descriptor;
     descriptor.options().kHalfPatchSize = 8;
@@ -50,7 +50,7 @@ void TestBriefDescriptor(const Image &image, const std::vector<Vec2> &features) 
 }
 
 int main(int argc, char **argv) {
-    LogInfo("Test feature detector.");
+    ReportInfo("Test feature detector.");
     int32_t feature_num_need = 10;
 
     cv::Mat raw_image = cv::imread(image_file_path, 0);

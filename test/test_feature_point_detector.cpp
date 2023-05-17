@@ -1,4 +1,4 @@
-#include "log_api.h"
+#include "log_report.h"
 #include "feature_point_detector.h"
 
 #include "opencv2/opencv.hpp"
@@ -6,7 +6,7 @@
 std::string image_file_path = "../examples/image.png";
 
 void TestHarrisFeatureDetector(Image &image, int32_t feature_num_need) {
-    LogInfo(YELLOW ">> Test Harris Feature Detector." RESET_COLOR);
+    ReportInfo(YELLOW ">> Test Harris Feature Detector." RESET_COLOR);
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::HARRIS;
@@ -24,12 +24,12 @@ void TestHarrisFeatureDetector(Image &image, int32_t feature_num_need) {
     }
     cv::imshow("harris detected features", show_image);
 
-    LogInfo("harris detected " << features.size());
+    ReportInfo("harris detected " << features.size());
 
 }
 
 void TestUpdateMaskWithDetectedFeatures(Image &image, int32_t feature_num_need) {
-    LogInfo(YELLOW ">> Test Harris Feature Detector, but some features has been detected." RESET_COLOR);
+    ReportInfo(YELLOW ">> Test Harris Feature Detector, but some features has been detected." RESET_COLOR);
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::HARRIS;
@@ -53,12 +53,12 @@ void TestUpdateMaskWithDetectedFeatures(Image &image, int32_t feature_num_need) 
     }
     cv::imshow("harris detected new features", show_image);
 
-    LogInfo("harris detected " << features.size());
+    ReportInfo("harris detected " << features.size());
 
 }
 
 void TestShiTomasFeatureDetector(Image &image, int32_t feature_num_need) {
-    LogInfo(YELLOW ">> Test Shi-Tomas Feature Detector." RESET_COLOR);
+    ReportInfo(YELLOW ">> Test Shi-Tomas Feature Detector." RESET_COLOR);
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::SHI_TOMAS;
@@ -76,12 +76,12 @@ void TestShiTomasFeatureDetector(Image &image, int32_t feature_num_need) {
     }
     cv::imshow("shi tomas detected features", show_image);
 
-    LogInfo("shi tomas detected " << features.size());
+    ReportInfo("shi tomas detected " << features.size());
 
 }
 
 void TestFastFeatureDetector(Image &image, int32_t feature_num_need) {
-    LogInfo(YELLOW ">> Test Fast Feature Detector." RESET_COLOR);
+    ReportInfo(YELLOW ">> Test Fast Feature Detector." RESET_COLOR);
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
     detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::FAST;
@@ -99,11 +99,11 @@ void TestFastFeatureDetector(Image &image, int32_t feature_num_need) {
     }
     cv::imshow("fast detected features", show_image);
 
-    LogInfo("fast detected " << features.size());
+    ReportInfo("fast detected " << features.size());
 }
 
 void TestOpencvDetectGoodFeatures(Image &image, int32_t feature_num_need) {
-    LogInfo(YELLOW ">>Test Opencv Detect Good Features." RESET_COLOR);
+    ReportInfo(YELLOW ">>Test Opencv Detect Good Features." RESET_COLOR);
     cv::Mat cv_image(image.rows(), image.cols(), CV_8UC1, image.data());
 
     std::vector<cv::Point2f> features;
@@ -118,7 +118,7 @@ void TestOpencvDetectGoodFeatures(Image &image, int32_t feature_num_need) {
 }
 
 int main(int argc, char **argv) {
-    LogInfo(YELLOW ">> Test feature detector." RESET_COLOR);
+    ReportInfo(YELLOW ">> Test feature detector." RESET_COLOR);
     int32_t feature_num_need = 200;
 
     cv::Mat raw_image = cv::imread(image_file_path, 0);
