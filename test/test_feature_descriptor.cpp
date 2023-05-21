@@ -10,9 +10,9 @@ std::vector<Vec2> TestHarrisFeatureDetector(const Image &image, const int32_t fe
     ReportInfo(">> Test Harris Feature Detector.");
 
     FEATURE_DETECTOR::FeaturePointDetector detector;
-    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::HARRIS;
-    detector.options().kMinValidResponse = 20.0f;
+    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::kHarris;
     detector.options().kMinFeatureDistance = 20;
+    detector.harris().options().kMinValidResponse = 20.0f;
 
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);

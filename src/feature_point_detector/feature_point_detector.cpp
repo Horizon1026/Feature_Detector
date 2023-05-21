@@ -55,11 +55,11 @@ void FeaturePointDetector::SparsifyFeatures(const std::vector<Vec2> &features,
 
 bool FeaturePointDetector::SelectCandidates(const Image &image) {
     switch (options_.kMethod) {
-        case HARRIS:
+        case kHarris:
             return harris_.SelectAllCandidates(image, mask_, candidates_);
-        case SHI_TOMAS:
+        case kShiTomas:
             return shi_tomas_.SelectAllCandidates(image, mask_, candidates_);
-        case FAST:
+        case kFast:
             return fast_.SelectAllCandidates(image, mask_, candidates_);
         default:
             return false;

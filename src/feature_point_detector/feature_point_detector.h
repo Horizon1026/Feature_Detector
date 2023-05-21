@@ -16,16 +16,14 @@ class FeaturePointDetector {
 
 public:
     enum FeatureDetectMethod: uint8_t {
-        FAST = 0,
-        HARRIS,
-        SHI_TOMAS,
-        ORB,
+        kFast = 0,
+        kHarris = 1,
+        kShiTomas = 2,
     };
 
     struct FeatureDetectOptions {
-        float kMinValidResponse = 0.1f;
+        FeatureDetectMethod kMethod = kHarris;
         int32_t kMinFeatureDistance = 15;
-        FeatureDetectMethod kMethod = HARRIS;
         int32_t kGridFilterRowDivideNumber = 12;
         int32_t kGridFilterColDivideNumber = 12;
     };
@@ -46,7 +44,11 @@ public:
                           const uint8_t status_after_filter,
                           std::vector<uint8_t> &status);
 
+    // Reference for member variables.
     FeatureDetectOptions &options() { return options_; }
+    HarrisFeature &harris() { return harris_; }
+    ShiTomasFeature &shi_tomas() { return shi_tomas_; }
+    FastFeature &fast() { return fast_; }
 
 private:
     bool SelectCandidates(const Image &image);

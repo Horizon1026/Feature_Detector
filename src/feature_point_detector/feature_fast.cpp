@@ -38,7 +38,7 @@ float FastFeature::ComputeResponse(const Image &image,
 
         // It cannot be a FAST corner.
         if (smaller_cnt < 3 && larger_cnt < 3) {
-            return false;
+            return 0;
         }
     }
 
@@ -59,10 +59,10 @@ float FastFeature::ComputeResponse(const Image &image,
     for (int32_t k = 0; k < 2 && best_cnt < 16; ++k) {
         for (uint32_t i = 0; i < compare_results.size(); ++i) {
             if (compare_results[i] == 1) {
-                larger_cnt++;
+                ++larger_cnt;
                 smaller_cnt = 0;
             } else if (compare_results[i] == -1) {
-                smaller_cnt++;
+                ++smaller_cnt;
                 larger_cnt = 0;
             } else {
                 smaller_cnt = 0;

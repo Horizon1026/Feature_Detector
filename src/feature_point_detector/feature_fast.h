@@ -11,7 +11,7 @@ struct FastOptions {
     int32_t kN = 12;        // Fast-12 default.
     int32_t kHalfPatchSize = 3;
     uint8_t kMinPixelDiffValue = 15;
-    float kMinValidResponse = 0.1f;
+    float kMinValidResponse = 9.0f;
 };
 
 class FastFeature : public Feature<FastOptions> {
