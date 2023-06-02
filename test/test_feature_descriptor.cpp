@@ -1,5 +1,6 @@
 #include "log_report.h"
 #include "feature_point_detector.h"
+#include "feature_harris.h"
 #include "descriptor_brief.h"
 
 #include "opencv2/opencv.hpp"
@@ -9,10 +10,9 @@ std::string image_file_path = "../examples/image.png";
 std::vector<Vec2> TestHarrisFeatureDetector(const Image &image, const int32_t feature_num_need) {
     ReportInfo(">> Test Harris Feature Detector.");
 
-    FEATURE_DETECTOR::FeaturePointDetector detector;
-    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::kHarris;
+    FEATURE_DETECTOR::FeaturePointDetector<FEATURE_DETECTOR::HarrisFeature> detector;
     detector.options().kMinFeatureDistance = 20;
-    detector.harris().options().kMinValidResponse = 20.0f;
+    detector.feature().options().kMinValidResponse = 20.0f;
 
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);

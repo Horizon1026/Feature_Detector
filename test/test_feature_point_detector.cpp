@@ -1,5 +1,10 @@
 #include "log_report.h"
 #include "feature_point_detector.h"
+#include "feature_harris.h"
+#include "feature_shi_tomas.h"
+#include "feature_fast.h"
+
+using namespace FEATURE_DETECTOR;
 
 #include "opencv2/opencv.hpp"
 
@@ -8,10 +13,9 @@ std::string image_file_path = "../examples/image.png";
 void TestHarrisFeatureDetector(Image &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Harris Feature Detector." RESET_COLOR);
 
-    FEATURE_DETECTOR::FeaturePointDetector detector;
-    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::kHarris;
+    FeaturePointDetector<HarrisFeature> detector;
     detector.options().kMinFeatureDistance = 20;
-    detector.harris().options().kMinValidResponse = 30.0f;
+    detector.feature().options().kMinValidResponse = 30.0f;
 
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
@@ -31,10 +35,9 @@ void TestHarrisFeatureDetector(Image &image, int32_t feature_num_need) {
 void TestUpdateMaskWithDetectedFeatures(Image &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Harris Feature Detector, but some features has been detected." RESET_COLOR);
 
-    FEATURE_DETECTOR::FeaturePointDetector detector;
-    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::kHarris;
+    FeaturePointDetector<HarrisFeature> detector;
     detector.options().kMinFeatureDistance = 20;
-    detector.harris().options().kMinValidResponse = 30.0f;
+    detector.feature().options().kMinValidResponse = 30.0f;
 
     std::vector<Vec2> features;
     features.reserve(feature_num_need);
@@ -60,10 +63,9 @@ void TestUpdateMaskWithDetectedFeatures(Image &image, int32_t feature_num_need) 
 void TestShiTomasFeatureDetector(Image &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Shi-Tomas Feature Detector." RESET_COLOR);
 
-    FEATURE_DETECTOR::FeaturePointDetector detector;
-    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::kShiTomas;
+    FeaturePointDetector<ShiTomasFeature> detector;
     detector.options().kMinFeatureDistance = 20;
-    detector.shi_tomas().options().kMinValidResponse = 40.0f;
+    detector.feature().options().kMinValidResponse = 40.0f;
 
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
@@ -83,10 +85,9 @@ void TestShiTomasFeatureDetector(Image &image, int32_t feature_num_need) {
 void TestFastFeatureDetector(Image &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Fast Feature Detector." RESET_COLOR);
 
-    FEATURE_DETECTOR::FeaturePointDetector detector;
-    detector.options().kMethod = FEATURE_DETECTOR::FeaturePointDetector::kFast;
+    FeaturePointDetector<FastFeature> detector;
     detector.options().kMinFeatureDistance = 20;
-    detector.harris().options().kMinValidResponse = 10.0f;
+    detector.feature().options().kMinValidResponse = 10.0f;
 
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
