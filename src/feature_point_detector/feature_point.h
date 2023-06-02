@@ -21,7 +21,11 @@ public:
                                   const int32_t row,
                                   const int32_t col) = 0;
 
+    // Reference for member variables.
     OptionsType &options() { return options_; }
+
+    // Const reference for member variables.
+    const OptionsType &options() const { return options_; }
 
 private:
     OptionsType options_;

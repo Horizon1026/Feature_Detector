@@ -18,7 +18,11 @@ public:
                  const std::vector<Vec2> &pixel_uv,
                  std::vector<DescriptorType> &descriptor);
 
+    // Reference for member variables.
     OptionsType &options() { return options_; }
+
+    // Reference for member variables.
+    const OptionsType &options() const { return options_; }
 
 private:
     virtual bool ComputeForOneFeature(const Image &image,

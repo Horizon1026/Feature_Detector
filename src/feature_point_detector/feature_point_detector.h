@@ -37,6 +37,10 @@ public:
     FeatureDetectOptions &options() { return options_; }
     FeatureType &feature() { return feature_; }
 
+    // Const reference for member variables.
+    const FeatureDetectOptions &options() const { return options_; }
+    const FeatureType &feature() const { return feature_; }
+
 private:
     bool SelectCandidates(const Image &image);
 
