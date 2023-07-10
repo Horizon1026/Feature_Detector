@@ -10,7 +10,7 @@ using namespace FEATURE_DETECTOR;
 
 std::string image_file_path = "../examples/image.png";
 
-void TestHarrisFeatureDetector(Image &image, int32_t feature_num_need) {
+void TestHarrisFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Harris Feature Detector." RESET_COLOR);
 
     FeaturePointDetector<HarrisFeature> detector;
@@ -32,7 +32,7 @@ void TestHarrisFeatureDetector(Image &image, int32_t feature_num_need) {
 
 }
 
-void TestUpdateMaskWithDetectedFeatures(Image &image, int32_t feature_num_need) {
+void TestUpdateMaskWithDetectedFeatures(GrayImage &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Harris Feature Detector, but some features has been detected." RESET_COLOR);
 
     FeaturePointDetector<HarrisFeature> detector;
@@ -60,7 +60,7 @@ void TestUpdateMaskWithDetectedFeatures(Image &image, int32_t feature_num_need) 
 
 }
 
-void TestShiTomasFeatureDetector(Image &image, int32_t feature_num_need) {
+void TestShiTomasFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Shi-Tomas Feature Detector." RESET_COLOR);
 
     FeaturePointDetector<ShiTomasFeature> detector;
@@ -82,7 +82,7 @@ void TestShiTomasFeatureDetector(Image &image, int32_t feature_num_need) {
 
 }
 
-void TestFastFeatureDetector(Image &image, int32_t feature_num_need) {
+void TestFastFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Fast Feature Detector." RESET_COLOR);
 
     FeaturePointDetector<FastFeature> detector;
@@ -103,7 +103,7 @@ void TestFastFeatureDetector(Image &image, int32_t feature_num_need) {
     ReportInfo("fast detected " << features.size());
 }
 
-void TestOpencvDetectGoodFeatures(Image &image, int32_t feature_num_need) {
+void TestOpencvDetectGoodFeatures(GrayImage &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">>Test Opencv Detect Good Features." RESET_COLOR);
     cv::Mat cv_image(image.rows(), image.cols(), CV_8UC1, image.data());
 
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
     int32_t feature_num_need = 200;
 
     cv::Mat raw_image = cv::imread(image_file_path, 0);
-    Image image(raw_image.data, raw_image.rows, raw_image.cols);
+    GrayImage image(raw_image.data, raw_image.rows, raw_image.cols);
 
     TestOpencvDetectGoodFeatures(image, feature_num_need);
     TestFastFeatureDetector(image, feature_num_need);

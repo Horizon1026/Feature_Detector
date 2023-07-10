@@ -24,7 +24,7 @@ public:
     virtual ~BriefDescriptor() = default;
 
 private:
-    virtual bool ComputeForOneFeature(const Image &image,
+    virtual bool ComputeForOneFeature(const GrayImage &image,
                                       const Vec2 &pixel_uv,
                                       BriefType &descriptor) override;
 

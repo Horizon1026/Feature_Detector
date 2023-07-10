@@ -22,7 +22,7 @@ public:
     virtual ~FeaturePointDetector() = default;
     FeaturePointDetector(const FeaturePointDetector &detecor) = delete;
 
-    bool DetectGoodFeatures(const Image &image,
+    bool DetectGoodFeatures(const GrayImage &image,
                             const uint32_t needed_feature_num,
                             std::vector<Vec2> &features);
 
@@ -42,16 +42,16 @@ public:
     const FeatureType &feature() const { return feature_; }
 
 private:
-    bool SelectCandidates(const Image &image);
+    bool SelectCandidates(const GrayImage &image);
 
-    bool SelectGoodFeatures(const Image &image,
+    bool SelectGoodFeatures(const GrayImage &image,
                             const uint32_t needed_feature_num,
                             std::vector<Vec2> &features);
 
     void DrawRectangleInMask(const int32_t row,
                              const int32_t col);
 
-    void UpdateMaskByFeatures(const Image &image,
+    void UpdateMaskByFeatures(const GrayImage &image,
                               const std::vector<Vec2> &features);
 
 private:
@@ -65,7 +65,7 @@ private:
 
 /* Class Feature Point Detector Definition. */
 template <typename FeatureType>
-bool FeaturePointDetector<FeatureType>::DetectGoodFeatures(const Image &image,
+bool FeaturePointDetector<FeatureType>::DetectGoodFeatures(const GrayImage &image,
                                                            const uint32_t needed_feature_num,
                                                            std::vector<Vec2> &features) {
     // Check input image.
@@ -116,12 +116,12 @@ void FeaturePointDetector<FeatureType>::SparsifyFeatures(const std::vector<Vec2>
 }
 
 template <typename FeatureType>
-bool FeaturePointDetector<FeatureType>::SelectCandidates(const Image &image) {
+bool FeaturePointDetector<FeatureType>::SelectCandidates(const GrayImage &image) {
     return feature_.SelectAllCandidates(image, mask_, candidates_);
 }
 
 template <typename FeatureType>
-bool FeaturePointDetector<FeatureType>::SelectGoodFeatures(const Image &image,
+bool FeaturePointDetector<FeatureType>::SelectGoodFeatures(const GrayImage &image,
                                                            const uint32_t needed_feature_num,
                                                            std::vector<Vec2> &features) {
     for (auto it = candidates_.crbegin(); it != candidates_.crend(); ++it) {
@@ -159,7 +159,7 @@ void FeaturePointDetector<FeatureType>::DrawRectangleInMask(const int32_t row,
 }
 
 template <typename FeatureType>
-void FeaturePointDetector<FeatureType>::UpdateMaskByFeatures(const Image &image,
+void FeaturePointDetector<FeatureType>::UpdateMaskByFeatures(const GrayImage &image,
                                                              const std::vector<Vec2> &features) {
     mask_.setConstant(image.rows(), image.cols(), 1);
 

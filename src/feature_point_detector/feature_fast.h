@@ -20,11 +20,11 @@ public:
     FastFeature() : Feature<FastOptions>() {}
     virtual ~FastFeature() = default;
 
-    virtual bool SelectAllCandidates(const Image &image,
+    virtual bool SelectAllCandidates(const GrayImage &image,
                                      const MatInt &mask,
                                      std::map<float, Pixel> &candidates) override;
 
-    virtual float ComputeResponse(const Image &image,
+    virtual float ComputeResponse(const GrayImage &image,
                                   const int32_t row,
                                   const int32_t col) override;
 

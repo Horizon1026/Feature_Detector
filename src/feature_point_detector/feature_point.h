@@ -13,11 +13,11 @@ public:
     Feature() = default;
     virtual ~Feature() = default;
 
-    virtual bool SelectAllCandidates(const Image &image,
+    virtual bool SelectAllCandidates(const GrayImage &image,
                                      const MatInt &mask,
                                      std::map<float, Pixel> &candidates) = 0;
 
-    virtual float ComputeResponse(const Image &image,
+    virtual float ComputeResponse(const GrayImage &image,
                                   const int32_t row,
                                   const int32_t col) = 0;
 

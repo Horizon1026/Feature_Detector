@@ -6,7 +6,7 @@ constexpr int32_t fast_indice[][2] = {
     {0, -3}, {1, -3}, {2, -2}, {3, -1}, {3, 0}, {3, 1}, {2, 2}, {1, 3},
     {0, 3}, {-1, 3}, {-2, 2}, {-3, 1}, {-3, 0}, {-3, -1}, {-2, -2}, {-1, -3} };
 
-float FastFeature::ComputeResponse(const Image &image,
+float FastFeature::ComputeResponse(const GrayImage &image,
                                    const int32_t row,
                                    const int32_t col) {
 
@@ -81,7 +81,7 @@ float FastFeature::ComputeResponse(const Image &image,
     return static_cast<float>(best_cnt);
 }
 
-bool FastFeature::SelectAllCandidates(const Image &image,
+bool FastFeature::SelectAllCandidates(const GrayImage &image,
                                       const MatInt &mask,
                                       std::map<float, Pixel> &candidates) {
     const int32_t &bound = options().kHalfPatchSize;

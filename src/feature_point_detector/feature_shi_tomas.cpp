@@ -2,7 +2,7 @@
 
 namespace FEATURE_DETECTOR {
 
-bool ShiTomasFeature::ComputeGradient(const Image &image) {
+bool ShiTomasFeature::ComputeGradient(const GrayImage &image) {
     Ix_.setZero(image.rows(), image.cols());
     Iy_.setZero(image.rows(), image.cols());
 
@@ -16,7 +16,7 @@ bool ShiTomasFeature::ComputeGradient(const Image &image) {
     return true;
 }
 
-float ShiTomasFeature::ComputeResponse(const Image &image,
+float ShiTomasFeature::ComputeResponse(const GrayImage &image,
                                        const int32_t row,
                                        const int32_t col) {
     Mat2 M = Mat2::Zero();
@@ -41,7 +41,7 @@ float ShiTomasFeature::ComputeResponse(const Image &image,
     return std::max(eig(0), eig(1));
 }
 
-bool ShiTomasFeature::SelectAllCandidates(const Image &image,
+bool ShiTomasFeature::SelectAllCandidates(const GrayImage &image,
                                           const MatInt &mask,
                                           std::map<float, Pixel> &candidates) {
     if (ComputeGradient(image) == false) {

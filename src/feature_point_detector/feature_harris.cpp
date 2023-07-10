@@ -2,7 +2,7 @@
 
 namespace FEATURE_DETECTOR {
 
-bool HarrisFeature::ComputeGradient(const Image &image) {
+bool HarrisFeature::ComputeGradient(const GrayImage &image) {
     Ix_.setZero(image.rows(), image.cols());
     Iy_.setZero(image.rows(), image.cols());
 
@@ -16,7 +16,7 @@ bool HarrisFeature::ComputeGradient(const Image &image) {
     return true;
 }
 
-float HarrisFeature::ComputeResponse(const Image &image,
+float HarrisFeature::ComputeResponse(const GrayImage &image,
                                      const int32_t row,
                                      const int32_t col) {
 
@@ -42,7 +42,7 @@ float HarrisFeature::ComputeResponse(const Image &image,
     return det - options().k * trace * trace;
 }
 
-bool HarrisFeature::SelectAllCandidates(const Image &image,
+bool HarrisFeature::SelectAllCandidates(const GrayImage &image,
                                         const MatInt &mask,
                                         std::map<float, Pixel> &candidates) {
     if (ComputeGradient(image) == false) {

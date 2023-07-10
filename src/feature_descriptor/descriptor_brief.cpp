@@ -3,7 +3,7 @@
 
 namespace FEATURE_DETECTOR {
 
-bool BriefDescriptor::ComputeForOneFeature(const Image &image,
+bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image,
                                            const Vec2 &pixel_uv,
                                            BriefType &descriptor) {
     if (pixel_uv.x() < options().kHalfPatchSize || pixel_uv.x() > image.cols() - options().kHalfPatchSize ||

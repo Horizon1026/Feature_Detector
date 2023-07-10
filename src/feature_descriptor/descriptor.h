@@ -14,7 +14,7 @@ public:
     Descriptor() = default;
     virtual ~Descriptor() = default;
 
-    bool Compute(const Image &image,
+    bool Compute(const GrayImage &image,
                  const std::vector<Vec2> &pixel_uv,
                  std::vector<DescriptorType> &descriptor);
 
@@ -25,7 +25,7 @@ public:
     const OptionsType &options() const { return options_; }
 
 private:
-    virtual bool ComputeForOneFeature(const Image &image,
+    virtual bool ComputeForOneFeature(const GrayImage &image,
                                       const Vec2 &pixel_uv,
                                       DescriptorType &descriptor) = 0;
 
@@ -36,7 +36,7 @@ private:
 
 /* Class Descriptor Definition. */
 template <typename OptionsType, typename DescriptorType>
-bool Descriptor<OptionsType, DescriptorType>::Compute(const Image &image,
+bool Descriptor<OptionsType, DescriptorType>::Compute(const GrayImage &image,
                                                       const std::vector<Vec2> &pixel_uv,
                                                       std::vector<DescriptorType> &descriptor) {
     if (pixel_uv.empty() || image.data() == nullptr) {
