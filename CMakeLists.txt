@@ -7,8 +7,6 @@ set( CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -lpthread" )
 set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 set( CMAKE_CXX_STANDARD 17 )
 
-find_package( OpenCV REQUIRED )
-
 # Add feature point/line detector and feature descriptor.
 set( FEATURE_DETECTOR_PATH ${PROJECT_SOURCE_DIR}/../Feature_Detector )
 if ( NOT TARGET lib_feature_point_detector )
@@ -21,10 +19,13 @@ if ( NOT TARGET lib_feature_descriptor )
 add_subdirectory( ${FEATURE_DETECTOR_PATH}/src/feature_descriptor ${PROJECT_SOURCE_DIR}/build/lib_feature_descriptor )
 endif()
 
-# Add slam utility log.
+# Add slam utility log and visualizor.
 set( SLAM_UTILITY_PATH ${PROJECT_SOURCE_DIR}/../Slam_Utility/src )
 if ( NOT TARGET lib_slam_utility_log )
     add_subdirectory( ${SLAM_UTILITY_PATH}/log ${PROJECT_SOURCE_DIR}/build/lib_slam_utility_log )
+endif()
+if ( NOT TARGET lib_slam_utility_visualize )
+    add_subdirectory( ${SLAM_UTILITY_PATH}/visualize ${PROJECT_SOURCE_DIR}/build/lib_slam_utility_visualize )
 endif()
 
 # Test feature point detector.
@@ -32,9 +33,9 @@ add_executable( test_feature_point_detector
     test/test_feature_point_detector.cpp
 )
 target_link_libraries( test_feature_point_detector
-    ${OpenCV_LIBS}
     lib_feature_point_detector
     lib_slam_utility_log
+    lib_slam_utility_visualize
 )
 
 # Test feature descriptor.
@@ -42,8 +43,8 @@ add_executable( test_feature_descriptor
     test/test_feature_descriptor.cpp
 )
 target_link_libraries( test_feature_descriptor
-    ${OpenCV_LIBS}
     lib_feature_point_detector
     lib_feature_descriptor
     lib_slam_utility_log
+    lib_slam_utility_visualize
 )

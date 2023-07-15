@@ -1,9 +1,10 @@
-#include "log_report.h"
 #include "feature_point_detector.h"
 #include "feature_harris.h"
 #include "descriptor_brief.h"
 
-#include "opencv2/opencv.hpp"
+#include "log_report.h"
+#include "slam_memory.h"
+#include "visualizor.h"
 
 std::string image_file_path = "../examples/image.png";
 
@@ -17,13 +18,13 @@ std::vector<Vec2> TestHarrisFeatureDetector(const GrayImage &image, const int32_
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
 
-    cv::Mat cv_image(image.rows(), image.cols(), CV_8UC1, image.data());
-    cv::Mat show_image(cv_image.rows, cv_image.cols, CV_8UC3);
-    cv::cvtColor(cv_image, show_image, cv::COLOR_GRAY2BGR);
+    uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
+    RgbImage show_image(buf, image.rows(), image.cols(), true);
+    Visualizor::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
     for (unsigned long i = 0; i < features.size(); i++) {
-        cv::circle(show_image, cv::Point2f(features[i].x(), features[i].y()), 2, cv::Scalar(255, 255, 0), 3);
+        Visualizor::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbPixel{.r = 255, .g = 0, .b = 0});
     }
-    cv::imshow("harris detected features", show_image);
+    Visualizor::ShowImage("harris detected features", show_image);
 
     ReportInfo("harris detected " << features.size());
     return features;
@@ -53,13 +54,13 @@ int main(int argc, char **argv) {
     ReportInfo("Test feature detector.");
     int32_t feature_num_need = 10;
 
-    cv::Mat raw_image = cv::imread(image_file_path, 0);
-    GrayImage image(raw_image.data, raw_image.rows, raw_image.cols);
+    GrayImage image;
+    Visualizor::LoadImage(image_file_path, image);
 
     std::vector<Vec2> features = TestHarrisFeatureDetector(image, feature_num_need);
     TestBriefDescriptor(image, features);
 
-    cv::waitKey(0);
+    Visualizor::WaitKey(0);
 
     return 0;
 }

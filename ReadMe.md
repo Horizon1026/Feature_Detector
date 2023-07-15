@@ -7,7 +7,7 @@ Intergration of some simple sparse feature detect method.
 - [ ] Feature line detector
 
 # Dependence
-Slam_Utility, OpenCV4(only for test)
+Slam_Utility
 
 # Tips
 - 欢迎一起交流学习，不同意商用；
