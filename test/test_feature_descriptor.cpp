@@ -4,6 +4,7 @@
 
 #include "log_report.h"
 #include "slam_memory.h"
+#include "tick_tock.h"
 #include "visualizor.h"
 
 std::string image_file_path = "../examples/image.png";
@@ -38,8 +39,10 @@ void TestBriefDescriptor(const GrayImage &image, const std::vector<Vec2> &featur
     descriptor.options().kLength = 128;
     descriptor.options().kValidBoundary = 16;
 
+    TickTock timer;
     std::vector<FEATURE_DETECTOR::BriefType> descriptors;
     descriptor.Compute(image, features, descriptors);
+    ReportDebug("Compute descriptor cost time " << timer.TickInMillisecond() << " ms.");
 
     for (const auto &item : descriptors) {
         std::cout << "descriptor is ";

@@ -5,6 +5,7 @@
 
 #include "log_report.h"
 #include "slam_memory.h"
+#include "tick_tock.h"
 #include "visualizor.h"
 
 using namespace FEATURE_DETECTOR;
@@ -28,8 +29,10 @@ void TestHarrisFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     detector.options().kMinFeatureDistance = 20;
     detector.feature().options().kMinValidResponse = 30.0f;
 
+    TickTock timer;
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
+    ReportDebug("harris detect time cost " << timer.TickInMillisecond() << " ms.");
 
     ShowImage(image, "harris detected features", features);
     ReportInfo("harris detected " << features.size());
@@ -49,7 +52,10 @@ void TestUpdateMaskWithDetectedFeatures(GrayImage &image, int32_t feature_num_ne
             features.emplace_back(Vec2(i * 15, j * 15));
         }
     }
+
+    TickTock timer;
     detector.DetectGoodFeatures(image, feature_num_need, features);
+    ReportDebug("harris detect new features time cost " << timer.TickInMillisecond() << " ms.");
 
     ShowImage(image, "harris detected new features", features);
     ReportInfo("harris detected " << features.size());
@@ -62,8 +68,10 @@ void TestShiTomasFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     detector.options().kMinFeatureDistance = 20;
     detector.feature().options().kMinValidResponse = 40.0f;
 
+    TickTock timer;
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
+    ReportDebug("shi tomas detect new features time cost " << timer.TickInMillisecond() << " ms.");
 
     ShowImage(image, "shi tomas detected features", features);
     ReportInfo("shi tomas detected " << features.size());
@@ -76,8 +84,10 @@ void TestFastFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     detector.options().kMinFeatureDistance = 20;
     detector.feature().options().kMinValidResponse = 10.0f;
 
+    TickTock timer;
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
+    ReportDebug("fast detect new features time cost " << timer.TickInMillisecond() << " ms.");
 
     ShowImage(image, "fast detected features", features);
     ReportInfo("fast detected " << features.size());
