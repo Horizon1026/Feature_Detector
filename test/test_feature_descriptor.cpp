@@ -45,11 +45,11 @@ void TestBriefDescriptor(const GrayImage &image, const std::vector<Vec2> &featur
     ReportDebug("Compute descriptor cost time " << timer.TickInMillisecond() << " ms.");
 
     for (const auto &item : descriptors) {
-        std::cout << "descriptor is ";
+        ReportText("descriptor is ");
         for (const auto &bit : item) {
-            std::cout << static_cast<int32_t>(bit);
+            ReportText(static_cast<int32_t>(bit));
         }
-        std::cout << std::endl;
+        ReportText(std::endl);
     }
 }
 
