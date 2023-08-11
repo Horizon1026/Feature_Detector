@@ -4,6 +4,7 @@
 #include "datatype_basic.h"
 #include "datatype_image.h"
 #include "slam_operations.h"
+#include "log_report.h"
 
 namespace FEATURE_DETECTOR {
 
@@ -107,6 +108,12 @@ void FeaturePointDetector<FeatureType>::SparsifyFeatures(const std::vector<Vec2>
     for (uint32_t i = 0; i < features.size(); ++i) {
         const int32_t row = static_cast<int32_t>(features[i].y() / grid_row_step);
         const int32_t col = static_cast<int32_t>(features[i].x() / grid_col_step);
+
+        if (row < 0 || row > mask_.rows() - 1 || col < 0 || col > mask_.cols() - 1) {
+            status[i] = status_after_filter;
+            continue;
+        }
+
         if (mask_(row, col) && status[i] == status_need_filter) {
             mask_(row, col) = 0;
         } else if (!mask_(row, col) && status[i] == status_need_filter) {
