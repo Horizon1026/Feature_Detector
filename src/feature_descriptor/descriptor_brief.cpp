@@ -6,8 +6,8 @@ namespace FEATURE_DETECTOR {
 bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image,
                                            const Vec2 &pixel_uv,
                                            BriefType &descriptor) {
-    if (pixel_uv.x() < options().kHalfPatchSize || pixel_uv.x() > image.cols() - options().kHalfPatchSize ||
-        pixel_uv.y() < options().kHalfPatchSize || pixel_uv.y() > image.rows() - options().kHalfPatchSize) {
+    if (pixel_uv.x() < options().kHalfPatchSize || pixel_uv.x() > image.cols() - options().kHalfPatchSize - 1 ||
+        pixel_uv.y() < options().kHalfPatchSize || pixel_uv.y() > image.rows() - options().kHalfPatchSize - 1) {
         return false;
     }
 
