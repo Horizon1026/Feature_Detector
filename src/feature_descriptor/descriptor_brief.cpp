@@ -1,4 +1,6 @@
 #include "descriptor_brief.h"
+#include "math_kinematics.h"
+#include "slam_operations.h"
 #include "log_report.h"
 
 namespace FEATURE_DETECTOR {
@@ -23,6 +25,8 @@ bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image,
         }
     }
     const float m = std::sqrt(m01 * m01 + m10 * m10);
+    RETURN_FALSE_IF(m < kZero);
+
     const float sin_theta = m01 / m;
     const float cos_theta = m10 / m;
     Mat2 rot;
