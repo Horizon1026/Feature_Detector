@@ -7,6 +7,8 @@
 #include "tick_tock.h"
 #include "visualizor.h"
 
+using namespace SLAM_VISUALIZOR;
+
 std::string image_file_path = "../examples/image.png";
 
 std::vector<Vec2> TestHarrisFeatureDetector(const GrayImage &image, const int32_t feature_num_need) {

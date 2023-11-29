@@ -9,6 +9,7 @@
 #include "visualizor.h"
 
 using namespace FEATURE_DETECTOR;
+using namespace SLAM_VISUALIZOR;
 
 std::string image_file_path = "../examples/image.png";
 
