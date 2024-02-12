@@ -25,7 +25,7 @@ std::vector<Vec2> TestHarrisFeatureDetector(const GrayImage &image, const int32_
     RgbImage show_image(buf, image.rows(), image.cols(), true);
     Visualizor::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
     for (unsigned long i = 0; i < features.size(); i++) {
-        Visualizor::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbPixel{.r = 255, .g = 0, .b = 0});
+        Visualizor::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbColor::kRed);
     }
     Visualizor::ShowImage("harris detected features", show_image);
 

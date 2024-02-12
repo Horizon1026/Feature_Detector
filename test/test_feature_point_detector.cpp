@@ -18,7 +18,7 @@ void ShowImage(const GrayImage &image, const std::string &title, const std::vect
     RgbImage show_image(buf, image.rows(), image.cols(), true);
     Visualizor::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
     for (unsigned long i = 0; i < features.size(); ++i) {
-        Visualizor::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbPixel{.r = 0, .g = 255, .b = 255});
+        Visualizor::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbColor::kCyan);
     }
     Visualizor::ShowImage(title, show_image);
 }
