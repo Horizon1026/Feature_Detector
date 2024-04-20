@@ -5,9 +5,11 @@
 #include "log_report.h"
 #include "slam_memory.h"
 #include "tick_tock.h"
+#include "image_painter.h"
 #include "visualizor.h"
 
 using namespace SLAM_VISUALIZOR;
+using namespace IMAGE_PAINTER;
 
 std::string image_file_path = "../examples/image.png";
 
@@ -23,9 +25,9 @@ std::vector<Vec2> TestHarrisFeatureDetector(const GrayImage &image, const int32_
 
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
     RgbImage show_image(buf, image.rows(), image.cols(), true);
-    Visualizor::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
+    ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
     for (unsigned long i = 0; i < features.size(); i++) {
-        Visualizor::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbColor::kRed);
+        ImagePainter::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbColor::kRed);
     }
     Visualizor::ShowImage("harris detected features", show_image);
 

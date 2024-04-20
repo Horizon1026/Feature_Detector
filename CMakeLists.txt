@@ -25,6 +25,12 @@ if ( NOT TARGET lib_slam_utility_log )
     add_subdirectory( ${SLAM_UTILITY_PATH}/log ${PROJECT_SOURCE_DIR}/build/lib_slam_utility_log )
 endif()
 
+# Add image painter.
+set( IMAGE_PAINTER_PATH ${PROJECT_SOURCE_DIR}/../Image_Painter/src )
+if ( NOT TARGET lib_image_painter )
+    add_subdirectory( ${IMAGE_PAINTER_PATH} ${PROJECT_SOURCE_DIR}/build/lib_image_painter )
+endif()
+
 # Add visualizor.
 set( VISUALIZOR_PATH ${PROJECT_SOURCE_DIR}/../Visualizor2D )
 if ( NOT TARGET lib_image_visualizor )
@@ -38,6 +44,7 @@ add_executable( test_feature_point_detector
 target_link_libraries( test_feature_point_detector
     lib_feature_point_detector
     lib_slam_utility_log
+    lib_image_painter
     lib_image_visualizor
 )
 
@@ -49,5 +56,6 @@ target_link_libraries( test_feature_descriptor
     lib_feature_point_detector
     lib_feature_descriptor
     lib_slam_utility_log
+    lib_image_painter
     lib_image_visualizor
 )

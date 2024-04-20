@@ -6,19 +6,21 @@
 #include "log_report.h"
 #include "slam_memory.h"
 #include "tick_tock.h"
+#include "image_painter.h"
 #include "visualizor.h"
 
 using namespace FEATURE_DETECTOR;
 using namespace SLAM_VISUALIZOR;
+using namespace IMAGE_PAINTER;
 
 std::string image_file_path = "../examples/image.png";
 
 void ShowImage(const GrayImage &image, const std::string &title, const std::vector<Vec2> &features) {
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
     RgbImage show_image(buf, image.rows(), image.cols(), true);
-    Visualizor::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
+    ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
     for (unsigned long i = 0; i < features.size(); ++i) {
-        Visualizor::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbColor::kCyan);
+        ImagePainter::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbColor::kCyan);
     }
     Visualizor::ShowImage(title, show_image);
 }
