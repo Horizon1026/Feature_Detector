@@ -11,6 +11,8 @@ class FeatureLineDetector {
 
 public:
     struct PixelParam {
+        int32_t row = 0;
+        int32_t col = 0;
         float line_level_angle = 0.0f;
         float gradient_norm = 0.0f;
         bool is_valid = false;
@@ -40,12 +42,14 @@ public:
 
 private:
     bool ComputeLineLevelAngleMap(const GrayImage &image);
+    float GrowRegionAndGetAngleOfRectangle(int32_t row, int32_t col);
 
 private:
     Options options_;
 
     Eigen::Matrix<PixelParam, Eigen::Dynamic, Eigen::Dynamic> pixels_;
     std::vector<PixelParam *> sorted_pixels_;
+    std::vector<PixelParam *> pixels_in_region_;
 
 };
 

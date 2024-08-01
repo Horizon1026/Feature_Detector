@@ -20,19 +20,29 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
     // Compute minimal number of pixels in a region, which can give a meaningful event.
     const float p = options_.kMinToleranceAngleResidualInRad / kPai;
     const float log_NT = 5.0f * (std::log10(double(image.cols())) + std::log10(double(image.rows()))) / 2.0f + std::log10(11.0f);
-    const int32_t min_region_size = static_cast<int32_t>(- log_NT / std::log10(p));
+    const uint32_t min_region_size = static_cast<uint32_t>(- log_NT / std::log10(p));
 
     RETURN_FALSE_IF_FALSE(ComputeLineLevelAngleMap(image));
+
+    // Search for line segments.
+    pixels_in_region_.clear();
+    for (const auto &sorted_pixel : sorted_pixels_) {
+        CONTINUE_IF(sorted_pixel->is_used || !sorted_pixel->is_valid);
+        const float angle_of_rectangle = GrowRegionAndGetAngleOfRectangle(sorted_pixel->row, sorted_pixel->col);
+        CONTINUE_IF(pixels_in_region_.size() < min_region_size);
+    }
 
     return true;
 }
 
 bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
 {
-    pixels_.resize(image.rows(), image.cols());
+    pixels_.resize(image.rows() - 1, image.cols() - 1);
 
     for (int32_t col = 0; col < image.cols() - 1; ++col) {
         for (int32_t row = 0; row < image.rows() - 1; ++row) {
+            pixels_(row, col).row = row;
+            pixels_(row, col).col = col;
             // Compute pixel gradient.
             const int32_t pixel_ad = static_cast<int32_t>(image.GetPixelValueNoCheck(row + 1, col + 1)) -
                 static_cast<int32_t>(image.GetPixelValueNoCheck(row, col));
@@ -49,12 +59,16 @@ bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
         }
     }
 
-    // Sort pixels by gradient norm.
+    // Sort pixels by gradient norm from large to small.
     std::sort(sorted_pixels_.begin(), sorted_pixels_.end(), [&](PixelParam *pixel1, PixelParam * pixel2) {
-        return pixel1->gradient_norm < pixel2->gradient_norm;
+        return pixel1->gradient_norm > pixel2->gradient_norm;
     });
 
     return true;
+}
+
+float FeatureLineDetector::GrowRegionAndGetAngleOfRectangle(int32_t row, int32_t col) {
+    return 0.0f;
 }
 
 }
