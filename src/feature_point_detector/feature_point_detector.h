@@ -12,7 +12,7 @@ template <typename FeatureType>
 class FeaturePointDetector {
 
 public:
-    struct FeatureDetectOptions {
+    struct Options {
         int32_t kMinFeatureDistance = 15;
         int32_t kGridFilterRowDivideNumber = 12;
         int32_t kGridFilterColDivideNumber = 12;
@@ -35,11 +35,11 @@ public:
                           std::vector<uint8_t> &status);
 
     // Reference for member variables.
-    FeatureDetectOptions &options() { return options_; }
+    Options &options() { return options_; }
     FeatureType &feature() { return feature_; }
 
     // Const reference for member variables.
-    const FeatureDetectOptions &options() const { return options_; }
+    const Options &options() const { return options_; }
     const FeatureType &feature() const { return feature_; }
 
 private:
@@ -57,11 +57,9 @@ private:
 
 private:
     std::map<float, Pixel> candidates_;
-    FeatureDetectOptions options_;
+    Options options_;
     MatInt mask_;
-
     FeatureType feature_;
-
 };
 
 /* Class Feature Point Detector Definition. */
