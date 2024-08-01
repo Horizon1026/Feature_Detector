@@ -1,5 +1,4 @@
 #include "feature_line_detector.h"
-#include "math_kinematics.h"
 #include "slam_operations.h"
 #include "log_report.h"
 
@@ -13,9 +12,15 @@ FeatureLineDetector::FeatureLineDetector() {
 bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
                                              const uint32_t needed_feature_num,
                                              std::vector<Vec4> &features) {
+    // Validate parameters.
     RETURN_FALSE_IF(image.data() == nullptr || image.rows() < 2 || image.cols() < 2);
     features.clear();
     RETURN_TRUE_IF(needed_feature_num == 0);
+
+    // Compute minimal number of pixels in a region, which can give a meaningful event.
+    const float p = options_.kMinToleranceAngleResidualInRad / kPai;
+    const float log_NT = 5.0f * (std::log10(double(image.cols())) + std::log10(double(image.rows()))) / 2.0f + std::log10(11.0f);
+    const int32_t min_region_size = static_cast<int32_t>(- log_NT / std::log10(p));
 
     RETURN_FALSE_IF_FALSE(ComputeLineLevelAngleMap(image));
 

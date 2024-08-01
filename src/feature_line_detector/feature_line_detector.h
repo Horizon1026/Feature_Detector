@@ -3,6 +3,7 @@
 
 #include "datatype_basic.h"
 #include "datatype_image.h"
+#include "math_kinematics.h"
 
 namespace FEATURE_DETECTOR {
 
@@ -18,6 +19,7 @@ public:
 
     struct Options {
         float kMinValidGradientNorm = 5.0f;
+        float kMinToleranceAngleResidualInRad = 22.5f * kDegToRad;
     };
 
 public:
