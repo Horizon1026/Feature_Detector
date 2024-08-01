@@ -97,7 +97,7 @@ void TestFastFeatureDetector(GrayImage &image, int32_t feature_num_need) {
 }
 
 int main(int argc, char **argv) {
-    ReportInfo(YELLOW ">> Test feature detector." RESET_COLOR);
+    ReportInfo(YELLOW ">> Test feature point detector." RESET_COLOR);
     int32_t feature_num_need = 200;
 
     GrayImage image;

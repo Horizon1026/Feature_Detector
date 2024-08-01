@@ -59,3 +59,14 @@ target_link_libraries( test_feature_descriptor
     lib_image_painter
     lib_image_visualizor
 )
+
+# Test feature line detector.
+add_executable( test_feature_line_detector
+    test/test_feature_line_detector.cpp
+)
+target_link_libraries( test_feature_line_detector
+    lib_feature_line_detector
+    lib_slam_utility_log
+    lib_image_painter
+    lib_image_visualizor
+)
