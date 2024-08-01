@@ -38,7 +38,7 @@ bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
             pixels_(row, col).gradient_norm = std::sqrt(gradient_x * gradient_x + gradient_y * gradient_y);
             pixels_(row, col).is_valid = pixels_(row, col).gradient_norm > options_.kMinValidGradientNorm;
             if (pixels_(row, col).is_valid) {
-                pixels_(row, col).line_level_angle = std::atan2(gradient_x, - gradient_y) * kDegToRad;
+                pixels_(row, col).line_level_angle = std::atan2(gradient_x, - gradient_y) * kRadToDeg;
                 sorted_pixels_.emplace_back(&pixels_(row, col));
             }
         }

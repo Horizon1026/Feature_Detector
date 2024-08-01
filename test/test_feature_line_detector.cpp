@@ -22,7 +22,7 @@ void ShowDetectResult(const GrayImage &image, const std::string &title, const st
     Visualizor::ShowImage(title, show_image);
 }
 
-void ShowPixels(const FeatureLineDetector &detector, const std::string &title) {
+void ShowPixelsGradientNorm(const FeatureLineDetector &detector, const std::string &title) {
     const auto &pixels = detector.pixels();
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(pixels.rows() * pixels.cols() * sizeof(uint8_t));
     GrayImage show_image(buf, pixels.rows(), pixels.cols(), true);
@@ -30,6 +30,23 @@ void ShowPixels(const FeatureLineDetector &detector, const std::string &title) {
         for (uint32_t row = 0; row < pixels.rows(); ++row) {
             const uint8_t pixel_value = static_cast<uint8_t>(pixels(row, col).gradient_norm);
             show_image.SetPixelValueNoCheck(row, col, pixel_value);
+        }
+    }
+    Visualizor::ShowImage(title, show_image);
+}
+
+void ShowPixelsGradientAngle(const FeatureLineDetector &detector, const std::string &title) {
+    const auto &pixels = detector.pixels();
+    uint8_t *buf = (uint8_t *)SlamMemory::Malloc(pixels.rows() * pixels.cols() * sizeof(uint8_t));
+    GrayImage show_image(buf, pixels.rows(), pixels.cols(), true);
+    for (uint32_t col = 0; col < pixels.cols(); ++col) {
+        for (uint32_t row = 0; row < pixels.rows(); ++row) {
+            if (pixels(row, col).is_valid) {
+                const uint8_t pixel_value = static_cast<uint8_t>((pixels(row, col).line_level_angle + 180.0f) / 360.0f * 255.0f);
+                show_image.SetPixelValueNoCheck(row, col, pixel_value);
+            } else {
+                show_image.SetPixelValueNoCheck(row, col, 0);
+            }
         }
     }
     Visualizor::ShowImage(title, show_image);
@@ -45,7 +62,8 @@ void TestLsdFeatureLineDetector(GrayImage &image, int32_t feature_num_need) {
     detector.DetectGoodFeatures(image, feature_num_need, features);
     ReportDebug("LSD line detect time cost " << timer.TockTickInMillisecond() << " ms.");
 
-    ShowPixels(detector, "pixel gradient norm");
+    ShowPixelsGradientNorm(detector, "pixel gradient norm");
+    ShowPixelsGradientAngle(detector, "pixel gradient direction");
     ShowDetectResult(image, "LSD line detected features", features);
     ReportInfo("LSD line detected " << features.size());
 }
