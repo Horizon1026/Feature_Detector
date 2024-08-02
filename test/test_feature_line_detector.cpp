@@ -8,6 +8,7 @@
 using namespace FEATURE_DETECTOR;
 using namespace SLAM_VISUALIZOR;
 using namespace IMAGE_PAINTER;
+using namespace SLAM_UTILITY;
 
 std::string image_file_path = "../examples/image.png";
 
@@ -42,7 +43,7 @@ void ShowPixelsGradientAngle(const FeatureLineDetector &detector, const std::str
     for (uint32_t col = 0; col < pixels.cols(); ++col) {
         for (uint32_t row = 0; row < pixels.rows(); ++row) {
             if (pixels(row, col).is_valid) {
-                const uint8_t pixel_value = static_cast<uint8_t>((pixels(row, col).line_level_angle + 180.0f) / 360.0f * 255.0f);
+                const uint8_t pixel_value = static_cast<uint8_t>((pixels(row, col).line_level_angle + kPai) / k2Pai * 255.0f);
                 show_image.SetPixelValueNoCheck(row, col, pixel_value);
             } else {
                 show_image.SetPixelValueNoCheck(row, col, 0);
@@ -52,8 +53,18 @@ void ShowPixelsGradientAngle(const FeatureLineDetector &detector, const std::str
     Visualizor::ShowImage(title, show_image);
 }
 
+void ShowOneRegion(const GrayImage &image, const FeatureLineDetector &detector, const std::string &title) {
+    uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
+    RgbImage show_image(buf, image.rows(), image.cols(), true);
+    ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
+    for (const auto &pixel : detector.region().pixels) {
+        show_image.SetPixelValueNoCheck(pixel->row, pixel->col, RgbColor::kRed);
+    }
+    Visualizor::ShowImage(title, show_image);
+}
+
 void TestLsdFeatureLineDetector(GrayImage &image, int32_t feature_num_need) {
-    ReportInfo(YELLOW ">> Test Harris Feature Detector." RESET_COLOR);
+    ReportInfo(YELLOW ">> Test Lsd Line Feature Detector." RESET_COLOR);
 
     FeatureLineDetector detector;
 
@@ -64,6 +75,7 @@ void TestLsdFeatureLineDetector(GrayImage &image, int32_t feature_num_need) {
 
     ShowPixelsGradientNorm(detector, "pixel gradient norm");
     ShowPixelsGradientAngle(detector, "pixel gradient direction");
+    ShowOneRegion(image, detector, "a region growed");
     ShowDetectResult(image, "LSD line detected features", features);
     ReportInfo("LSD line detected " << features.size());
 }

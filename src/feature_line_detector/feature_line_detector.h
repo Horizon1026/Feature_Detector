@@ -16,8 +16,9 @@ public:
         int32_t col = 0;
         float line_level_angle = 0.0f;
         float gradient_norm = 0.0f;
-        bool is_valid = false;
-        bool is_used = false;
+        bool is_valid = false;  // Valid when gradient norm is large enough.
+        bool is_used = false;   // Has been used in a region.
+        bool is_occupied = false;   // Has been searched when region is growing. It will be cleared later.
     };
 
     struct RegionParam {
@@ -26,7 +27,7 @@ public:
     };
 
     struct Options {
-        float kMinValidGradientNorm = 5.0f;
+        float kMinValidGradientNorm = 20.0f;
         float kMinToleranceAngleResidualInRad = 22.5f * kDegToRad;
     };
 
@@ -41,14 +42,19 @@ public:
     // Reference for member variables.
     Options &options() { return options_; }
     Eigen::Matrix<PixelParam, Eigen::Dynamic, Eigen::Dynamic> &pixels() { return pixels_; }
+    std::vector<PixelParam *> &sorted_pixels() { return sorted_pixels_; }
+    RegionParam &region() { return region_; }
 
     // Const reference for member variables.
     const Options &options() const { return options_; }
     const Eigen::Matrix<PixelParam, Eigen::Dynamic, Eigen::Dynamic> &pixels() const { return pixels_; }
+    const std::vector<PixelParam *> &sorted_pixels() const { return sorted_pixels_; }
+    const RegionParam &region() const { return region_; }
 
 private:
     bool ComputeLineLevelAngleMap(const GrayImage &image);
-    int32_t GrowRegion(int32_t row, int32_t col);
+    void GrowRegion(PixelParam &seed_pixel);
+    void TryToAddPixelIntoCandidates(PixelParam &neighbour);
 
 private:
     Options options_;
@@ -56,7 +62,8 @@ private:
     Eigen::Matrix<PixelParam, Eigen::Dynamic, Eigen::Dynamic> pixels_;
     std::vector<PixelParam *> sorted_pixels_;
     RegionParam region_;
-    CircularBuffer<Pixel, 10000> candidates_;
+    CircularBuffer<PixelParam *, 1000> candidates_;
+    CircularBuffer<PixelParam *, 1000> visited_pixels_;
 
 };
 

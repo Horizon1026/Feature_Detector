@@ -6,7 +6,7 @@ namespace FEATURE_DETECTOR {
 
 FeatureLineDetector::FeatureLineDetector() {
     sorted_pixels_.clear();
-    sorted_pixels_.reserve(76800);
+    sorted_pixels_.reserve(10000);
 }
 
 bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
@@ -20,16 +20,20 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
     // Compute minimal number of pixels in a region, which can give a meaningful event.
     const float p = options_.kMinToleranceAngleResidualInRad / kPai;
     const float log_NT = 5.0f * (std::log10(double(image.cols())) + std::log10(double(image.rows()))) / 2.0f + std::log10(11.0f);
-    const int32_t min_region_size = static_cast<int32_t>(- log_NT / std::log10(p));
+    const uint32_t min_region_size = static_cast<uint32_t>(- log_NT / std::log10(p));
 
     RETURN_FALSE_IF_FALSE(ComputeLineLevelAngleMap(image));
 
     // Search for line segments.
     for (const auto &sorted_pixel : sorted_pixels_) {
         CONTINUE_IF(sorted_pixel->is_used || !sorted_pixel->is_valid);
-        float angle_of_rectangle = 0.0f;
-        const int32_t size_of_region = GrowRegion(sorted_pixel->row, sorted_pixel->col);
-        CONTINUE_IF(size_of_region < min_region_size);
+        GrowRegion(*sorted_pixel);
+        if (region_.pixels.size() < min_region_size) {
+            for (auto &pixel : region_.pixels) {
+                pixel->is_used = false;
+            }
+            continue;
+        }
     }
 
     return true;
@@ -43,6 +47,7 @@ bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
         for (int32_t row = 0; row < image.rows() - 1; ++row) {
             pixels_(row, col).row = row;
             pixels_(row, col).col = col;
+            pixels_(row, col).is_occupied = false;
             // Compute pixel gradient.
             const int32_t pixel_ad = static_cast<int32_t>(image.GetPixelValueNoCheck(row + 1, col + 1)) -
                 static_cast<int32_t>(image.GetPixelValueNoCheck(row, col));
@@ -53,7 +58,7 @@ bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
             pixels_(row, col).gradient_norm = std::sqrt(gradient_x * gradient_x + gradient_y * gradient_y);
             pixels_(row, col).is_valid = pixels_(row, col).gradient_norm > options_.kMinValidGradientNorm;
             if (pixels_(row, col).is_valid) {
-                pixels_(row, col).line_level_angle = std::atan2(gradient_x, - gradient_y) * kRadToDeg;
+                pixels_(row, col).line_level_angle = std::atan2(gradient_x, - gradient_y);
                 sorted_pixels_.emplace_back(&pixels_(row, col));
             }
         }
@@ -67,19 +72,73 @@ bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
     return true;
 }
 
-int32_t FeatureLineDetector::GrowRegion(int32_t row, int32_t col) {
-    if (row <= 0 || row >= pixels_.rows() - 1 || col <= 0 || col >= pixels_.cols()) {
-        return 0;
+void FeatureLineDetector::GrowRegion(PixelParam &seed_pixel) {
+    if (seed_pixel.row <= 0 || seed_pixel.row >= pixels_.rows() - 1 || seed_pixel.col <= 0 || seed_pixel.col >= pixels_.cols() - 1) {
+        return;
     }
+
     candidates_.Clear();
+    visited_pixels_.Clear();
+    visited_pixels_.PushBack(&seed_pixel);
+    seed_pixel.is_occupied = true;
+
+    // Initialize region with seed pixel.
     region_.pixels.clear();
+    region_.angle = seed_pixel.line_level_angle;
+    float sum_dx = std::cos(seed_pixel.line_level_angle);
+    float sum_dy = std::sin(seed_pixel.line_level_angle);
 
-    // Add seed pixel into candidates.
-    candidates_.PushBack(Pixel(row, col));
-    region_.pixels.emplace_back(&pixels_(row, col));
-    region_.angle = pixels_(row, col).line_level_angle;
+    // Add its neighbour.
+    TryToAddPixelIntoCandidates(pixels_(seed_pixel.row - 1, seed_pixel.col - 1));
+    TryToAddPixelIntoCandidates(pixels_(seed_pixel.row - 1, seed_pixel.col));
+    TryToAddPixelIntoCandidates(pixels_(seed_pixel.row - 1, seed_pixel.col + 1));
+    TryToAddPixelIntoCandidates(pixels_(seed_pixel.row, seed_pixel.col - 1));
+    TryToAddPixelIntoCandidates(pixels_(seed_pixel.row, seed_pixel.col + 1));
+    TryToAddPixelIntoCandidates(pixels_(seed_pixel.row + 1, seed_pixel.col - 1));
+    TryToAddPixelIntoCandidates(pixels_(seed_pixel.row + 1, seed_pixel.col));
+    TryToAddPixelIntoCandidates(pixels_(seed_pixel.row + 1, seed_pixel.col + 1));
 
-    return region_.pixels.size();
+    // Grow region.
+    while (!candidates_.Empty()) {
+        // Got the next pixel.
+        const auto &pixel_ptr = candidates_.Front();
+        candidates_.PopFront();
+        visited_pixels_.PushBack(pixel_ptr);
+        CONTINUE_IF(pixel_ptr->row <= 0 || pixel_ptr->row >= pixels_.rows() - 1 || pixel_ptr->col <= 0 || pixel_ptr->col >= pixels_.cols() - 1);
+        // Check if it is aligned with this region.
+        const float angle_residual = Utility::AngleDiffInRad(region_.angle, pixel_ptr->line_level_angle);
+        if (std::fabs(angle_residual) > options_.kMinToleranceAngleResidualInRad) {
+            continue;
+        }
+        // Add it into region if aligned. Recompute angle of this region.
+        sum_dx += std::cos(pixel_ptr->line_level_angle);
+        sum_dy += std::sin(pixel_ptr->line_level_angle);
+        region_.angle = std::atan2(sum_dy, sum_dx);
+        region_.pixels.emplace_back(pixel_ptr);
+        pixel_ptr->is_used = true;
+        // Add its neighbour.
+        TryToAddPixelIntoCandidates(pixels_(pixel_ptr->row - 1, pixel_ptr->col - 1));
+        TryToAddPixelIntoCandidates(pixels_(pixel_ptr->row - 1, pixel_ptr->col));
+        TryToAddPixelIntoCandidates(pixels_(pixel_ptr->row - 1, pixel_ptr->col + 1));
+        TryToAddPixelIntoCandidates(pixels_(pixel_ptr->row, pixel_ptr->col - 1));
+        TryToAddPixelIntoCandidates(pixels_(pixel_ptr->row, pixel_ptr->col + 1));
+        TryToAddPixelIntoCandidates(pixels_(pixel_ptr->row + 1, pixel_ptr->col - 1));
+        TryToAddPixelIntoCandidates(pixels_(pixel_ptr->row + 1, pixel_ptr->col));
+        TryToAddPixelIntoCandidates(pixels_(pixel_ptr->row + 1, pixel_ptr->col + 1));
+    }
+
+    // Clear flag of occupied.
+    while (!visited_pixels_.Empty()) {
+        visited_pixels_.Front()->is_occupied = false;
+        visited_pixels_.PopFront();
+    }
+}
+
+void FeatureLineDetector::TryToAddPixelIntoCandidates(PixelParam &neighbour) {
+    if (!neighbour.is_occupied && !neighbour.is_used && neighbour.is_valid) {
+        neighbour.is_occupied = true;
+        candidates_.PushBack(&neighbour);
+    }
 }
 
 }
