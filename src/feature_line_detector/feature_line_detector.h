@@ -3,6 +3,7 @@
 
 #include "datatype_basic.h"
 #include "datatype_image.h"
+#include "circular_buffer.h"
 #include "math_kinematics.h"
 
 namespace FEATURE_DETECTOR {
@@ -17,6 +18,11 @@ public:
         float gradient_norm = 0.0f;
         bool is_valid = false;
         bool is_used = false;
+    };
+
+    struct RegionParam {
+        std::vector<PixelParam *> pixels;
+        float angle = 0.0f;
     };
 
     struct Options {
@@ -42,14 +48,15 @@ public:
 
 private:
     bool ComputeLineLevelAngleMap(const GrayImage &image);
-    float GrowRegionAndGetAngleOfRectangle(int32_t row, int32_t col);
+    int32_t GrowRegion(int32_t row, int32_t col);
 
 private:
     Options options_;
 
     Eigen::Matrix<PixelParam, Eigen::Dynamic, Eigen::Dynamic> pixels_;
     std::vector<PixelParam *> sorted_pixels_;
-    std::vector<PixelParam *> pixels_in_region_;
+    RegionParam region_;
+    CircularBuffer<Pixel, 10000> candidates_;
 
 };
 

@@ -20,16 +20,16 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
     // Compute minimal number of pixels in a region, which can give a meaningful event.
     const float p = options_.kMinToleranceAngleResidualInRad / kPai;
     const float log_NT = 5.0f * (std::log10(double(image.cols())) + std::log10(double(image.rows()))) / 2.0f + std::log10(11.0f);
-    const uint32_t min_region_size = static_cast<uint32_t>(- log_NT / std::log10(p));
+    const int32_t min_region_size = static_cast<int32_t>(- log_NT / std::log10(p));
 
     RETURN_FALSE_IF_FALSE(ComputeLineLevelAngleMap(image));
 
     // Search for line segments.
-    pixels_in_region_.clear();
     for (const auto &sorted_pixel : sorted_pixels_) {
         CONTINUE_IF(sorted_pixel->is_used || !sorted_pixel->is_valid);
-        const float angle_of_rectangle = GrowRegionAndGetAngleOfRectangle(sorted_pixel->row, sorted_pixel->col);
-        CONTINUE_IF(pixels_in_region_.size() < min_region_size);
+        float angle_of_rectangle = 0.0f;
+        const int32_t size_of_region = GrowRegion(sorted_pixel->row, sorted_pixel->col);
+        CONTINUE_IF(size_of_region < min_region_size);
     }
 
     return true;
@@ -67,8 +67,19 @@ bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
     return true;
 }
 
-float FeatureLineDetector::GrowRegionAndGetAngleOfRectangle(int32_t row, int32_t col) {
-    return 0.0f;
+int32_t FeatureLineDetector::GrowRegion(int32_t row, int32_t col) {
+    if (row <= 0 || row >= pixels_.rows() - 1 || col <= 0 || col >= pixels_.cols()) {
+        return 0;
+    }
+    candidates_.Clear();
+    region_.pixels.clear();
+
+    // Add seed pixel into candidates.
+    candidates_.PushBack(Pixel(row, col));
+    region_.pixels.emplace_back(&pixels_(row, col));
+    region_.angle = pixels_(row, col).line_level_angle;
+
+    return region_.pixels.size();
 }
 
 }
