@@ -41,13 +41,24 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
 
 bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
 {
+    // The bottom-right boundary of image will be invalid, because gradient is invalid.
     pixels_.resize(image.rows() - 1, image.cols() - 1);
+    for (int32_t i = 0; i < pixels_.rows(); ++i) {
+        pixels_(i, 0).row = i;
+        pixels_(i, pixels_.cols() - 1).row = i;
+        pixels_(i, pixels_.cols() - 1).col = pixels_.cols() - 1;
+    }
+    for (int32_t i = 0; i < pixels_.cols(); ++i) {
+        pixels_(0, 1).col = i;
+        pixels_(pixels_.rows() - 1, i).col = i;
+        pixels_(pixels_.rows() - 1, i).row = pixels_.rows() - 1;
+    }
 
-    for (int32_t col = 0; col < image.cols() - 1; ++col) {
-        for (int32_t row = 0; row < image.rows() - 1; ++row) {
+    // The boundary of 'pixels_' should be set to be invalid. Then there is no need to check pixel location overflow.
+    for (int32_t col = 1; col < image.cols() - 2; ++col) {
+        for (int32_t row = 1; row < image.rows() - 2; ++row) {
             pixels_(row, col).row = row;
             pixels_(row, col).col = col;
-            pixels_(row, col).is_occupied = false;
             // Compute pixel gradient.
             const int32_t pixel_ad = static_cast<int32_t>(image.GetPixelValueNoCheck(row + 1, col + 1)) -
                 static_cast<int32_t>(image.GetPixelValueNoCheck(row, col));
@@ -73,10 +84,6 @@ bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
 }
 
 void FeatureLineDetector::GrowRegion(PixelParam &seed_pixel) {
-    if (seed_pixel.row <= 0 || seed_pixel.row >= pixels_.rows() - 1 || seed_pixel.col <= 0 || seed_pixel.col >= pixels_.cols() - 1) {
-        return;
-    }
-
     candidates_.Clear();
     visited_pixels_.Clear();
     visited_pixels_.PushBack(&seed_pixel);
@@ -104,7 +111,6 @@ void FeatureLineDetector::GrowRegion(PixelParam &seed_pixel) {
         const auto &pixel_ptr = candidates_.Front();
         candidates_.PopFront();
         visited_pixels_.PushBack(pixel_ptr);
-        CONTINUE_IF(pixel_ptr->row <= 0 || pixel_ptr->row >= pixels_.rows() - 1 || pixel_ptr->col <= 0 || pixel_ptr->col >= pixels_.cols() - 1);
         // Check if it is aligned with this region.
         const float angle_residual = Utility::AngleDiffInRad(region_.angle, pixel_ptr->line_level_angle);
         if (std::fabs(angle_residual) > options_.kMinToleranceAngleResidualInRad) {

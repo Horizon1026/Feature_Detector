@@ -36,6 +36,18 @@ void ShowPixelsGradientNorm(const FeatureLineDetector &detector, const std::stri
     Visualizor::ShowImage(title, show_image);
 }
 
+void ShowPixelsValidation(const FeatureLineDetector &detector, const std::string &title) {
+    const auto &pixels = detector.pixels();
+    uint8_t *buf = (uint8_t *)SlamMemory::Malloc(pixels.rows() * pixels.cols() * sizeof(uint8_t));
+    GrayImage show_image(buf, pixels.rows(), pixels.cols(), true);
+    for (uint32_t col = 0; col < pixels.cols(); ++col) {
+        for (uint32_t row = 0; row < pixels.rows(); ++row) {
+            show_image.SetPixelValueNoCheck(row, col, pixels(row, col).is_valid ? 0 : 255);
+        }
+    }
+    Visualizor::ShowImage(title, show_image);
+}
+
 void ShowPixelsGradientAngle(const FeatureLineDetector &detector, const std::string &title) {
     const auto &pixels = detector.pixels();
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(pixels.rows() * pixels.cols() * sizeof(uint8_t));
@@ -57,6 +69,7 @@ void ShowOneRegion(const GrayImage &image, const FeatureLineDetector &detector, 
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
     RgbImage show_image(buf, image.rows(), image.cols(), true);
     ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
+    ReportInfo("Size of shown region is " << detector.region().pixels.size());
     for (const auto &pixel : detector.region().pixels) {
         show_image.SetPixelValueNoCheck(pixel->row, pixel->col, RgbColor::kRed);
     }
@@ -74,6 +87,7 @@ void TestLsdFeatureLineDetector(GrayImage &image, int32_t feature_num_need) {
     ReportDebug("LSD line detect time cost " << timer.TockTickInMillisecond() << " ms.");
 
     ShowPixelsGradientNorm(detector, "pixel gradient norm");
+    ShowPixelsValidation(detector, "pixel is valid");
     ShowPixelsGradientAngle(detector, "pixel gradient direction");
     ShowOneRegion(image, detector, "a region growed");
     ShowDetectResult(image, "LSD line detected features", features);
