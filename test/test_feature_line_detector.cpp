@@ -65,13 +65,32 @@ void ShowPixelsGradientAngle(const FeatureLineDetector &detector, const std::str
     Visualizor::ShowImage(title, show_image);
 }
 
-void ShowOneRegion(const GrayImage &image, const FeatureLineDetector &detector, const std::string &title) {
+void ShowUsedPixels(const FeatureLineDetector &detector, const std::string &title) {
+    const auto &pixels = detector.pixels();
+    uint8_t *buf = (uint8_t *)SlamMemory::Malloc(pixels.rows() * pixels.cols() * sizeof(uint8_t));
+    GrayImage show_image(buf, pixels.rows(), pixels.cols(), true);
+    for (uint32_t col = 0; col < pixels.cols(); ++col) {
+        for (uint32_t row = 0; row < pixels.rows(); ++row) {
+            if (pixels(row, col).is_used) {
+                show_image.SetPixelValueNoCheck(row, col, 255);
+            } else {
+                show_image.SetPixelValueNoCheck(row, col, 0);
+            }
+        }
+    }
+    Visualizor::ShowImage(title, show_image);
+}
+
+void ShowDetectedRectangles(const GrayImage &image, const std::string &title, const FeatureLineDetector &detector) {
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
     RgbImage show_image(buf, image.rows(), image.cols(), true);
     ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
-    ReportInfo("Size of shown region is " << detector.region().pixels.size());
-    for (const auto &pixel : detector.region().pixels) {
-        show_image.SetPixelValueNoCheck(pixel->row, pixel->col, RgbColor::kRed);
+    for (const auto &rect : detector.rectangles()) {
+        ImagePainter::DrawSolidCircle(show_image, rect.center_point.x(), rect.center_point.y(), 2, RgbColor::kRed);
+        ImagePainter::DrawBressenhanLine(show_image, rect.start_point.x(), rect.start_point.y(), rect.end_point.x(), rect.end_point.y(), RgbColor::kBlue);
+        const Vec2 dir_vector = rect.dir_vector * 10.0f;
+        ImagePainter::DrawBressenhanLine(show_image, rect.center_point.x(), rect.center_point.y(), rect.center_point.x() + dir_vector.x(), rect.center_point.y() + dir_vector.y(), RgbColor::kGreen);
+
     }
     Visualizor::ShowImage(title, show_image);
 }
@@ -89,7 +108,8 @@ void TestLsdFeatureLineDetector(GrayImage &image, int32_t feature_num_need) {
     ShowPixelsGradientNorm(detector, "pixel gradient norm");
     ShowPixelsValidation(detector, "pixel is valid");
     ShowPixelsGradientAngle(detector, "pixel gradient direction");
-    ShowOneRegion(image, detector, "a region growed");
+    ShowUsedPixels(detector, "pixel is used after region grow");
+    ShowDetectedRectangles(image, "detected rectangles", detector);
     ShowDetectResult(image, "LSD line detected features", features);
     ReportInfo("LSD line detected " << features.size());
 }

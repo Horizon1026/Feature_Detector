@@ -26,6 +26,15 @@ public:
         float angle = 0.0f;
     };
 
+    struct RectangleParam {
+        Vec2 start_point = Vec2::Zero();
+        Vec2 end_point = Vec2::Zero();
+        Vec2 center_point = Vec2::Zero();
+        float width = 0.0f;
+        float angle = 0.0f;
+        Vec2 dir_vector = Vec2::Identity();
+    };
+
     struct Options {
         float kMinValidGradientNorm = 20.0f;
         float kMinToleranceAngleResidualInRad = 22.5f * kDegToRad;
@@ -43,28 +52,28 @@ public:
     Options &options() { return options_; }
     Eigen::Matrix<PixelParam, Eigen::Dynamic, Eigen::Dynamic> &pixels() { return pixels_; }
     std::vector<PixelParam *> &sorted_pixels() { return sorted_pixels_; }
-    RegionParam &region() { return region_; }
+    std::vector<RectangleParam> &rectangles() { return rectangles_; }
 
     // Const reference for member variables.
     const Options &options() const { return options_; }
     const Eigen::Matrix<PixelParam, Eigen::Dynamic, Eigen::Dynamic> &pixels() const { return pixels_; }
     const std::vector<PixelParam *> &sorted_pixels() const { return sorted_pixels_; }
-    const RegionParam &region() const { return region_; }
+    const std::vector<RectangleParam> &rectangles() const { return rectangles_; }
 
 private:
     bool ComputeLineLevelAngleMap(const GrayImage &image);
-    void GrowRegion(PixelParam &seed_pixel);
+    void GrowRegion(PixelParam &seed_pixel, RegionParam &region);
     void TryToAddPixelIntoCandidates(PixelParam &neighbour);
+    RectangleParam ConvertRegionToRectangle(const RegionParam &region);
 
 private:
     Options options_;
 
     Eigen::Matrix<PixelParam, Eigen::Dynamic, Eigen::Dynamic> pixels_;
     std::vector<PixelParam *> sorted_pixels_;
-    RegionParam region_;
     CircularBuffer<PixelParam *, 1000> candidates_;
     CircularBuffer<PixelParam *, 1000> visited_pixels_;
-
+    std::vector<RectangleParam> rectangles_;
 };
 
 }
