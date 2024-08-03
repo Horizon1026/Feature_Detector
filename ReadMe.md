@@ -8,8 +8,8 @@ Intergration of some simple sparse feature detect method.
     - [x] Fast.
 - [x] Feature descriptor
     - [x] Brief.
-- [ ] Feature line detector
-    - [ ] Line Segment Detector(LSD).
+- [x] Feature line detector
+    - [x] Line Segment Detector(LSD).
 
 # Dependence
 - Slam_Utility
@@ -18,3 +18,4 @@ Intergration of some simple sparse feature detect method.
 
 # Tips
 - 欢迎一起交流学习，不同意商用；
+- 仅出于学习目的，参考《视觉SLAM十四讲》和opencv4.7.0源码进行的复现；
