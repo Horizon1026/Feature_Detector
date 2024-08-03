@@ -38,6 +38,9 @@ public:
     struct Options {
         float kMinValidGradientNorm = 20.0f;
         float kMinToleranceAngleResidualInRad = 22.5f * kDegToRad;
+        bool kRefineDetectedRectangle = false;
+        float kMinValidLineLengthInPixel = 20.0f;
+        float kMaxValidRectangleWidthInPixel = 4.0f;
     };
 
 public:

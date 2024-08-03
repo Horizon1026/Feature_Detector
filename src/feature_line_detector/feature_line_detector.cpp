@@ -40,6 +40,17 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
 
         // Convert region to rectangle.
         RectangleParam rectangle = ConvertRegionToRectangle(region);
+        CONTINUE_IF((rectangle.start_point - rectangle.end_point).squaredNorm() < options_.kMinValidLineLengthInPixel * options_.kMinValidLineLengthInPixel ||
+            rectangle.width > options_.kMaxValidRectangleWidthInPixel);
+
+        // Refine rectangle if necessary.
+        if (options_.kRefineDetectedRectangle) {
+            // TODO:
+        }
+
+        // Compensate the offset.
+        rectangle.start_point += Vec2::Constant(0.5f);
+        rectangle.end_point += Vec2::Constant(0.5f);
         rectangles_.emplace_back(rectangle);
     }
 
