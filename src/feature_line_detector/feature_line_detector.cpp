@@ -14,7 +14,6 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
                                              std::vector<Vec4> &features) {
     // Validate parameters.
     RETURN_FALSE_IF(image.data() == nullptr || image.rows() < 2 || image.cols() < 2);
-    features.clear();
     RETURN_TRUE_IF(needed_feature_num == 0);
 
     // Compute minimal number of pixels in a region, which can give a meaningful event.
@@ -40,13 +39,8 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
 
         // Convert region to rectangle.
         RectangleParam rectangle = ConvertRegionToRectangle(region);
-        CONTINUE_IF((rectangle.start_point - rectangle.end_point).squaredNorm() < options_.kMinValidLineLengthInPixel * options_.kMinValidLineLengthInPixel ||
-            rectangle.width > options_.kMaxValidRectangleWidthInPixel);
-
-        // Refine rectangle if necessary.
-        if (options_.kRefineDetectedRectangle) {
-            // TODO:
-        }
+        CONTINUE_IF(rectangle.length < options_.kMinValidLineLengthInPixel ||
+            rectangle.inlier_ratio < options_.kMaxToleranceInlierRation);
 
         // Compensate the offset.
         rectangle.start_point += Vec2::Constant(0.5f);
@@ -54,6 +48,11 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
         rectangles_.emplace_back(rectangle);
     }
 
+    // Output.
+    features.clear();
+    for (const auto &rect : rectangles_) {
+        features.emplace_back(Vec4(rect.start_point.x(), rect.start_point.y(), rect.end_point.x(), rect.end_point.y()));
+    }
     return true;
 }
 
@@ -219,10 +218,16 @@ FeatureLineDetector::RectangleParam FeatureLineDetector::ConvertRegionToRectangl
         width_range(1) = std::max(width_range(1), width);
     }
 
-    // Update paremeters of rectangle.
+    // Update paremeters of rectangle. And compute inlier ratio.
     rect.start_point = rect.center_point + length_range(0) * rect.dir_vector;
     rect.end_point = rect.center_point + length_range(1) * rect.dir_vector;
+    rect.length = length_range(1) - length_range(0);
     rect.width = width_range(1) - width_range(0);
+    // Lenght and width should be at least 1 pixel.
+    rect.length = std::max(rect.length, 1.0f);
+    rect.width = std::max(rect.width, 1.0f);
+    const float area_size = (length_range(1) - length_range(0)) * rect.width;
+    rect.inlier_ratio = static_cast<float>(region.pixels.size()) / area_size;
     return rect;
 }
 

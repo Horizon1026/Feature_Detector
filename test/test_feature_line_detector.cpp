@@ -12,17 +12,6 @@ using namespace SLAM_UTILITY;
 
 std::string image_file_path = "../examples/image.png";
 
-void ShowDetectResult(const GrayImage &image, const std::string &title, const std::vector<Vec4> &features) {
-    uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
-    RgbImage show_image(buf, image.rows(), image.cols(), true);
-    ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
-    for (unsigned long i = 0; i < features.size(); ++i) {
-        ImagePainter::DrawBressenhanLine(show_image, static_cast<int32_t>(features[i][0]), static_cast<int32_t>(features[i][1]),
-            static_cast<int32_t>(features[i][2]), static_cast<int32_t>(features[i][3]), RgbColor::kCyan);
-    }
-    Visualizor::ShowImage(title, show_image);
-}
-
 void ShowPixelsGradientNorm(const FeatureLineDetector &detector, const std::string &title) {
     const auto &pixels = detector.pixels();
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(pixels.rows() * pixels.cols() * sizeof(uint8_t));
@@ -90,7 +79,17 @@ void ShowDetectedRectangles(const GrayImage &image, const std::string &title, co
         ImagePainter::DrawBressenhanLine(show_image, rect.start_point.x(), rect.start_point.y(), rect.end_point.x(), rect.end_point.y(), RgbColor::kBlue);
         const Vec2 dir_vector = rect.dir_vector * 10.0f;
         ImagePainter::DrawBressenhanLine(show_image, rect.center_point.x(), rect.center_point.y(), rect.center_point.x() + dir_vector.x(), rect.center_point.y() + dir_vector.y(), RgbColor::kGreen);
+        Visualizor::ShowImage(title, show_image);
+    }
+}
 
+void ShowDetectResult(const GrayImage &image, const std::string &title, const std::vector<Vec4> &features) {
+    uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
+    RgbImage show_image(buf, image.rows(), image.cols(), true);
+    ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
+    for (unsigned long i = 0; i < features.size(); ++i) {
+        ImagePainter::DrawBressenhanLine(show_image, static_cast<int32_t>(features[i][0]), static_cast<int32_t>(features[i][1]),
+            static_cast<int32_t>(features[i][2]), static_cast<int32_t>(features[i][3]), RgbColor::kCyan);
     }
     Visualizor::ShowImage(title, show_image);
 }

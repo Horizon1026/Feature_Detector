@@ -30,17 +30,18 @@ public:
         Vec2 start_point = Vec2::Zero();
         Vec2 end_point = Vec2::Zero();
         Vec2 center_point = Vec2::Zero();
+        float length = 0.0f;
         float width = 0.0f;
         float angle = 0.0f;
         Vec2 dir_vector = Vec2::Identity();
+        float inlier_ratio = 0.0f;
     };
 
     struct Options {
         float kMinValidGradientNorm = 20.0f;
         float kMinToleranceAngleResidualInRad = 22.5f * kDegToRad;
-        bool kRefineDetectedRectangle = false;
         float kMinValidLineLengthInPixel = 20.0f;
-        float kMaxValidRectangleWidthInPixel = 4.0f;
+        float kMaxToleranceInlierRation = 0.6f;
     };
 
 public:
