@@ -1,7 +1,7 @@
 #include "descriptor_brief.h"
-#include "math_kinematics.h"
+#include "slam_basic_math.h"
 #include "slam_operations.h"
-#include "log_report.h"
+#include "slam_log_reporter.h"
 
 namespace FEATURE_DETECTOR {
 

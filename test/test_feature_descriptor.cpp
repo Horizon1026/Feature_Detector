@@ -2,7 +2,7 @@
 #include "feature_harris.h"
 #include "descriptor_brief.h"
 
-#include "log_report.h"
+#include "slam_log_reporter.h"
 #include "slam_memory.h"
 #include "tick_tock.h"
 #include "image_painter.h"
