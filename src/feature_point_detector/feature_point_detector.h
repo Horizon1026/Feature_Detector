@@ -1,7 +1,7 @@
 #ifndef _FEATURE_POINT_DETECTOR_H_
 #define _FEATURE_POINT_DETECTOR_H_
 
-#include "datatype_basic.h"
+#include "basic_type.h"
 #include "datatype_image.h"
 #include "slam_operations.h"
 #include "slam_log_reporter.h"

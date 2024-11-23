@@ -1,7 +1,7 @@
 #ifndef _FEATURE_LINE_DETECTOR_H_
 #define _FEATURE_LINE_DETECTOR_H_
 
-#include "datatype_basic.h"
+#include "basic_type.h"
 #include "datatype_image.h"
 #include "circular_buffer.h"
 #include "slam_basic_math.h"

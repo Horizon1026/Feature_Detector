@@ -1,7 +1,7 @@
 #ifndef _FEATURE_DESCRIPTOR_BRIEF_H_
 #define _FEATURE_DESCRIPTOR_BRIEF_H_
 
-#include "datatype_basic.h"
+#include "basic_type.h"
 #include "datatype_image.h"
 
 #include "descriptor.h"

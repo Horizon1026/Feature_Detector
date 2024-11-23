@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 3.10 )
 
 project( feature_detector )
 
-set( CMAKE_BUILD_TYPE "Release" )
+set( CMAKE_BUILD_TYPE "Debug" )
 set( CMAKE_CXX_FLAGS "-std=c++17 -O3 -Wall -lpthread" )
 set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 set( CMAKE_CXX_STANDARD 17 )
@@ -20,21 +20,21 @@ add_subdirectory( ${FEATURE_DETECTOR_PATH}/feature_descriptor ${PROJECT_SOURCE_D
 endif()
 
 # Add slam utility log.
-set( SLAM_UTILITY_PATH ${PROJECT_SOURCE_DIR}/../Slam_Utility/src )
+set( SLAM_UTILITY_PATH ${PROJECT_SOURCE_DIR}/../Slam_Utility )
 if ( NOT TARGET lib_slam_utility_log )
-    add_subdirectory( ${SLAM_UTILITY_PATH}/log ${PROJECT_SOURCE_DIR}/build/lib_slam_utility_log )
+    add_subdirectory( ${SLAM_UTILITY_PATH}/src/log ${PROJECT_SOURCE_DIR}/build/lib_slam_utility_log )
 endif()
 
 # Add image painter.
-set( IMAGE_PAINTER_PATH ${PROJECT_SOURCE_DIR}/../Image_Painter/src )
+set( IMAGE_PAINTER_PATH ${PROJECT_SOURCE_DIR}/../Image_Painter )
 if ( NOT TARGET lib_image_painter )
-    add_subdirectory( ${IMAGE_PAINTER_PATH} ${PROJECT_SOURCE_DIR}/build/lib_image_painter )
+    add_subdirectory( ${IMAGE_PAINTER_PATH}/src ${PROJECT_SOURCE_DIR}/build/lib_image_painter )
 endif()
 
 # Add visualizor.
 set( VISUALIZOR_PATH ${PROJECT_SOURCE_DIR}/../Visualizor2D )
-if ( NOT TARGET lib_image_visualizor )
-    add_subdirectory( ${VISUALIZOR_PATH}/src ${PROJECT_SOURCE_DIR}/build/lib_image_visualizor )
+if ( NOT TARGET lib_2d_visualizor )
+    add_subdirectory( ${VISUALIZOR_PATH}/src ${PROJECT_SOURCE_DIR}/build/lib_2d_visualizor )
 endif()
 
 # Test feature point detector.
@@ -45,7 +45,7 @@ target_link_libraries( test_feature_point_detector
     lib_feature_point_detector
     lib_slam_utility_log
     lib_image_painter
-    lib_image_visualizor
+    lib_2d_visualizor
 )
 
 # Test feature descriptor.
@@ -57,7 +57,7 @@ target_link_libraries( test_feature_descriptor
     lib_feature_descriptor
     lib_slam_utility_log
     lib_image_painter
-    lib_image_visualizor
+    lib_2d_visualizor
 )
 
 # Test feature line detector.
@@ -68,5 +68,5 @@ target_link_libraries( test_feature_line_detector
     lib_feature_line_detector
     lib_slam_utility_log
     lib_image_painter
-    lib_image_visualizor
+    lib_2d_visualizor
 )

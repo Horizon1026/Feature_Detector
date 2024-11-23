@@ -1,7 +1,7 @@
 #ifndef _FEATURE_SHI_TOMAS_H_
 #define _FEATURE_SHI_TOMAS_H_
 
-#include "datatype_basic.h"
+#include "basic_type.h"
 #include "datatype_image.h"
 #include "feature_point.h"
 
