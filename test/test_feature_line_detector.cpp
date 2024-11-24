@@ -3,7 +3,7 @@
 #include "slam_memory.h"
 #include "tick_tock.h"
 #include "image_painter.h"
-#include "visualizor.h"
+#include "visualizor_2d.h"
 
 using namespace FEATURE_DETECTOR;
 using namespace SLAM_VISUALIZOR;

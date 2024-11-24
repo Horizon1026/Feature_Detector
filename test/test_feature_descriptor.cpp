@@ -6,7 +6,7 @@
 #include "slam_memory.h"
 #include "tick_tock.h"
 #include "image_painter.h"
-#include "visualizor.h"
+#include "visualizor_2d.h"
 
 using namespace SLAM_VISUALIZOR;
 using namespace IMAGE_PAINTER;
