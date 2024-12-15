@@ -22,7 +22,7 @@ void ShowImage(const GrayImage &image, const std::string &title, const std::vect
     for (unsigned long i = 0; i < features.size(); ++i) {
         ImagePainter::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbColor::kCyan);
     }
-    Visualizor::ShowImage(title, show_image);
+    Visualizor2D::ShowImage(title, show_image);
 }
 
 void TestHarrisFeatureDetector(GrayImage &image, int32_t feature_num_need) {
@@ -101,14 +101,14 @@ int main(int argc, char **argv) {
     int32_t feature_num_need = 200;
 
     GrayImage image;
-    Visualizor::LoadImage(image_file_path, image);
+    Visualizor2D::LoadImage(image_file_path, image);
 
     TestFastFeatureDetector(image, feature_num_need);
     TestHarrisFeatureDetector(image, feature_num_need);
     TestShiTomasFeatureDetector(image, feature_num_need);
     TestUpdateMaskWithDetectedFeatures(image, feature_num_need);
 
-    Visualizor::WaitKey(0);
+    Visualizor2D::WaitKey(0);
 
     return 0;
 }

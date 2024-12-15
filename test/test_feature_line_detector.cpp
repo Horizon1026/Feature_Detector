@@ -22,7 +22,7 @@ void ShowPixelsGradientNorm(const FeatureLineDetector &detector, const std::stri
             show_image.SetPixelValueNoCheck(row, col, pixel_value);
         }
     }
-    Visualizor::ShowImage(title, show_image);
+    Visualizor2D::ShowImage(title, show_image);
 }
 
 void ShowPixelsValidation(const FeatureLineDetector &detector, const std::string &title) {
@@ -34,7 +34,7 @@ void ShowPixelsValidation(const FeatureLineDetector &detector, const std::string
             show_image.SetPixelValueNoCheck(row, col, pixels(row, col).is_valid ? 0 : 255);
         }
     }
-    Visualizor::ShowImage(title, show_image);
+    Visualizor2D::ShowImage(title, show_image);
 }
 
 void ShowPixelsGradientAngle(const FeatureLineDetector &detector, const std::string &title) {
@@ -51,7 +51,7 @@ void ShowPixelsGradientAngle(const FeatureLineDetector &detector, const std::str
             }
         }
     }
-    Visualizor::ShowImage(title, show_image);
+    Visualizor2D::ShowImage(title, show_image);
 }
 
 void ShowUsedPixels(const FeatureLineDetector &detector, const std::string &title) {
@@ -67,7 +67,7 @@ void ShowUsedPixels(const FeatureLineDetector &detector, const std::string &titl
             }
         }
     }
-    Visualizor::ShowImage(title, show_image);
+    Visualizor2D::ShowImage(title, show_image);
 }
 
 void ShowDetectedRectangles(const GrayImage &image, const std::string &title, const FeatureLineDetector &detector) {
@@ -79,7 +79,7 @@ void ShowDetectedRectangles(const GrayImage &image, const std::string &title, co
         ImagePainter::DrawBressenhanLine(show_image, rect.start_point.x(), rect.start_point.y(), rect.end_point.x(), rect.end_point.y(), RgbColor::kBlue);
         const Vec2 dir_vector = rect.dir_vector * 10.0f;
         ImagePainter::DrawBressenhanLine(show_image, rect.center_point.x(), rect.center_point.y(), rect.center_point.x() + dir_vector.x(), rect.center_point.y() + dir_vector.y(), RgbColor::kGreen);
-        Visualizor::ShowImage(title, show_image);
+        Visualizor2D::ShowImage(title, show_image);
     }
 }
 
@@ -91,7 +91,7 @@ void ShowDetectResult(const GrayImage &image, const std::string &title, const st
         ImagePainter::DrawBressenhanLine(show_image, static_cast<int32_t>(features[i][0]), static_cast<int32_t>(features[i][1]),
             static_cast<int32_t>(features[i][2]), static_cast<int32_t>(features[i][3]), RgbColor::kCyan);
     }
-    Visualizor::ShowImage(title, show_image);
+    Visualizor2D::ShowImage(title, show_image);
 }
 
 void TestLsdFeatureLineDetector(GrayImage &image, int32_t feature_num_need) {
@@ -118,11 +118,11 @@ int main(int argc, char **argv) {
     int32_t feature_num_need = 200;
 
     GrayImage image;
-    Visualizor::LoadImage(image_file_path, image);
+    Visualizor2D::LoadImage(image_file_path, image);
 
     TestLsdFeatureLineDetector(image, feature_num_need);
 
-    Visualizor::WaitKey(0);
+    Visualizor2D::WaitKey(0);
 
     return 0;
 }

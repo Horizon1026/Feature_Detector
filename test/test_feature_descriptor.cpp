@@ -29,7 +29,7 @@ std::vector<Vec2> TestHarrisFeatureDetector(const GrayImage &image, const int32_
     for (unsigned long i = 0; i < features.size(); i++) {
         ImagePainter::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbColor::kRed);
     }
-    Visualizor::ShowImage("harris detected features", show_image);
+    Visualizor2D::ShowImage("harris detected features", show_image);
 
     ReportInfo("harris detected " << features.size());
     return features;
@@ -62,12 +62,12 @@ int main(int argc, char **argv) {
     int32_t feature_num_need = 10;
 
     GrayImage image;
-    Visualizor::LoadImage(image_file_path, image);
+    Visualizor2D::LoadImage(image_file_path, image);
 
     std::vector<Vec2> features = TestHarrisFeatureDetector(image, feature_num_need);
     TestBriefDescriptor(image, features);
 
-    Visualizor::WaitKey(0);
+    Visualizor2D::WaitKey(0);
 
     return 0;
 }
