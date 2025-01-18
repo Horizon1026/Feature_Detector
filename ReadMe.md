@@ -10,11 +10,15 @@ Intergration of some simple sparse feature detect method.
     - [x] Brief.
 - [x] Feature line detector
     - [x] Line Segment Detector(LSD).
+- [ ] NN feature point detector
+    - [x] XFeat keypoints.
+    - [ ] XFeat descriptors.
 
 # Dependence
 - Slam_Utility
 - Image_Painter
 - Visualizor2D
+- libtorch(nn feature needed)
 
 # Tips
 - 欢迎一起交流学习，不同意商用；

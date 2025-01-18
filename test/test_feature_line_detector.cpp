@@ -102,7 +102,7 @@ void TestLsdFeatureLineDetector(GrayImage &image, int32_t feature_num_need) {
     TickTock timer;
     std::vector<Vec4> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
-    ReportDebug("LSD line detect time cost " << timer.TockTickInMillisecond() << " ms.");
+    ReportInfo("LSD line detect time cost " << timer.TockTickInMillisecond() << " ms.");
 
     ShowPixelsGradientNorm(detector, "pixel gradient norm");
     ShowPixelsValidation(detector, "pixel is valid");
