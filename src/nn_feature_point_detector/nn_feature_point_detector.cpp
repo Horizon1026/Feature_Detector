@@ -170,4 +170,37 @@ void NNFeaturePointDetector::UpdateMaskByFeatures(const GrayImage &image, const 
     }
 }
 
+bool NNFeaturePointDetector::ExtractDescriptors(const std::vector<Vec2> &features, Mat &descriptors) {
+    RETURN_TRUE_IF(features.empty());
+    const int32_t descriptor_size = model_output_.descriptor.size(1);
+    const int32_t tensor_rows = model_output_.descriptor.size(2);
+    const int32_t tensor_cols = model_output_.descriptor.size(3);
+    RETURN_FALSE_IF(descriptor_size == 0);
+    descriptors.setZero(features.size(), descriptor_size);
+
+    for (uint32_t i = 0; i < features.size(); ++i) {
+        const Vec2 loc_in_tensor = features[i] / 8.0f;
+        // Continue if the location is out of the tensor.
+        CONTINUE_IF(loc_in_tensor.x() < 0 || loc_in_tensor.x() > tensor_cols - 2 || loc_in_tensor.y() < 0 || loc_in_tensor.y() > tensor_rows - 2);
+        for (int32_t j = 0; j < descriptor_size; ++j) {
+            // Bilinear interpolation.
+            const float x = loc_in_tensor.x();
+            const float y = loc_in_tensor.y();
+            const int32_t x0 = static_cast<int32_t>(x);
+            const int32_t y0 = static_cast<int32_t>(y);
+            const int32_t x1 = x0 + 1;
+            const int32_t y1 = y0 + 1;
+            const float dx = x - x0;
+            const float dy = y - y0;
+            const float v00 = model_output_.descriptor[0][j][y0][x0].item<float>();
+            const float v01 = model_output_.descriptor[0][j][y1][x0].item<float>();
+            const float v10 = model_output_.descriptor[0][j][y0][x1].item<float>();
+            const float v11 = model_output_.descriptor[0][j][y1][x1].item<float>();
+            descriptors(i, j) = (1 - dx) * (1 - dy) * v00 + dx * (1 - dy) * v10 + (1 - dx) * dy * v01 + dx * dy * v11;
+        }
+    }
+
+    return true;
+}
+
 } // End of namespace FEATURE_DETECTOR.

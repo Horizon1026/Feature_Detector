@@ -33,10 +33,16 @@ int main(int argc, char **argv) {
     NNFeaturePointDetector detector("../src/nn_feature_point_detector/models/xfeat_cpu_1_1_h_w.pt");
 
     // Detect feature points.
-    const int32_t feature_num_need = 200;
+    const int32_t feature_num_need = 20;
     std::vector<Vec2> features;
     features.reserve(feature_num_need);
     detector.DetectGoodFeatures(image, feature_num_need, features);
+
+    // Extract descriptors.
+    Mat descriptors;
+    detector.ExtractDescriptors(features, descriptors);
+    std::vector<std::array<float, 64>> descriptors_64;
+    detector.ExtractDescriptors<64>(features, descriptors_64);
 
     // Show the image of heat map.
     MatImg &heatmap_mat_img = detector.keypoints_heat_map();
