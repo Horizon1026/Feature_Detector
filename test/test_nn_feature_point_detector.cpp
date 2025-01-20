@@ -31,21 +31,16 @@ int main(int argc, char **argv) {
 
     // Initialize the detector.
     NNFeaturePointDetector detector("../src/nn_feature_point_detector/models/xfeat_cpu_1_1_h_w.pt");
+    detector.options().kModelType = NNFeaturePointDetector::ModelType::kXFeat;
 
-    // Detect feature points.
-    const int32_t feature_num_need = 20;
+    // Detect feature points with descriptors.
     std::vector<Vec2> features;
-    features.reserve(feature_num_need);
-    detector.DetectGoodFeatures(image, feature_num_need, features);
-
-    // Extract descriptors.
-    Mat descriptors;
-    detector.ExtractDescriptors(features, descriptors);
-    std::vector<std::array<float, 64>> descriptors_64;
-    detector.ExtractDescriptors<64>(features, descriptors_64);
+    std::vector<XFeatDescriptorType> descriptors;
+    detector.DetectGoodFeaturesWithDescriptor(image, 200, features, descriptors);
+    ReportInfo("nn detected " << features.size());
 
     // Show the image of heat map.
-    MatImg &heatmap_mat_img = detector.keypoints_heat_map();
+    MatImg heatmap_mat_img = (detector.keypoints_heat_map() * 255.0f).cast<uint8_t>();
     GrayImage heatmap_image(heatmap_mat_img.data(), heatmap_mat_img.rows(), heatmap_mat_img.cols(), false);
     Visualizor2D::ShowImage("Heat Map", heatmap_image);
 

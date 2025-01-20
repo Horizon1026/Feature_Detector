@@ -7,17 +7,24 @@
 
 namespace FEATURE_DETECTOR {
 
-using XFeatType = std::array<float, 64>;
+using XFeatDescriptorType = std::array<float, 64>;
 
 /* Class NNFeaturePointDetector Declaration. */
 class NNFeaturePointDetector {
 
 public:
+    enum class ModelType : uint8_t {
+        kXFeat = 0,
+        kSuperpoint = 1,
+        kAlike = 2,
+    };
+
     struct Options {
-        int32_t kMinFeatureDistance = 15;
-        int32_t kGridFilterRowDivideNumber = 12;
-        int32_t kGridFilterColDivideNumber = 12;
-        uint8_t kMinResponse = 25;
+        int32_t kMinFeatureDistance = 5;
+        int32_t kGridFilterRowDivideNumber = 15;
+        int32_t kGridFilterColDivideNumber = 15;
+        float kMinResponse = 0.4f;
+        ModelType kModelType = ModelType::kXFeat;
     };
 
 public:
@@ -25,96 +32,97 @@ public:
     explicit NNFeaturePointDetector(const std::string &model_path);
     virtual ~NNFeaturePointDetector() = default;
 
-    bool DetectGoodFeatures(const GrayImage &image,
-                            const uint32_t needed_feature_num,
-                            std::vector<Vec2> &features);
+    bool ReloadModel(const std::string &model_path);
 
-    void SparsifyFeatures(const std::vector<Vec2> &features,
-                          const int32_t image_rows,
-                          const int32_t image_cols,
-                          const uint8_t status_need_filter,
-                          const uint8_t status_after_filter,
-                          std::vector<uint8_t> &status);
-
-    bool ExtractDescriptors(const std::vector<Vec2> &features,
-                            Mat &descriptors);
-
-    template <uint32_t DescriptorSize>
-    bool ExtractDescriptors(const std::vector<Vec2> &features,
-                            std::vector<std::array<float, DescriptorSize>> &descriptors);
+    template <typename NNFeatureDescriptorType>
+    bool DetectGoodFeaturesWithDescriptor(const GrayImage &image,
+                                          const uint32_t needed_feature_num,
+                                          std::vector<Vec2> &features,
+                                          std::vector<NNFeatureDescriptorType> &descriptors);
 
 public:
     // Reference for member variables.
     Options &options() { return options_; }
-    MatImg &keypoints_heat_map() { return keypoints_heat_map_; }
+    MatImgF &keypoints_heat_map() { return keypoints_heat_map_; }
 
     // Const reference for member variables.
     const Options &options() const { return options_; }
-    const MatImg &keypoints_heat_map() const { return keypoints_heat_map_; }
+    const MatImgF &keypoints_heat_map() const { return keypoints_heat_map_; }
 
 private:
+    // General operations.
+    template <typename NNFeatureDescriptorType>
+    bool CheckModelInput(const GrayImage &image,
+                         const uint32_t needed_feature_num,
+                         std::vector<Vec2> &features,
+                         std::vector<NNFeatureDescriptorType> &descriptors);
+    template <typename NNFeatureDescriptorType>
+    bool Preparation(const GrayImage &image,
+                     const uint32_t needed_feature_num,
+                     std::vector<Vec2> &features,
+                     std::vector<NNFeatureDescriptorType> &descriptors);
+    void DrawRectangleInMask(const int32_t row, const int32_t col, const int32_t radius);
+    void UpdateMaskByFeatures(const GrayImage &image, const std::vector<Vec2> &features);
+    bool SelectKeypointCandidatesFromHeatMap();
+    bool SelectGoodFeaturesFromCandidates(const uint32_t needed_feature_num, std::vector<Vec2> &features);
+    template <typename NNFeatureDescriptorType>
+    bool ExtractDescriptorsForSelectedFeatures(const std::vector<Vec2> &features, std::vector<NNFeatureDescriptorType> &descriptors);
+
+    // Model operations.
     bool ExecuteModel(const GrayImage &image);
-    bool ProcessModelOutputOfDescriptor();
-    bool ProcessModelOutputOfKeypoints();
-    bool ProcessModelOutputOfReliability();
-
-    bool SelectCandidates();
-    bool SelectGoodFeatures(const uint32_t needed_feature_num,
-                            std::vector<Vec2> &features);
-    void DrawRectangleInMask(const int32_t row,
-                             const int32_t col);
-    void UpdateMaskByFeatures(const GrayImage &image,
-                              const std::vector<Vec2> &features);
+    bool ProcessModelOutputXFeat();
+    bool ProcessModelOutputSuperpoint();
+    bool ProcessModelOutputAlike();
 
 private:
+    // Options.
     Options options_;
 
+    // Model related.
     torch::jit::script::Module nn_model_;
+    struct ModelInput {
+        std::vector<torch::jit::IValue> jit;
+        torch::Tensor tensor;
+    } model_input_;
     struct ModelOutput {
-        torch::Tensor descriptor;
+        torch::jit::IValue raw;
+        torch::Tensor descriptors;
         torch::Tensor keypoints;
         torch::Tensor reliability;
     } model_output_;
-    torch::Tensor input_;
-    MatImg keypoints_heat_map_;
 
+    // Post process related.
+    MatImgF keypoints_heat_map_;
+    MatImg mask_;
     std::multimap<uint8_t, Pixel> candidates_;
-    MatInt mask_;
 };
 
-/* Class NNFeaturePointDetector Definition. */
-template <uint32_t DescriptorSize>
-bool NNFeaturePointDetector::ExtractDescriptors(const std::vector<Vec2> &features,
-                                                std::vector<std::array<float, DescriptorSize>> &descriptors) {
-    RETURN_TRUE_IF(features.empty());
-    const int32_t descriptor_size = model_output_.descriptor.size(1);
-    const int32_t tensor_rows = model_output_.descriptor.size(2);
-    const int32_t tensor_cols = model_output_.descriptor.size(3);
-    RETURN_FALSE_IF(descriptor_size == 0);
-    descriptors.resize(features.size());
-
-    for (uint32_t i = 0; i < features.size(); ++i) {
-        const Vec2 loc_in_tensor = features[i] / 8.0f;
-        // Continue if the locaiton is out of the tensor.
-        CONTINUE_IF(loc_in_tensor.x() < 0 || loc_in_tensor.x() > tensor_cols - 2 || loc_in_tensor.y() < 0 || loc_in_tensor.y() > tensor_rows - 2);
-        for (int32_t j = 0; j < descriptor_size; ++j) {
-            // Bilinear interpolation.
-            const float x = loc_in_tensor.x();
-            const float y = loc_in_tensor.y();
-            const int32_t x0 = static_cast<int32_t>(x);
-            const int32_t y0 = static_cast<int32_t>(y);
-            const int32_t x1 = x0 + 1;
-            const int32_t y1 = y0 + 1;
-            const float dx = x - x0;
-            const float dy = y - y0;
-            const float v00 = model_output_.descriptor[0][j][y0][x0].item<float>();
-            const float v01 = model_output_.descriptor[0][j][y1][x0].item<float>();
-            const float v10 = model_output_.descriptor[0][j][y0][x1].item<float>();
-            const float v11 = model_output_.descriptor[0][j][y1][x1].item<float>();
-            descriptors[i][j] = (1 - dx) * (1 - dy) * v00 + dx * (1 - dy) * v10 + (1 - dx) * dy * v01 + dx * dy * v11;
-        }
+/* Class NNFeaturePointDetector Implementation. */
+template <typename NNFeatureDescriptorType>
+bool NNFeaturePointDetector::CheckModelInput(const GrayImage &image,
+                                             const uint32_t needed_feature_num,
+                                             std::vector<Vec2> &features,
+                                             std::vector<NNFeatureDescriptorType> &descriptors) {
+    RETURN_FALSE_IF(image.rows() == 0 || image.cols() == 0);
+    RETURN_FALSE_IF(image.data() == nullptr);
+    RETURN_FALSE_IF(needed_feature_num == 0);
+    if (!features.empty()) {
+        RETURN_FALSE_IF(features.size() != descriptors.size());
     }
+    return true;
+}
 
+template <typename NNFeatureDescriptorType>
+bool NNFeaturePointDetector::Preparation(const GrayImage &image,
+                                         const uint32_t needed_feature_num,
+                                         std::vector<Vec2> &features,
+                                         std::vector<NNFeatureDescriptorType> &descriptors) {
+    keypoints_heat_map_.resize(image.rows(), image.cols());
+    mask_.resize(image.rows(), image.cols());
+    mask_.setConstant(1);
+    if (!features.empty()) {
+        UpdateMaskByFeatures(image, features);
+    }
     return true;
 }
 
