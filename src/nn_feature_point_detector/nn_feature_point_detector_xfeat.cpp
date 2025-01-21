@@ -73,18 +73,20 @@ bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures<XFeatDescript
     XFeatDescriptorType temp_descriptor;
     for (uint32_t i = descriptors.size(); i < features.size(); ++i) {
         const Vec2 loc_in_tensor = features[i] / 8.0f;
+
         // Continue if the location is out of the tensor.
-        CONTINUE_IF(loc_in_tensor.x() < 0 || loc_in_tensor.x() > tensor_cols - 2 || loc_in_tensor.y() < 0 || loc_in_tensor.y() > tensor_rows - 2);
+        const float &x = loc_in_tensor.x();
+        const float &y = loc_in_tensor.y();
+        const int32_t x0 = static_cast<int32_t>(x);
+        const int32_t y0 = static_cast<int32_t>(y);
+        CONTINUE_IF(x0 < 0 || x0 > tensor_cols - 2 || y0 < 0 || y0 > tensor_rows - 2);
+        const int32_t x1 = x0 + 1;
+        const int32_t y1 = y0 + 1;
+        const float dx = x - x0;
+        const float dy = y - y0;
+
+        // Bilinear interpolation.
         for (int32_t j = 0; j < descriptor_size; ++j) {
-            // Bilinear interpolation.
-            const float x = loc_in_tensor.x();
-            const float y = loc_in_tensor.y();
-            const int32_t x0 = static_cast<int32_t>(x);
-            const int32_t y0 = static_cast<int32_t>(y);
-            const int32_t x1 = x0 + 1;
-            const int32_t y1 = y0 + 1;
-            const float dx = x - x0;
-            const float dy = y - y0;
             const float v00 = model_output_.descriptors[0][j][y0][x0].item<float>();
             const float v01 = model_output_.descriptors[0][j][y1][x0].item<float>();
             const float v10 = model_output_.descriptors[0][j][y0][x1].item<float>();
@@ -103,14 +105,38 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptor<XFeatDescriptorTyp
                                                                                    const uint32_t needed_feature_num,
                                                                                    std::vector<Vec2> &features,
                                                                                    std::vector<XFeatDescriptorType> &descriptors) {
-    RETURN_FALSE_IF(options_.kModelType != ModelType::kXFeat);
-    RETURN_FALSE_IF(!CheckModelInput(image, needed_feature_num, features, descriptors));
-    RETURN_FALSE_IF(!Preparation(image, needed_feature_num, features, descriptors));
-    RETURN_FALSE_IF(!ExecuteModel(image));
-    RETURN_FALSE_IF(!ProcessModelOutputXFeat());
-    RETURN_FALSE_IF(!SelectKeypointCandidatesFromHeatMap());
-    RETURN_FALSE_IF(!SelectGoodFeaturesFromCandidates(needed_feature_num, features));
-    RETURN_FALSE_IF(!ExtractDescriptorsForSelectedFeatures(features, descriptors));
+    if (options_.kModelType != ModelType::kXFeat) {
+        ReportError("[NN Feature Detector] Model is not xfeat.");
+        return false;
+    }
+    if (!CheckModelInput(image, needed_feature_num, features, descriptors)) {
+        ReportError("[NN Feature Detector] Failed to check model input.");
+        return false;
+    }
+    if (!Preparation(image, needed_feature_num, features, descriptors)) {
+        ReportError("[NN Feature Detector] Failed to prepare.");
+        return false;
+    }
+    if (!ExecuteModel(image)) {
+        ReportError("[NN Feature Detector] Failed to execute model.");
+        return false;
+    }
+    if (!ProcessModelOutputXFeat()) {
+        ReportError("[NN Feature Detector] Failed to process model output.");
+        return false;
+    }
+    if (!SelectKeypointCandidatesFromHeatMap()) {
+        ReportError("[NN Feature Detector] Failed to select keypoint candidates from heat map.");
+        return false;
+    }
+    if (!SelectGoodFeaturesFromCandidates(needed_feature_num, features)) {
+        ReportError("[NN Feature Detector] Failed to select good features from candidates.");
+        return false;
+    }
+    if (!ExtractDescriptorsForSelectedFeatures(features, descriptors)) {
+        ReportError("[NN Feature Detector] Failed to extract descriptors for selected features.");
+        return false;
+    }
     return true;
 }
 

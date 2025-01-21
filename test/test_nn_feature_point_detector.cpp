@@ -37,7 +37,6 @@ int main(int argc, char **argv) {
     std::vector<Vec2> features;
     std::vector<XFeatDescriptorType> descriptors;
     detector.DetectGoodFeaturesWithDescriptor(image, 200, features, descriptors);
-    ReportInfo("nn detected " << features.size());
 
     // Show the image of heat map.
     MatImg heatmap_mat_img = (detector.keypoints_heat_map() * 255.0f).cast<uint8_t>();

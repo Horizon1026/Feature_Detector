@@ -20,10 +20,11 @@ public:
     };
 
     struct Options {
+        int32_t kInvalidBoundary = 8;
         int32_t kMinFeatureDistance = 5;
         int32_t kGridFilterRowDivideNumber = 15;
         int32_t kGridFilterColDivideNumber = 15;
-        float kMinResponse = 0.4f;
+        float kMinResponse = 0.5f;
         ModelType kModelType = ModelType::kXFeat;
     };
 
@@ -120,6 +121,12 @@ bool NNFeaturePointDetector::Preparation(const GrayImage &image,
     keypoints_heat_map_.resize(image.rows(), image.cols());
     mask_.resize(image.rows(), image.cols());
     mask_.setConstant(1);
+    if (options_.kInvalidBoundary) {
+        mask_.topRows(options_.kInvalidBoundary).setZero();
+        mask_.bottomRows(options_.kInvalidBoundary).setZero();
+        mask_.leftCols(options_.kInvalidBoundary).setZero();
+        mask_.rightCols(options_.kInvalidBoundary).setZero();
+    }
     if (!features.empty()) {
         UpdateMaskByFeatures(image, features);
     }

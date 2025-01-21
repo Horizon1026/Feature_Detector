@@ -43,10 +43,12 @@ void NNFeaturePointDetector::UpdateMaskByFeatures(const GrayImage &image, const 
 
 bool NNFeaturePointDetector::SelectKeypointCandidatesFromHeatMap() {
     RETURN_FALSE_IF(keypoints_heat_map_.size() == 0);
+    RETURN_FALSE_IF(mask_.rows() != keypoints_heat_map_.rows() || mask_.cols() != keypoints_heat_map_.cols());
     candidates_.clear();
 
     for (int32_t row = 0; row < keypoints_heat_map_.rows(); ++row) {
         for (int32_t col = 0; col < keypoints_heat_map_.cols(); ++col) {
+            CONTINUE_IF(!mask_(row, col));
             const float response = keypoints_heat_map_(row, col);
             if (response > options_.kMinResponse) {
                 candidates_.emplace(response, Pixel(col, row));
