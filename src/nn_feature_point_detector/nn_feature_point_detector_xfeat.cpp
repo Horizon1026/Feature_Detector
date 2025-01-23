@@ -133,6 +133,7 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptor<XFeatDescriptorTyp
         ReportError("[NN Feature Detector] Failed to select good features from candidates.");
         return false;
     }
+    RETURN_TRUE_IF(!options_.kComputeDescriptors);
     if (!ExtractDescriptorsForSelectedFeatures(features, descriptors)) {
         ReportError("[NN Feature Detector] Failed to extract descriptors for selected features.");
         return false;

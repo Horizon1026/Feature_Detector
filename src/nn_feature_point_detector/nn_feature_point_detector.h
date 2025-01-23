@@ -26,6 +26,7 @@ public:
         int32_t kGridFilterColDivideNumber = 15;
         float kMinResponse = 0.5f;
         ModelType kModelType = ModelType::kXFeat;
+        bool kComputeDescriptors = true;
     };
 
 public:
