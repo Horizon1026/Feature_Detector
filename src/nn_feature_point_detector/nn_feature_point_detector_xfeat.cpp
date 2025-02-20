@@ -69,6 +69,12 @@ bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures<XFeatDescript
         descriptors.reserve(features.size());
     }
 
+    // Prelocate address of each layer.
+    std::vector<float *> descriptors_ptr(descriptor_size, nullptr);
+    for (int32_t j = 0; j < descriptor_size; ++j) {
+        descriptors_ptr[j] = model_output_.descriptors[0][j].data_ptr<float>();
+    }
+
     // If descriptors is not empty, do not change the existing part.
     XFeatDescriptorType temp_descriptor;
     for (uint32_t i = descriptors.size(); i < features.size(); ++i) {
@@ -87,10 +93,10 @@ bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures<XFeatDescript
 
         // Bilinear interpolation.
         for (int32_t j = 0; j < descriptor_size; ++j) {
-            const float v00 = model_output_.descriptors[0][j][y0][x0].item<float>();
-            const float v01 = model_output_.descriptors[0][j][y1][x0].item<float>();
-            const float v10 = model_output_.descriptors[0][j][y0][x1].item<float>();
-            const float v11 = model_output_.descriptors[0][j][y1][x1].item<float>();
+            const float v00 = descriptors_ptr[j][y0 * tensor_cols + x0];
+            const float v01 = descriptors_ptr[j][y1 * tensor_cols + x0];
+            const float v10 = descriptors_ptr[j][y0 * tensor_cols + x1];
+            const float v11 = descriptors_ptr[j][y1 * tensor_cols + x1];
             temp_descriptor[j] = (1 - dx) * (1 - dy) * v00 + dx * (1 - dy) * v10 + (1 - dx) * dy * v01 + dx * dy * v11;
         }
         descriptors.emplace_back(temp_descriptor);
