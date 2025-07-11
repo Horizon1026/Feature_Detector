@@ -26,12 +26,12 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
     // Search for line segments.
     RegionParam region;
     rectangles_.clear();
-    for (const auto &sorted_pixel : sorted_pixels_) {
+    for (const auto &sorted_pixel: sorted_pixels_) {
         // Try to grow new region from seed pixel. Clear pixels consist of it if this region is invalid.
         CONTINUE_IF(!sorted_pixel->is_valid || sorted_pixel->is_used);
         GrowRegion(*sorted_pixel, region);
         if (region.pixels.size() < min_region_size) {
-            for (auto &pixel : region.pixels) {
+            for (auto &pixel: region.pixels) {
                 pixel->is_used = false;
             }
             continue;
@@ -50,7 +50,7 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
 
     // Output.
     features.clear();
-    for (const auto &rect : rectangles_) {
+    for (const auto &rect: rectangles_) {
         features.emplace_back(Vec4(rect.start_point.x(), rect.start_point.y(), rect.end_point.x(), rect.end_point.y()));
     }
     return true;
@@ -168,7 +168,7 @@ FeatureLineDetector::RectangleParam FeatureLineDetector::ConvertRegionToRectangl
     RectangleParam rect;
     // Compute centroid of rectangle.
     float sum_weight = 0.0f;
-    for (const auto &pixel : region.pixels) {
+    for (const auto &pixel: region.pixels) {
         rect.center_point.x() += static_cast<float>(pixel->col) * pixel->gradient_norm;
         rect.center_point.y() += static_cast<float>(pixel->row) * pixel->gradient_norm;
         sum_weight += pixel->gradient_norm;
@@ -182,7 +182,7 @@ FeatureLineDetector::RectangleParam FeatureLineDetector::ConvertRegionToRectangl
     float Ixx = 0.0f;
     float Iyy = 0.0f;
     float Ixy = 0.0f;
-    for (const auto &pixel : region.pixels) {
+    for (const auto &pixel: region.pixels) {
         const float dx = pixel->col - rect.center_point.x();
         const float dy = pixel->row - rect.center_point.y();
         Ixx += dy * dy * pixel->gradient_norm;
@@ -207,7 +207,7 @@ FeatureLineDetector::RectangleParam FeatureLineDetector::ConvertRegionToRectangl
     // Compute length and width of rectangle.
     Vec2 length_range = Vec2::Zero();
     Vec2 width_range = Vec2::Zero();
-    for (const auto &pixel : region.pixels) {
+    for (const auto &pixel: region.pixels) {
         const float region_dx = pixel->col - rect.center_point.x();
         const float region_dy = pixel->row - rect.center_point.y();
         const float length = region_dx * rect.dir_vector.x() + region_dy * rect.dir_vector.y();

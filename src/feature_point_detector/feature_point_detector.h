@@ -168,7 +168,7 @@ void FeaturePointDetector<FeatureType>::UpdateMaskByFeatures(const GrayImage &im
                                                              const std::vector<Vec2> &features) {
     mask_.setConstant(image.rows(), image.cols(), 1);
 
-    for (const auto &feature : features) {
+    for (const auto &feature: features) {
         const int32_t row = feature.y();
         const int32_t col = feature.x();
         DrawRectangleInMask(row, col);

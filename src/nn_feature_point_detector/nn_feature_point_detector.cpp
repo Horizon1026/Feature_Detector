@@ -34,7 +34,7 @@ void NNFeaturePointDetector::DrawRectangleInMask(const int32_t row, const int32_
 }
 
 void NNFeaturePointDetector::UpdateMaskByFeatures(const GrayImage &image, const std::vector<Vec2> &features) {
-    for (const auto &feature : features) {
+    for (const auto &feature: features) {
         const int32_t row = feature.y();
         const int32_t col = feature.x();
         DrawRectangleInMask(row, col, options_.kMinFeatureDistance);

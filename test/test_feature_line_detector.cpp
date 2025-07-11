@@ -74,7 +74,7 @@ void ShowDetectedRectangles(const GrayImage &image, const std::string &title, co
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
     RgbImage show_image(buf, image.rows(), image.cols(), true);
     ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
-    for (const auto &rect : detector.rectangles()) {
+    for (const auto &rect: detector.rectangles()) {
         ImagePainter::DrawSolidCircle(show_image, rect.center_point.x(), rect.center_point.y(), 2, RgbColor::kRed);
         ImagePainter::DrawBressenhanLine(show_image, rect.start_point.x(), rect.start_point.y(), rect.end_point.x(), rect.end_point.y(), RgbColor::kBlue);
         const Vec2 dir_vector = rect.dir_vector * 10.0f;
