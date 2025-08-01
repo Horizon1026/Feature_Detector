@@ -25,7 +25,7 @@ bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image,
         }
     }
     const float m = std::sqrt(m01 * m01 + m10 * m10);
-    RETURN_FALSE_IF(m < kZerofloat);
+    RETURN_FALSE_IF(m < kZeroFloat);
 
     const float sin_theta = m01 / m;
     const float cos_theta = m10 / m;
