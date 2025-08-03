@@ -18,9 +18,6 @@ endif()
 if( NOT TARGET lib_feature_descriptor )
     add_subdirectory( ${FEATURE_DETECTOR_PATH}/feature_descriptor ${PROJECT_SOURCE_DIR}/build/lib_feature_descriptor )
 endif()
-if( NOT TARGET lib_nn_feature_point_detector )
-    add_subdirectory( ${FEATURE_DETECTOR_PATH}/nn_feature_point_detector ${PROJECT_SOURCE_DIR}/build/lib_nn_feature_point_detector )
-endif()
 
 # Add slam utility log.
 set( SLAM_UTILITY_PATH ${PROJECT_SOURCE_DIR}/../Slam_Utility )
@@ -77,16 +74,4 @@ target_link_libraries( test_feature_line_detector
     lib_slam_utility_log
     lib_image_painter
     lib_2d_visualizor
-)
-
-# Test nn feature point detector.
-add_executable( test_nn_feature_point_detector
-    test/test_nn_feature_point_detector.cpp
-)
-target_link_libraries( test_nn_feature_point_detector
-    lib_nn_feature_point_detector
-    lib_slam_utility_log
-    lib_image_painter
-    lib_2d_visualizor
-    lib_stack_backward
 )
