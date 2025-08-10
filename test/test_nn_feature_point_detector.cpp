@@ -27,31 +27,15 @@ int main(int argc, char **argv) {
     ReportInfo(YELLOW ">> Test nn feature point detector." RESET_COLOR);
     TickTock timer;
 
+    // Initialize feature detector.
+    NNFeaturePointDetector detector;
+    detector.options().kModelType = NNFeaturePointDetector::ModelType::kSuperpoint;
+    detector.Initialize();
+
     // Load the image.
     GrayImage image;
     Visualizor2D::LoadImage("../examples/image.png", image);
 
-    // Initialize the detector.
-    timer.TockTickInSecond();
-    NNFeaturePointDetector detector("../src/nn_feature_point_detector/models/xfeat_cpu_1_1_h_w.pt");
-    detector.options().kModelType = NNFeaturePointDetector::ModelType::kXFeat;
-    ReportInfo("Load model cost " << timer.TockTickInSecond() << " s.");
-
-    // Detect feature points with descriptors.
-    std::vector<Vec2> features;
-    std::vector<XFeatDescriptorType> descriptors;
-    timer.TockTickInSecond();
-    detector.DetectGoodFeaturesWithDescriptor(image, 200, features, descriptors);
-    ReportInfo("NN feature detect cost " << timer.TockTickInSecond() << " s.");
-
-    // Show the image of heat map.
-    MatImg heatmap_mat_img = (detector.keypoints_heat_map() * 255.0f).cast<uint8_t>();
-    GrayImage heatmap_image(heatmap_mat_img.data(), heatmap_mat_img.rows(), heatmap_mat_img.cols(), false);
-    Visualizor2D::ShowImage("Heat Map", heatmap_image);
-
-    // Show the detected features.
-    ShowImage(image, "nn detected features", features);
-    Visualizor2D::WaitKey(0);
 
     return 0;
 }

@@ -11,8 +11,10 @@ Intergration of some simple sparse feature detect method.
 - [x] Feature line detector
     - [x] Line Segment Detector(LSD).
 - [ ] NN feature point detector
-    - [x] XFeat keypoints.
-    - [ ] XFeat descriptors.
+    - [ ] Superpoint.
+    - [ ] Superpoint with nms.
+    - [ ] Disk.
+    - [ ] Disk with nms.
 
 # Dependence
 - Slam_Utility

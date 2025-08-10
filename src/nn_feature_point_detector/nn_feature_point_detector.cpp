@@ -1,23 +1,67 @@
 #include "nn_feature_point_detector.h"
 #include "slam_operations.h"
 #include "slam_log_reporter.h"
+#include "tick_tock.h"
 
 namespace FEATURE_DETECTOR {
 
-bool NNFeaturePointDetector::ReloadModel(const std::string &model_path) {
-    try {
-        nn_model_ = torch::jit::load(model_path);
-        nn_model_.eval();
-    } catch (const c10::Error &e) {
-        ReportError("[NN Feature Detector] Failed to reload model from: " << model_path);
-        return false;
+Ort::Env NNFeaturePointDetector::onnx_environment_ = Ort::Env(ORT_LOGGING_LEVEL_WARNING, "NNFeaturePointDetector");
+
+bool NNFeaturePointDetector::Initialize() {
+    const std::string model_root_path = "../onnx_models/";
+    std::string model_path;
+    switch (options_.kModelType) {
+        default:
+        case ModelType::kSuperpoint: {
+            model_path = model_root_path + "superpoint.onnx";
+            break;
+        }
+        case ModelType::kSuperpointNms: {
+            model_path = model_root_path + "superpoint_nms.onnx";
+            break;
+        }
+        case ModelType::kDisk: {
+            model_path = model_root_path + "disk.onnx";
+            break;
+        }
+        case ModelType::kDiskNms: {
+            model_path = model_root_path + "disk_nms.onnx";
+            break;
+        }
     }
+
+    // Initialize session options if needed.
+    session_options_.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
+    session_options_.SetExecutionMode(ExecutionMode::ORT_PARALLEL);
+
+    // For onnxruntime of version 1.20, enable GPU.
+    OnnxRuntime::TryToEnableCuda(session_options_);
+
+    // Create session.
+    try {
+        session_ = Ort::Session(NNFeaturePointDetector::onnx_environment_, model_path.c_str(), session_options_);
+        ReportInfo("[NNFeaturePointDetector] Succeed to load onnx model: " << model_path);
+    } catch (const Ort::Exception &e) {
+        ReportError("[NNFeaturePointDetector] Failed to load onnx model: " << model_path);
+    }
+    memory_info_ = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeDefault);
 
     return true;
 }
 
-NNFeaturePointDetector::NNFeaturePointDetector(const std::string &model_path) {
-    ReloadModel(model_path);
+bool NNFeaturePointDetector::CreateMask(const GrayImage &image, std::vector<Vec2> &features) {
+    mask_.resize(image.rows(), image.cols());
+    mask_.setConstant(1);
+    if (options_.kInvalidBoundary) {
+        mask_.topRows(options_.kInvalidBoundary).setZero();
+        mask_.bottomRows(options_.kInvalidBoundary).setZero();
+        mask_.leftCols(options_.kInvalidBoundary).setZero();
+        mask_.rightCols(options_.kInvalidBoundary).setZero();
+    }
+    if (!features.empty()) {
+        UpdateMaskByFeatures(image, features);
+    }
+    return true;
 }
 
 void NNFeaturePointDetector::DrawRectangleInMask(const int32_t row, const int32_t col, const int32_t radius) {
@@ -41,38 +85,11 @@ void NNFeaturePointDetector::UpdateMaskByFeatures(const GrayImage &image, const 
     }
 }
 
-bool NNFeaturePointDetector::SelectKeypointCandidatesFromHeatMap() {
-    RETURN_FALSE_IF(keypoints_heat_map_.size() == 0);
-    RETURN_FALSE_IF(mask_.rows() != keypoints_heat_map_.rows() || mask_.cols() != keypoints_heat_map_.cols());
-    candidates_.clear();
-
-    for (int32_t row = 0; row < keypoints_heat_map_.rows(); ++row) {
-        for (int32_t col = 0; col < keypoints_heat_map_.cols(); ++col) {
-            CONTINUE_IF(!mask_(row, col));
-            const float response = keypoints_heat_map_(row, col);
-            if (response > options_.kMinResponse) {
-                candidates_.emplace(response, Pixel(col, row));
-            }
-        }
-    }
+bool NNFeaturePointDetector::InferenceSession(const GrayImage &image) {
+    OnnxRuntime::ConvertImageToTensor(image, memory_info_, input_tensor_);
+    run_options_.SetRunLogVerbosityLevel(ORT_LOGGING_LEVEL_WARNING);
 
     return true;
 }
-
-bool NNFeaturePointDetector::SelectGoodFeaturesFromCandidates(const uint32_t needed_feature_num, std::vector<Vec2> &features) {
-    for (auto it = candidates_.crbegin(); it != candidates_.crend(); ++it) {
-        const Pixel pixel = it->second;
-        const int32_t row = pixel.y();
-        const int32_t col = pixel.x();
-        if (mask_(row, col)) {
-            features.emplace_back(Vec2(pixel.x(), pixel.y()));
-            RETURN_TRUE_IF(features.size() >= needed_feature_num);
-            DrawRectangleInMask(row, col, options_.kMinFeatureDistance);
-        }
-    }
-
-    return true;
-}
-
 
 } // End of namespace FEATURE_DETECTOR.

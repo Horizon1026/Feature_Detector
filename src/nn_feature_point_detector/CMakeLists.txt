@@ -25,10 +25,9 @@ endif()
 if( NOT TARGET lib_image )
     add_subdirectory( ${SLAM_UTILITY_PATH}/src/data_type/image ${PROJECT_SOURCE_DIR}/build/lib_image )
 endif()
-
 # Add all relative 3rd libraries.
-if( NOT TARGET lib_pytorch_for_cxx )
-    add_subdirectory( ${SLAM_UTILITY_PATH}/3rd_libraries/libtorch ${PROJECT_SOURCE_DIR}/build/lib_pytorch_for_cxx )
+if( NOT TARGET lib_onnx_run_time_for_cxx )
+    add_subdirectory( ${SLAM_UTILITY_PATH}/3rd_libraries/onnx ${PROJECT_SOURCE_DIR}/build/lib_onnx_run_time_for_cxx )
 endif()
 
 add_library( lib_nn_feature_point_detector ${AUX_SRC_NN_FEATURE_POINT_DETECTOR})
@@ -42,5 +41,5 @@ target_link_libraries( lib_nn_feature_point_detector
     lib_slam_utility_tick_tock
 
     lib_image
-    lib_pytorch_for_cxx
+    lib_onnx_run_time_for_cxx
 )
