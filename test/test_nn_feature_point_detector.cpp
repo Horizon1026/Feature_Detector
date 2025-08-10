@@ -25,17 +25,28 @@ void ShowImage(const GrayImage &image, const std::string &title, const std::vect
 
 int main(int argc, char **argv) {
     ReportInfo(YELLOW ">> Test nn feature point detector." RESET_COLOR);
-    TickTock timer;
-
-    // Initialize feature detector.
-    NNFeaturePointDetector detector;
-    detector.options().kModelType = NNFeaturePointDetector::ModelType::kSuperpoint;
-    detector.Initialize();
 
     // Load the image.
     GrayImage image;
     Visualizor2D::LoadImage("../examples/image.png", image);
 
+    // Initialize feature detector.
+    NNFeaturePointDetector detector;
+    detector.options().kMinResponse = 0.1f;
+    detector.options().kMinFeatureDistance = 20;
+    detector.options().kModelType = NNFeaturePointDetector::ModelType::kSuperpoint;
+    detector.Initialize();
 
+    // Detect feature points.
+    TickTock timer;
+    std::vector<Vec2> all_pixel_uv;
+    std::vector<SuperpointDescriptorType> descriptors;
+    detector.DetectGoodFeaturesWithDescriptor(image, all_pixel_uv, descriptors);
+    ReportDebug("Superpoint detect time cost " << timer.TockTickInMillisecond() << " ms.");
+
+    ShowImage(image, "Superpoint detected features", all_pixel_uv);
+    ReportInfo("Superpoint detected " << all_pixel_uv.size());
+
+    Visualizor2D::WaitKey(0);
     return 0;
 }

@@ -4,6 +4,7 @@
 #include "basic_type.h"
 #include "datatype_image.h"
 #include "onnx_run_time.h"
+#include "unordered_map"
 
 namespace FEATURE_DETECTOR {
 
@@ -26,7 +27,7 @@ public:
         int32_t kGridFilterRowDivideNumber = 15;
         int32_t kGridFilterColDivideNumber = 15;
         int32_t kMaxNumberOfDetectedFeatures = 240;
-        float kMinResponse = 0.5f;
+        float kMinResponse = 0.1f;
         ModelType kModelType = ModelType::kSuperpoint;
         bool kComputeDescriptors = false;
     };
@@ -36,8 +37,6 @@ public:
     virtual ~NNFeaturePointDetector() = default;
 
     bool Initialize();
-    bool DetectGoodFeatures(const GrayImage &image,
-                            std::vector<Vec2> &all_pixel_uv);
     template <typename NNFeatureDescriptorType>
     bool DetectGoodFeaturesWithDescriptor(const GrayImage &image,
                                           std::vector<Vec2> &all_pixel_uv,
@@ -53,7 +52,15 @@ private:
     bool CreateMask(const GrayImage &image, std::vector<Vec2> &features);
     void DrawRectangleInMask(const int32_t row, const int32_t col, const int32_t radius);
     void UpdateMaskByFeatures(const GrayImage &image, const std::vector<Vec2> &features);
-    bool SelectKeypointCandidatesFromHeatMap();
+
+    bool DetectGoodFeaturesWithDescriptorBySuperpoint(const GrayImage &image,
+                                                      std::vector<Vec2> &all_pixel_uv,
+                                                      std::vector<SuperpointDescriptorType> &descriptors);
+    bool DetectGoodFeaturesWithDescriptorBySuperpointNms(const GrayImage &image,
+                                                         std::vector<Vec2> &all_pixel_uv,
+                                                         std::vector<SuperpointDescriptorType> &descriptors);
+
+    bool SelectKeypointCandidatesFromHeatMap(const MatImgF &heatmap);
     bool SelectGoodFeaturesFromCandidates(std::vector<Vec2> &features);
     template <typename NNFeatureDescriptorType>
     bool ExtractDescriptorsForSelectedFeatures(const std::vector<Vec2> &features, std::vector<NNFeatureDescriptorType> &descriptors);
@@ -66,12 +73,14 @@ private:
     Ort::Session session_{nullptr};
     Ort::MemoryInfo memory_info_{nullptr};
     Ort::RunOptions run_options_;
+    std::vector<std::string> input_names_;
+    std::vector<std::string> output_names_;
     OnnxRuntime::ImageTensor input_tensor_;
     std::vector<Ort::Value> output_tensors_;
+
+    std::unordered_map<float, Pixel> candidates_;
     MatImg mask_;
 };
-
-/* Class NNFeaturePointDetector Implementation. */
 
 } // namespace FEATURE_DETECTOR
 

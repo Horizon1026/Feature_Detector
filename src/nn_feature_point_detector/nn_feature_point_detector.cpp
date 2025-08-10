@@ -44,7 +44,13 @@ bool NNFeaturePointDetector::Initialize() {
     } catch (const Ort::Exception &e) {
         ReportError("[NNFeaturePointDetector] Failed to load onnx model: " << model_path);
     }
+    OnnxRuntime::GetSessionIO(session_, input_names_, output_names_);
     memory_info_ = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeDefault);
+
+    // Infer session once.
+    MatImg random_image_matrix = MatImg::Ones(480, 640);
+    const GrayImage random_image(random_image_matrix.data(), random_image_matrix.rows(), random_image_matrix.cols(), false);
+    InferenceSession(random_image);
 
     return true;
 }
@@ -70,11 +76,7 @@ void NNFeaturePointDetector::DrawRectangleInMask(const int32_t row, const int32_
     const int32_t col_start = std::max(0, col - radius);
     const int32_t col_end = std::min(static_cast<int32_t>(mask_.cols() - 1), col + radius);
 
-    for (int32_t r = row_start; r <= row_end; ++r) {
-        for (int32_t c = col_start; c <= col_end; ++c) {
-            mask_(r, c) = 0;
-        }
-    }
+    mask_.block(row_start, col_start, row_end - row_start + 1, col_end - col_start + 1).setZero();
 }
 
 void NNFeaturePointDetector::UpdateMaskByFeatures(const GrayImage &image, const std::vector<Vec2> &features) {
@@ -86,9 +88,51 @@ void NNFeaturePointDetector::UpdateMaskByFeatures(const GrayImage &image, const 
 }
 
 bool NNFeaturePointDetector::InferenceSession(const GrayImage &image) {
+    RETURN_FALSE_IF(!session_);
     OnnxRuntime::ConvertImageToTensor(image, memory_info_, input_tensor_);
     run_options_.SetRunLogVerbosityLevel(ORT_LOGGING_LEVEL_WARNING);
 
+    std::vector<const char *> input_names_ptr_;
+    std::vector<const char *> output_names_ptr_;
+    input_names_ptr_.reserve(input_names_.size());
+    output_names_ptr_.reserve(output_names_.size());
+    for (const auto &name: input_names_) {
+        input_names_ptr_.emplace_back(name.c_str());
+    }
+    for (const auto &name: output_names_) {
+        output_names_ptr_.emplace_back(name.c_str());
+    }
+    output_tensors_ = session_.Run(run_options_,
+        input_names_ptr_.data(), &input_tensor_.value, input_names_ptr_.size(),
+        output_names_ptr_.data(), output_names_ptr_.size());
+
+    return true;
+}
+
+bool NNFeaturePointDetector::SelectKeypointCandidatesFromHeatMap(const MatImgF &heatmap) {
+    candidates_.clear();
+    for (int32_t row = 0; row < heatmap.rows(); ++row) {
+        for (int32_t col = 0; col < heatmap.cols(); ++col) {
+            const float response = heatmap(row, col);
+            if (response > options_.kMinResponse) {
+                candidates_.insert(std::make_pair(response, Pixel(col, row)));
+            }
+        }
+    }
+    return true;
+}
+
+bool NNFeaturePointDetector::SelectGoodFeaturesFromCandidates(std::vector<Vec2> &features) {
+    features.clear();
+    features.reserve(options_.kMaxNumberOfDetectedFeatures);
+    for (const auto &[response, pixel]: candidates_) {
+        const int32_t row = pixel.y();
+        const int32_t col = pixel.x();
+        CONTINUE_IF(!mask_(row, col));
+        features.emplace_back(Vec2(pixel.x(), pixel.y()));
+        BREAK_IF(features.size() >= static_cast<uint32_t>(options_.kMaxNumberOfDetectedFeatures));
+        DrawRectangleInMask(row, col, options_.kMinFeatureDistance);
+    }
     return true;
 }
 
