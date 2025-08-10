@@ -48,7 +48,7 @@ bool NNFeaturePointDetector::Initialize() {
     memory_info_ = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeDefault);
 
     // Infer session once.
-    MatImg random_image_matrix = MatImg::Ones(480, 640);
+    MatImg random_image_matrix = MatImg::Ones(480, 752);
     const GrayImage random_image(random_image_matrix.data(), random_image_matrix.rows(), random_image_matrix.cols(), false);
     InferenceSession(random_image);
 
@@ -125,7 +125,8 @@ bool NNFeaturePointDetector::SelectKeypointCandidatesFromHeatMap(const MatImgF &
 bool NNFeaturePointDetector::SelectGoodFeaturesFromCandidates(std::vector<Vec2> &features) {
     features.clear();
     features.reserve(options_.kMaxNumberOfDetectedFeatures);
-    for (const auto &[response, pixel]: candidates_) {
+    for (auto it = candidates_.crbegin(); it != candidates_.crend(); ++it) {
+        const Pixel pixel = it->second;
         const int32_t row = pixel.y();
         const int32_t col = pixel.x();
         CONTINUE_IF(!mask_(row, col));

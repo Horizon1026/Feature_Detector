@@ -4,7 +4,7 @@
 #include "basic_type.h"
 #include "datatype_image.h"
 #include "onnx_run_time.h"
-#include "unordered_map"
+#include "map"
 
 namespace FEATURE_DETECTOR {
 
@@ -78,7 +78,7 @@ private:
     OnnxRuntime::ImageTensor input_tensor_;
     std::vector<Ort::Value> output_tensors_;
 
-    std::unordered_map<float, Pixel> candidates_;
+    std::multimap<float, Pixel> candidates_;
     MatImg mask_;
 };
 

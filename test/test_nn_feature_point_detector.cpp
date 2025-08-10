@@ -34,6 +34,7 @@ int main(int argc, char **argv) {
     NNFeaturePointDetector detector;
     detector.options().kMinResponse = 0.1f;
     detector.options().kMinFeatureDistance = 20;
+    detector.options().kMaxNumberOfDetectedFeatures = 100;
     detector.options().kModelType = NNFeaturePointDetector::ModelType::kSuperpoint;
     detector.Initialize();
 
