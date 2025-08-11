@@ -8,18 +8,18 @@ set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
 set( CMAKE_CXX_STANDARD 20 )
 
 # Add feature point/line detector and feature descriptor.
-set( FEATURE_DETECTOR_PATH ${PROJECT_SOURCE_DIR}/../Feature_Detector/src )
+set( FEATURE_DETECTOR_PATH ${PROJECT_SOURCE_DIR}/../Feature_Detector )
 if( NOT TARGET lib_feature_point_detector )
-    add_subdirectory( ${FEATURE_DETECTOR_PATH}/feature_point_detector ${PROJECT_SOURCE_DIR}/build/lib_feature_point_detector )
+    add_subdirectory( ${FEATURE_DETECTOR_PATH}/src/feature_point_detector ${PROJECT_SOURCE_DIR}/build/lib_feature_point_detector )
 endif()
 if( NOT TARGET lib_feature_line_detector )
-    add_subdirectory( ${FEATURE_DETECTOR_PATH}/feature_line_detector ${PROJECT_SOURCE_DIR}/build/lib_feature_line_detector )
+    add_subdirectory( ${FEATURE_DETECTOR_PATH}/src/feature_line_detector ${PROJECT_SOURCE_DIR}/build/lib_feature_line_detector )
 endif()
 if( NOT TARGET lib_feature_descriptor )
-    add_subdirectory( ${FEATURE_DETECTOR_PATH}/feature_descriptor ${PROJECT_SOURCE_DIR}/build/lib_feature_descriptor )
+    add_subdirectory( ${FEATURE_DETECTOR_PATH}/src/feature_descriptor ${PROJECT_SOURCE_DIR}/build/lib_feature_descriptor )
 endif()
 if( NOT TARGET lib_nn_feature_point_detector )
-    add_subdirectory( ${FEATURE_DETECTOR_PATH}/nn_feature_point_detector ${PROJECT_SOURCE_DIR}/build/lib_nn_feature_point_detector )
+    add_subdirectory( ${FEATURE_DETECTOR_PATH}/src/nn_feature_point_detector ${PROJECT_SOURCE_DIR}/build/lib_nn_feature_point_detector )
 endif()
 
 # Add slam utility log.

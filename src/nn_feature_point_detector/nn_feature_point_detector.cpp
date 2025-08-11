@@ -8,7 +8,7 @@ namespace FEATURE_DETECTOR {
 Ort::Env NNFeaturePointDetector::onnx_environment_ = Ort::Env(ORT_LOGGING_LEVEL_WARNING, "NNFeaturePointDetector");
 
 bool NNFeaturePointDetector::Initialize() {
-    const std::string model_root_path = "../onnx_models/";
+    const std::string model_root_path = "../../Feature_Detector/onnx_models/";
     std::string model_path;
     switch (options_.kModelType) {
         default:

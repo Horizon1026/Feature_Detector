@@ -6,6 +6,41 @@
 namespace FEATURE_DETECTOR {
 
 template <>
+bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures(const std::vector<Vec2> &features,
+                                                                   const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices,
+                                                                   std::vector<SuperpointDescriptorType> &descriptors) {
+    descriptors.resize(features.size());
+    for (uint32_t i = 0; i < descriptors.size(); ++i) {
+        const Vec2 &feature = features[i];
+        const float row = feature.y() / 8.0f;
+        const float col = feature.x() / 8.0f;
+        const int32_t int_row = static_cast<int32_t>(row);
+        const int32_t int_col = static_cast<int32_t>(col);
+        const float sub_row = row - std::floor(row);
+        const float sub_col = col - std::floor(col);
+        const float inv_sub_row = 1.0f - sub_row;
+        const float inv_sub_col = 1.0f - sub_col;
+        const std::array<float, 4> weights = {
+            inv_sub_col * inv_sub_row,
+            sub_col * inv_sub_row,
+            inv_sub_col * sub_row,
+            sub_col * sub_row
+        };
+
+        // using SuperpointDescriptorType = Eigen::Matrix<float, 256, 1>;
+        SuperpointDescriptorType &descriptor = descriptors[i];
+        for (uint32_t j = 0; j < descriptor.rows(); ++j) {
+            const auto &descriptor_map = descriptors_matrices[j];
+            const float *map_ptr = descriptor_map.data() + int_row * descriptor_map.cols() + int_col;
+            descriptor(j) = static_cast<float>(
+                weights[0] * map_ptr[0] + weights[1] * map_ptr[1] +
+                weights[2] * map_ptr[descriptor_map.cols()] + weights[3] * map_ptr[descriptor_map.cols() + 1]);
+        }
+    }
+    return true;
+}
+
+template <>
 bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptor(const GrayImage &image,
                                                               std::vector<Vec2> &all_pixel_uv,
                                                               std::vector<SuperpointDescriptorType> &descriptors) {
@@ -61,12 +96,19 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorBySuperpoint(const 
         return false;
     }
 
+    // Extract descriptors for selected features.
+    if (!ExtractDescriptorsForSelectedFeatures(all_pixel_uv, descriptors_matrices, descriptors)) {
+        ReportError("[NNFeaturePointDetector] Failed to extract descriptors for selected features.");
+        return false;
+    }
+
     return true;
 }
 
 bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorBySuperpointNms(const GrayImage &image,
                                                                              std::vector<Vec2> &all_pixel_uv,
                                                                              std::vector<SuperpointDescriptorType> &descriptors) {
+    // TODO:
 
     return true;
 }

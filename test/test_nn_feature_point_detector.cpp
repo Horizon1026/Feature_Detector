@@ -36,6 +36,8 @@ int main(int argc, char **argv) {
     detector.options().kMinFeatureDistance = 20;
     detector.options().kMaxNumberOfDetectedFeatures = 100;
     detector.options().kModelType = NNFeaturePointDetector::ModelType::kSuperpoint;
+    detector.options().kMaxImageRows = image.rows();
+    detector.options().kMaxImageCols = image.cols();
     detector.Initialize();
 
     // Detect feature points.
@@ -43,11 +45,11 @@ int main(int argc, char **argv) {
     std::vector<Vec2> all_pixel_uv;
     std::vector<SuperpointDescriptorType> descriptors;
     detector.DetectGoodFeaturesWithDescriptor(image, all_pixel_uv, descriptors);
-    ReportDebug("Superpoint detect time cost " << timer.TockTickInMillisecond() << " ms.");
+    ReportInfo("Superpoint detect time cost " << timer.TockTickInMillisecond() << " ms.");
 
+    // Show detect result.
     ShowImage(image, "Superpoint detected features", all_pixel_uv);
     ReportInfo("Superpoint detected " << all_pixel_uv.size());
-
     Visualizor2D::WaitKey(0);
     return 0;
 }
