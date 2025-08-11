@@ -22,10 +22,10 @@ public:
     };
 
     struct Options {
-        int32_t kInvalidBoundary = 8;
-        int32_t kMinFeatureDistance = 5;
-        int32_t kGridFilterRowDivideNumber = 15;
-        int32_t kGridFilterColDivideNumber = 15;
+        int32_t kInvalidBoundary = 3;
+        int32_t kMinFeatureDistance = 15;
+        int32_t kMaxImageRows = 480;
+        int32_t kMaxImageCols = 752;
         int32_t kMaxNumberOfDetectedFeatures = 240;
         float kMinResponse = 0.1f;
         ModelType kModelType = ModelType::kSuperpoint;
