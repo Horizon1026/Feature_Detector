@@ -62,10 +62,18 @@ private:
 
     bool SelectKeypointCandidatesFromHeatMap(const MatImgF &heatmap);
     bool SelectGoodFeaturesFromCandidates(std::vector<Vec2> &features);
+
     template <typename NNFeatureDescriptorType>
     bool ExtractDescriptorsForSelectedFeatures(const std::vector<Vec2> &features,
                                                const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices,
                                                std::vector<NNFeatureDescriptorType> &descriptors);
+    template <typename NNFeatureDescriptorType>
+    bool DirectlySelectGoodFeaturesWithDescriptors(const Ort::Value &candidates_pixel_uv,
+                                    const Eigen::Map<const MatImgF> &candidates_score,
+                                    const Eigen::Map<const MatImgF> &candidates_descriptor,
+                                    const std::vector<int32_t> sorted_indices,
+                                    std::vector<Vec2> &all_pixel_uv,
+                                    std::vector<NNFeatureDescriptorType> &descriptors);
 
 private:
     Options options_;

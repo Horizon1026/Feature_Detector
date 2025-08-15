@@ -30,19 +30,26 @@ int main(int argc, char **argv) {
     GrayImage image;
     Visualizor2D::LoadImage("../examples/image.png", image);
 
+    // Add some exists points. New feature points should not be detected around them.
+    std::vector<Vec2> all_pixel_uv;
+    for (int32_t i = 1; i < 5; ++i) {
+        for (int32_t j = 1; j < 5; ++j) {
+            all_pixel_uv.emplace_back(Vec2(i * 15, j * 15));
+        }
+    }
+
     // Initialize feature detector.
     NNFeaturePointDetector detector;
     detector.options().kMinResponse = 0.1f;
     detector.options().kMinFeatureDistance = 20;
     detector.options().kMaxNumberOfDetectedFeatures = 100;
-    detector.options().kModelType = NNFeaturePointDetector::ModelType::kSuperpoint;
+    detector.options().kModelType = NNFeaturePointDetector::ModelType::kSuperpointNms;
     detector.options().kMaxImageRows = image.rows();
     detector.options().kMaxImageCols = image.cols();
     detector.Initialize();
 
     // Detect feature points.
     TickTock timer;
-    std::vector<Vec2> all_pixel_uv;
     std::vector<SuperpointDescriptorType> descriptors;
     detector.DetectGoodFeaturesWithDescriptor(image, all_pixel_uv, descriptors);
     ReportInfo("Superpoint detect time cost " << timer.TockTickInMillisecond() << " ms.");

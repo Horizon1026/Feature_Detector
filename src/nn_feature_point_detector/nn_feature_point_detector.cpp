@@ -123,8 +123,9 @@ bool NNFeaturePointDetector::SelectKeypointCandidatesFromHeatMap(const MatImgF &
 }
 
 bool NNFeaturePointDetector::SelectGoodFeaturesFromCandidates(std::vector<Vec2> &features) {
-    features.clear();
-    features.reserve(options_.kMaxNumberOfDetectedFeatures);
+    if (features.empty()) {
+        features.reserve(options_.kMaxNumberOfDetectedFeatures);
+    }
     for (auto it = candidates_.crbegin(); it != candidates_.crend(); ++it) {
         const Pixel pixel = it->second;
         const int32_t row = pixel.y();

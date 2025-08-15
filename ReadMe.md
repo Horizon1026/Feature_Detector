@@ -11,7 +11,7 @@ Intergration of some simple sparse feature detect method.
 - [x] Feature line detector
     - [x] Line Segment Detector(LSD).
 - [ ] NN feature point detector
-    - [ ] Superpoint.
+    - [x] Superpoint.
     - [ ] Superpoint with nms.
     - [ ] Disk.
     - [ ] Disk with nms.
