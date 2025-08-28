@@ -9,6 +9,7 @@
 namespace FEATURE_DETECTOR {
 
 using SuperpointDescriptorType = Eigen::Matrix<float, 256, 1>;
+using DiskDescriptorType = Eigen::Matrix<float, 128, 1>;
 
 /* Class NNFeaturePointDetector Declaration. */
 class NNFeaturePointDetector {
@@ -59,6 +60,9 @@ private:
     bool DetectGoodFeaturesWithDescriptorBySuperpointNms(const GrayImage &image,
                                                          std::vector<Vec2> &all_pixel_uv,
                                                          std::vector<SuperpointDescriptorType> &descriptors);
+    bool DetectGoodFeaturesWithDescriptorByDiskNms(const GrayImage &image,
+                                                   std::vector<Vec2> &all_pixel_uv,
+                                                   std::vector<DiskDescriptorType> &descriptors);
 
     bool SelectKeypointCandidatesFromHeatMap(const MatImgF &heatmap);
     bool SelectGoodFeaturesFromCandidates(std::vector<Vec2> &features);
