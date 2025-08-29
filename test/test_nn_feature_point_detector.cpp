@@ -17,19 +17,14 @@ void ShowImage(const GrayImage &image, const std::string &title, const std::vect
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
     RgbImage show_image(buf, image.rows(), image.cols(), true);
     ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
-    for (unsigned long i = 0; i < features.size(); ++i) {
+    for (uint32_t i = 0; i < features.size(); ++i) {
         ImagePainter::DrawSolidCircle(show_image, static_cast<int32_t>(features[i].x()), static_cast<int32_t>(features[i].y()), 4, RgbColor::kCyan);
     }
     Visualizor2D::ShowImage(title, show_image);
 }
 
-int main(int argc, char **argv) {
-    ReportInfo(YELLOW ">> Test nn feature point detector." RESET_COLOR);
-
-    // Load the image.
-    GrayImage image;
-    Visualizor2D::LoadImage("../examples/image.png", image);
-
+void TestNNFeaturePointDetector(const GrayImage &image, const std::string &model_name, NNFeaturePointDetector::ModelType model_type) {
+    ReportColorWarn(">> Test nn feature point detector with model type: " << model_name << ".");
     // Add some exists points. New feature points should not be detected around them.
     std::vector<Vec2> all_pixel_uv;
     for (int32_t i = 1; i < 5; ++i) {
@@ -43,20 +38,47 @@ int main(int argc, char **argv) {
     detector.options().kMinResponse = 0.1f;
     detector.options().kMinFeatureDistance = 20;
     detector.options().kMaxNumberOfDetectedFeatures = 100;
-    detector.options().kModelType = NNFeaturePointDetector::ModelType::kSuperpointNms;
+    detector.options().kModelType = model_type;
     detector.options().kMaxImageRows = image.rows();
     detector.options().kMaxImageCols = image.cols();
     detector.Initialize();
 
     // Detect feature points.
     TickTock timer;
-    std::vector<SuperpointDescriptorType> descriptors;
-    detector.DetectGoodFeaturesWithDescriptor(image, all_pixel_uv, descriptors);
-    ReportInfo("Superpoint detect time cost " << timer.TockTickInMillisecond() << " ms.");
+    switch (model_type) {
+        case NNFeaturePointDetector::ModelType::kSuperpoint:
+        case NNFeaturePointDetector::ModelType::kSuperpointNms: {
+            std::vector<SuperpointDescriptorType> descriptors;
+            detector.DetectGoodFeaturesWithDescriptor(image, all_pixel_uv, descriptors);
+            break;
+        }
+        case NNFeaturePointDetector::ModelType::kDisk:
+        case NNFeaturePointDetector::ModelType::kDiskNms: {
+            std::vector<DiskDescriptorType> descriptors;
+            detector.DetectGoodFeaturesWithDescriptor(image, all_pixel_uv, descriptors);
+            break;
+        }
+        default:
+            break;
+    }
 
     // Show detect result.
-    ShowImage(image, "Superpoint detected features", all_pixel_uv);
-    ReportInfo("Superpoint detected " << all_pixel_uv.size());
+    ReportInfo("Model: " << model_name << " detect time cost " << timer.TockTickInMillisecond() << " ms.");
+    ShowImage(image, "Model: " + model_name + " detected features", all_pixel_uv);
+    ReportInfo("Model: " << model_name << " detected " << all_pixel_uv.size());
+}
+
+int main(int argc, char **argv) {
+    ReportInfo(YELLOW ">> Test nn feature point detector." RESET_COLOR);
+
+    // Load image and test each model.
+    GrayImage image;
+    Visualizor2D::LoadImage("../examples/image2.png", image);
+    TestNNFeaturePointDetector(image, "superpoint.onnx", NNFeaturePointDetector::ModelType::kSuperpoint);
+    TestNNFeaturePointDetector(image, "superpoint_nms.onnx", NNFeaturePointDetector::ModelType::kSuperpointNms);
+    TestNNFeaturePointDetector(image, "disk.onnx", NNFeaturePointDetector::ModelType::kDisk);
+    TestNNFeaturePointDetector(image, "disk_nms.onnx", NNFeaturePointDetector::ModelType::kDiskNms);
+
     Visualizor2D::WaitKey(0);
     return 0;
 }

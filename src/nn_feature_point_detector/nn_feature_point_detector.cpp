@@ -40,6 +40,7 @@ bool NNFeaturePointDetector::Initialize() {
     // Create session.
     try {
         session_ = Ort::Session(NNFeaturePointDetector::onnx_environment_, model_path.c_str(), session_options_);
+        OnnxRuntime::ReportInformationOfSession(session_);
         ReportInfo("[NNFeaturePointDetector] Succeed to load onnx model: " << model_path);
     } catch (const Ort::Exception &e) {
         ReportError("[NNFeaturePointDetector] Failed to load onnx model: " << model_path);
@@ -89,9 +90,24 @@ void NNFeaturePointDetector::UpdateMaskByFeatures(const GrayImage &image, const 
 
 bool NNFeaturePointDetector::InferenceSession(const GrayImage &image) {
     RETURN_FALSE_IF(!session_);
-    OnnxRuntime::ConvertImageToTensor(image, memory_info_, input_tensor_);
+
+    // Prepare input tensor.
+    switch (options_.kModelType) {
+        case ModelType::kDisk:
+        case ModelType::kDiskNms:
+            OnnxRuntime::ConvertGrayImageToRgbTensor(image, memory_info_, input_tensor_);
+            break;
+        default:
+        case ModelType::kSuperpoint:
+        case ModelType::kSuperpointNms:
+            OnnxRuntime::ConvertImageToTensor(image, memory_info_, input_tensor_);
+            break;
+    }
+
+    // Prepare run options.
     run_options_.SetRunLogVerbosityLevel(ORT_LOGGING_LEVEL_WARNING);
 
+    // Prepare input and output names.
     std::vector<const char *> input_names_ptr_;
     std::vector<const char *> output_names_ptr_;
     input_names_ptr_.reserve(input_names_.size());
@@ -102,10 +118,11 @@ bool NNFeaturePointDetector::InferenceSession(const GrayImage &image) {
     for (const auto &name: output_names_) {
         output_names_ptr_.emplace_back(name.c_str());
     }
+
+    // Infer session.
     output_tensors_ = session_.Run(run_options_,
         input_names_ptr_.data(), &input_tensor_.value, input_names_ptr_.size(),
         output_names_ptr_.data(), output_names_ptr_.size());
-
     return true;
 }
 
@@ -135,6 +152,82 @@ bool NNFeaturePointDetector::SelectGoodFeaturesFromCandidates(std::vector<Vec2> 
         BREAK_IF(features.size() >= static_cast<uint32_t>(options_.kMaxNumberOfDetectedFeatures));
         DrawRectangleInMask(row, col, options_.kMinFeatureDistance);
     }
+    return true;
+}
+
+
+template bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures<SuperpointDescriptorType>(const std::vector<Vec2> &features,
+    const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices, std::vector<SuperpointDescriptorType> &descriptors);
+template bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures<DiskDescriptorType>(const std::vector<Vec2> &features,
+    const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices, std::vector<DiskDescriptorType> &descriptors);
+template <typename NNFeatureDescriptorType>
+bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures(const std::vector<Vec2> &features,
+                                                                   const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices,
+                                                                   std::vector<NNFeatureDescriptorType> &descriptors) {
+    descriptors.resize(features.size());
+    for (uint32_t i = 0; i < descriptors.size(); ++i) {
+        const Vec2 &feature = features[i];
+        const float row = feature.y() / 8.0f;
+        const float col = feature.x() / 8.0f;
+        const int32_t int_row = static_cast<int32_t>(row);
+        const int32_t int_col = static_cast<int32_t>(col);
+        const float sub_row = row - std::floor(row);
+        const float sub_col = col - std::floor(col);
+        const float inv_sub_row = 1.0f - sub_row;
+        const float inv_sub_col = 1.0f - sub_col;
+        const std::array<float, 4> weights = {
+            inv_sub_col * inv_sub_row,
+            sub_col * inv_sub_row,
+            inv_sub_col * sub_row,
+            sub_col * sub_row
+        };
+
+        // using SuperpointDescriptorType = Eigen::Matrix<float, 256, 1>;
+        NNFeatureDescriptorType &descriptor = descriptors[i];
+        for (uint32_t j = 0; j < descriptor.rows(); ++j) {
+            const auto &descriptor_map = descriptors_matrices[j];
+            const float *map_ptr = descriptor_map.data() + int_row * descriptor_map.cols() + int_col;
+            descriptor(j) = static_cast<float>(
+                weights[0] * map_ptr[0] + weights[1] * map_ptr[1] +
+                weights[2] * map_ptr[descriptor_map.cols()] + weights[3] * map_ptr[descriptor_map.cols() + 1]);
+        }
+    }
+    return true;
+}
+
+template bool NNFeaturePointDetector::DirectlySelectGoodFeaturesWithDescriptors<SuperpointDescriptorType>(const Eigen::Map<const TMatImg<int64_t>> &candidates_pixel_uv,
+    const Eigen::Map<const MatImgF> &candidates_score, const Eigen::Map<const MatImgF> &candidates_descriptor, const std::vector<int32_t> sorted_indices,
+    std::vector<Vec2> &all_pixel_uv, std::vector<SuperpointDescriptorType> &descriptors);
+template bool NNFeaturePointDetector::DirectlySelectGoodFeaturesWithDescriptors<DiskDescriptorType>(const Eigen::Map<const TMatImg<int64_t>> &candidates_pixel_uv,
+    const Eigen::Map<const MatImgF> &candidates_score, const Eigen::Map<const MatImgF> &candidates_descriptor, const std::vector<int32_t> sorted_indices,
+    std::vector<Vec2> &all_pixel_uv, std::vector<DiskDescriptorType> &descriptors);
+template <typename NNFeatureDescriptorType>
+bool NNFeaturePointDetector::DirectlySelectGoodFeaturesWithDescriptors(const Eigen::Map<const TMatImg<int64_t>> &candidates_pixel_uv,
+                                                                       const Eigen::Map<const MatImgF> &candidates_score,
+                                                                       const Eigen::Map<const MatImgF> &candidates_descriptor,
+                                                                       const std::vector<int32_t> sorted_indices,
+                                                                       std::vector<Vec2> &all_pixel_uv,
+                                                                       std::vector<NNFeatureDescriptorType> &descriptors) {
+    // Extract features with high score.
+    all_pixel_uv.reserve(options_.kMaxNumberOfDetectedFeatures);
+    std::vector<int32_t> all_pixel_indices;
+    all_pixel_indices.reserve(options_.kMaxNumberOfDetectedFeatures);
+    for (auto it = sorted_indices.rbegin(); it != sorted_indices.rend(); ++it) {
+        const int32_t index = *it;
+        const TVec2<int32_t> pixel_uv = candidates_pixel_uv.row(index).cast<int32_t>().transpose();
+        CONTINUE_IF(!mask_(pixel_uv.y(), pixel_uv.x()));
+        all_pixel_uv.emplace_back(pixel_uv.cast<float>());
+        all_pixel_indices.emplace_back(index);
+        BREAK_IF(all_pixel_uv.size() >= static_cast<uint32_t>(options_.kMaxNumberOfDetectedFeatures));
+        DrawRectangleInMask(pixel_uv.y(), pixel_uv.x(), options_.kMinFeatureDistance);
+    }
+
+    // Extract selected descriptors.
+    descriptors.resize(all_pixel_indices.size());
+    for (uint32_t i = 0; i < descriptors.size(); ++i) {
+        descriptors[i] = candidates_descriptor.row(all_pixel_indices[i]).transpose();
+    }
+
     return true;
 }
 

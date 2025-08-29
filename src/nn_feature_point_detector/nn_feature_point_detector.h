@@ -60,6 +60,9 @@ private:
     bool DetectGoodFeaturesWithDescriptorBySuperpointNms(const GrayImage &image,
                                                          std::vector<Vec2> &all_pixel_uv,
                                                          std::vector<SuperpointDescriptorType> &descriptors);
+    bool DetectGoodFeaturesWithDescriptorByDisk(const GrayImage &image,
+                                                std::vector<Vec2> &all_pixel_uv,
+                                                std::vector<DiskDescriptorType> &descriptors);
     bool DetectGoodFeaturesWithDescriptorByDiskNms(const GrayImage &image,
                                                    std::vector<Vec2> &all_pixel_uv,
                                                    std::vector<DiskDescriptorType> &descriptors);
@@ -72,12 +75,12 @@ private:
                                                const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices,
                                                std::vector<NNFeatureDescriptorType> &descriptors);
     template <typename NNFeatureDescriptorType>
-    bool DirectlySelectGoodFeaturesWithDescriptors(const Ort::Value &candidates_pixel_uv,
-                                    const Eigen::Map<const MatImgF> &candidates_score,
-                                    const Eigen::Map<const MatImgF> &candidates_descriptor,
-                                    const std::vector<int32_t> sorted_indices,
-                                    std::vector<Vec2> &all_pixel_uv,
-                                    std::vector<NNFeatureDescriptorType> &descriptors);
+    bool DirectlySelectGoodFeaturesWithDescriptors(const Eigen::Map<const TMatImg<int64_t>> &candidates_pixel_uv,
+                                                   const Eigen::Map<const MatImgF> &candidates_score,
+                                                   const Eigen::Map<const MatImgF> &candidates_descriptor,
+                                                   const std::vector<int32_t> sorted_indices,
+                                                   std::vector<Vec2> &all_pixel_uv,
+                                                   std::vector<NNFeatureDescriptorType> &descriptors);
 
 private:
     Options options_;
