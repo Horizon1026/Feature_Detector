@@ -92,7 +92,7 @@ private:
     Ort::RunOptions run_options_;
     std::vector<std::string> input_names_;
     std::vector<std::string> output_names_;
-    OnnxRuntime::ImageTensor input_tensor_;
+    OnnxRuntime::MatrixTensor input_tensor_;
     std::vector<Ort::Value> output_tensors_;
 
     std::multimap<float, Pixel> candidates_;
