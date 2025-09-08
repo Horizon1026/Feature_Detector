@@ -8,9 +8,6 @@
 
 namespace FEATURE_DETECTOR {
 
-using SuperpointDescriptorType = Eigen::Matrix<float, 256, 1>;
-using DiskDescriptorType = Eigen::Matrix<float, 128, 1>;
-
 /* Class NNFeaturePointDetector Declaration. */
 class NNFeaturePointDetector {
 
