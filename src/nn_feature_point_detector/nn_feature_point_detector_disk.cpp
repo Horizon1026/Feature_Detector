@@ -17,7 +17,7 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptor(const GrayImage &i
     }
 
     switch (options_.kModelType) {
-        case ModelType::kDisk:
+        case ModelType::kDiskHeatmap:
             return DetectGoodFeaturesWithDescriptorByDisk(image, all_pixel_uv, descriptors);
         case ModelType::kDiskNms:
             return DetectGoodFeaturesWithDescriptorByDiskNms(image, all_pixel_uv, descriptors);
@@ -32,7 +32,7 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorByDisk(const GrayIm
                                                                     std::vector<Vec2> &all_pixel_uv,
                                                                     std::vector<DiskDescriptorType> &descriptors) {
     if (output_tensors_.size() != 2) {
-        ReportError("[NNFeaturePointDetector] Model kDisk error: output tensors size is not 2.");
+        ReportError("[NNFeaturePointDetector] Model kDiskHeatmap error: output tensors size is not 2.");
         return false;
     }
 

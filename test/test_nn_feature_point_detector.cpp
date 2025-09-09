@@ -46,13 +46,13 @@ void TestNNFeaturePointDetector(const GrayImage &image, const std::string &model
     // Detect feature points.
     TickTock timer;
     switch (model_type) {
-        case NNFeaturePointDetector::ModelType::kSuperpoint:
+        case NNFeaturePointDetector::ModelType::kSuperpointHeatmap:
         case NNFeaturePointDetector::ModelType::kSuperpointNms: {
             std::vector<SuperpointDescriptorType> descriptors;
             detector.DetectGoodFeaturesWithDescriptor(image, all_pixel_uv, descriptors);
             break;
         }
-        case NNFeaturePointDetector::ModelType::kDisk:
+        case NNFeaturePointDetector::ModelType::kDiskHeatmap:
         case NNFeaturePointDetector::ModelType::kDiskNms: {
             std::vector<DiskDescriptorType> descriptors;
             detector.DetectGoodFeaturesWithDescriptor(image, all_pixel_uv, descriptors);
@@ -74,9 +74,9 @@ int main(int argc, char **argv) {
     // Load image and test each model.
     GrayImage image;
     Visualizor2D::LoadImage("../examples/image2.png", image);
-    TestNNFeaturePointDetector(image, "superpoint.onnx", NNFeaturePointDetector::ModelType::kSuperpoint);
+    TestNNFeaturePointDetector(image, "superpoint.onnx", NNFeaturePointDetector::ModelType::kSuperpointHeatmap);
     TestNNFeaturePointDetector(image, "superpoint_nms.onnx", NNFeaturePointDetector::ModelType::kSuperpointNms);
-    TestNNFeaturePointDetector(image, "disk.onnx", NNFeaturePointDetector::ModelType::kDisk);
+    TestNNFeaturePointDetector(image, "disk.onnx", NNFeaturePointDetector::ModelType::kDiskHeatmap);
     TestNNFeaturePointDetector(image, "disk_nms.onnx", NNFeaturePointDetector::ModelType::kDiskNms);
 
     Visualizor2D::WaitKey(0);

@@ -12,7 +12,7 @@ bool NNFeaturePointDetector::Initialize() {
     std::string model_path;
     switch (options_.kModelType) {
         default:
-        case ModelType::kSuperpoint: {
+        case ModelType::kSuperpointHeatmap: {
             model_path = model_root_path + "superpoint.onnx";
             break;
         }
@@ -20,7 +20,7 @@ bool NNFeaturePointDetector::Initialize() {
             model_path = model_root_path + "superpoint_nms.onnx";
             break;
         }
-        case ModelType::kDisk: {
+        case ModelType::kDiskHeatmap: {
             model_path = model_root_path + "disk.onnx";
             break;
         }
@@ -93,12 +93,12 @@ bool NNFeaturePointDetector::InferenceSession(const GrayImage &image) {
 
     // Prepare input tensor.
     switch (options_.kModelType) {
-        case ModelType::kDisk:
+        case ModelType::kDiskHeatmap:
         case ModelType::kDiskNms:
             OnnxRuntime::ConvertGrayImageToRgbTensor(image, memory_info_, input_tensor_);
             break;
         default:
-        case ModelType::kSuperpoint:
+        case ModelType::kSuperpointHeatmap:
         case ModelType::kSuperpointNms:
             OnnxRuntime::ConvertImageToTensor(image, memory_info_, input_tensor_);
             break;

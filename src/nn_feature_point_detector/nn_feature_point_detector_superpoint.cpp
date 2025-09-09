@@ -17,7 +17,7 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptor(const GrayImage &i
     }
 
     switch (options_.kModelType) {
-        case ModelType::kSuperpoint:
+        case ModelType::kSuperpointHeatmap:
             return DetectGoodFeaturesWithDescriptorBySuperpoint(image, all_pixel_uv, descriptors);
         case ModelType::kSuperpointNms:
             return DetectGoodFeaturesWithDescriptorBySuperpointNms(image, all_pixel_uv, descriptors);
@@ -32,7 +32,7 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorBySuperpoint(const 
                                                                           std::vector<Vec2> &all_pixel_uv,
                                                                           std::vector<SuperpointDescriptorType> &descriptors) {
     if (output_tensors_.size() != 2) {
-        ReportError("[NNFeaturePointDetector] Model kSuperpoint error: output tensors size is not 2.");
+        ReportError("[NNFeaturePointDetector] Model kSuperpointHeatmap error: output tensors size is not 2.");
         return false;
     }
 

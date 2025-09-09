@@ -13,9 +13,9 @@ class NNFeaturePointDetector {
 
 public:
     enum class ModelType : uint8_t {
-        kSuperpoint = 0,
+        kSuperpointHeatmap = 0,
         kSuperpointNms = 1,
-        kDisk = 2,
+        kDiskHeatmap = 2,
         kDiskNms = 3,
     };
 
@@ -26,7 +26,7 @@ public:
         int32_t kMaxImageCols = 752;
         int32_t kMaxNumberOfDetectedFeatures = 240;
         float kMinResponse = 0.1f;
-        ModelType kModelType = ModelType::kSuperpoint;
+        ModelType kModelType = ModelType::kSuperpointHeatmap;
         bool kComputeDescriptors = false;
     };
 
