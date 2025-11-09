@@ -1,6 +1,6 @@
 #include "feature_line_detector.h"
-#include "slam_operations.h"
 #include "slam_log_reporter.h"
+#include "slam_operations.h"
 
 namespace FEATURE_DETECTOR {
 
@@ -9,9 +9,7 @@ FeatureLineDetector::FeatureLineDetector() {
     sorted_pixels_.reserve(10000);
 }
 
-bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
-                                             const uint32_t needed_feature_num,
-                                             std::vector<Vec4> &features) {
+bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec4> &features) {
     // Validate parameters.
     RETURN_FALSE_IF(image.data() == nullptr || image.rows() < 2 || image.cols() < 2);
     RETURN_TRUE_IF(needed_feature_num == 0);
@@ -19,7 +17,7 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
     // Compute minimal number of pixels in a region, which can give a meaningful event.
     const float p = options_.kMinToleranceAngleResidualInRad / kPai;
     const float log_NT = 5.0f * (std::log10(double(image.cols())) + std::log10(double(image.rows()))) / 2.0f + std::log10(11.0f);
-    const uint32_t min_region_size = static_cast<uint32_t>(- log_NT / std::log10(p));
+    const uint32_t min_region_size = static_cast<uint32_t>(-log_NT / std::log10(p));
 
     RETURN_FALSE_IF_FALSE(ComputeLineLevelAngleMap(image));
 
@@ -39,8 +37,7 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
 
         // Convert region to rectangle.
         RectangleParam rectangle = ConvertRegionToRectangle(region);
-        CONTINUE_IF(rectangle.length < options_.kMinValidLineLengthInPixel ||
-            rectangle.inlier_ratio < options_.kMaxToleranceInlierRation);
+        CONTINUE_IF(rectangle.length < options_.kMinValidLineLengthInPixel || rectangle.inlier_ratio < options_.kMaxToleranceInlierRation);
 
         // Compensate the offset.
         rectangle.start_point += Vec2::Constant(0.5f);
@@ -56,8 +53,7 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image,
     return true;
 }
 
-bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
-{
+bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image) {
     // The bottom-right boundary of image will be invalid, because gradient is invalid.
     pixels_.resize(image.rows() - 1, image.cols() - 1);
     for (int32_t i = 0; i < pixels_.rows(); ++i) {
@@ -77,23 +73,23 @@ bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image)
             pixels_(row, col).row = row;
             pixels_(row, col).col = col;
             // Compute pixel gradient.
-            const int32_t pixel_ad = static_cast<int32_t>(image.GetPixelValueNoCheck(row + 1, col + 1)) -
-                static_cast<int32_t>(image.GetPixelValueNoCheck(row, col));
-            const int32_t pixel_bc = static_cast<int32_t>(image.GetPixelValueNoCheck(row, col + 1)) -
-                static_cast<int32_t>(image.GetPixelValueNoCheck(row + 1, col));
+            const int32_t pixel_ad =
+                static_cast<int32_t>(image.GetPixelValueNoCheck(row + 1, col + 1)) - static_cast<int32_t>(image.GetPixelValueNoCheck(row, col));
+            const int32_t pixel_bc =
+                static_cast<int32_t>(image.GetPixelValueNoCheck(row, col + 1)) - static_cast<int32_t>(image.GetPixelValueNoCheck(row + 1, col));
             const float gradient_x = static_cast<float>(pixel_ad + pixel_bc) / 2.0f;
             const float gradient_y = static_cast<float>(pixel_ad - pixel_bc) / 2.0f;
             pixels_(row, col).gradient_norm = std::sqrt(gradient_x * gradient_x + gradient_y * gradient_y);
             pixels_(row, col).is_valid = pixels_(row, col).gradient_norm > options_.kMinValidGradientNorm;
             if (pixels_(row, col).is_valid) {
-                pixels_(row, col).line_level_angle = std::atan2(gradient_x, - gradient_y);
+                pixels_(row, col).line_level_angle = std::atan2(gradient_x, -gradient_y);
                 sorted_pixels_.emplace_back(&pixels_(row, col));
             }
         }
     }
 
     // Sort pixels by gradient norm from large to small.
-    std::sort(sorted_pixels_.begin(), sorted_pixels_.end(), [&](PixelParam *pixel1, PixelParam * pixel2) {
+    std::sort(sorted_pixels_.begin(), sorted_pixels_.end(), [&](PixelParam *pixel1, PixelParam *pixel2) {
         return pixel1->gradient_norm > pixel2->gradient_norm;
     });
 
@@ -211,7 +207,7 @@ FeatureLineDetector::RectangleParam FeatureLineDetector::ConvertRegionToRectangl
         const float region_dx = pixel->col - rect.center_point.x();
         const float region_dy = pixel->row - rect.center_point.y();
         const float length = region_dx * rect.dir_vector.x() + region_dy * rect.dir_vector.y();
-        const float width = - region_dx * rect.dir_vector.y() + region_dy * rect.dir_vector.x();
+        const float width = -region_dx * rect.dir_vector.y() + region_dy * rect.dir_vector.x();
         length_range(0) = std::min(length_range(0), length);
         length_range(1) = std::max(length_range(1), length);
         width_range(0) = std::min(width_range(0), width);
@@ -231,4 +227,4 @@ FeatureLineDetector::RectangleParam FeatureLineDetector::ConvertRegionToRectangl
     return rect;
 }
 
-}
+}  // namespace FEATURE_DETECTOR

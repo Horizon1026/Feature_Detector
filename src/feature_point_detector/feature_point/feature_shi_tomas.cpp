@@ -16,13 +16,11 @@ bool ShiTomasFeature::ComputeGradient(const GrayImage &image) {
     return true;
 }
 
-float ShiTomasFeature::ComputeResponse(const GrayImage &image,
-                                       const int32_t row,
-                                       const int32_t col) {
+float ShiTomasFeature::ComputeResponse(const GrayImage &image, const int32_t row, const int32_t col) {
     Mat2 M = Mat2::Zero();
     int32_t cnt = 0;
-    for (int32_t drow = - options().kHalfPatchSize; drow <= options().kHalfPatchSize; ++drow) {
-        for (int32_t dcol = - options().kHalfPatchSize; dcol <= options().kHalfPatchSize; ++dcol) {
+    for (int32_t drow = -options().kHalfPatchSize; drow <= options().kHalfPatchSize; ++drow) {
+        for (int32_t dcol = -options().kHalfPatchSize; dcol <= options().kHalfPatchSize; ++dcol) {
             const int32_t sub_row = row + drow;
             const int32_t sub_col = col + dcol;
             M(0, 0) += Ix_(sub_row, sub_col) * Ix_(sub_row, sub_col);
@@ -30,7 +28,6 @@ float ShiTomasFeature::ComputeResponse(const GrayImage &image,
             M(1, 1) += Iy_(sub_row, sub_col) * Iy_(sub_row, sub_col);
             ++cnt;
         }
-
     }
 
     M(1, 0) = M(0, 1);
@@ -41,9 +38,7 @@ float ShiTomasFeature::ComputeResponse(const GrayImage &image,
     return std::max(eig(0), eig(1));
 }
 
-bool ShiTomasFeature::SelectAllCandidates(const GrayImage &image,
-                                          const MatInt &mask,
-                                          std::map<float, Pixel> &candidates) {
+bool ShiTomasFeature::SelectAllCandidates(const GrayImage &image, const MatInt &mask, std::map<float, Pixel> &candidates) {
     if (ComputeGradient(image) == false) {
         return false;
     }
@@ -62,4 +57,4 @@ bool ShiTomasFeature::SelectAllCandidates(const GrayImage &image,
     return true;
 }
 
-}
+}  // namespace FEATURE_DETECTOR

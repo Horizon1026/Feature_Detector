@@ -1,16 +1,13 @@
 #include "descriptor_brief.h"
 #include "slam_basic_math.h"
-#include "slam_operations.h"
 #include "slam_log_reporter.h"
+#include "slam_operations.h"
 
 namespace FEATURE_DETECTOR {
 
-bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image,
-                                           const Vec2 &pixel_uv,
-                                           BriefType &descriptor) {
+bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, BriefType &descriptor) {
     const float max_bound = static_cast<float>(options().kHalfPatchSize) * 1.5f;
-    if (pixel_uv.x() < max_bound || pixel_uv.x() > image.cols() - max_bound ||
-        pixel_uv.y() < max_bound || pixel_uv.y() > image.rows() - max_bound) {
+    if (pixel_uv.x() < max_bound || pixel_uv.x() > image.cols() - max_bound || pixel_uv.y() < max_bound || pixel_uv.y() > image.rows() - max_bound) {
         return false;
     }
 
@@ -30,8 +27,7 @@ bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image,
     const float sin_theta = m01 / m;
     const float cos_theta = m10 / m;
     Mat2 rot;
-    rot << cos_theta, -sin_theta,
-           sin_theta, cos_theta;
+    rot << cos_theta, -sin_theta, sin_theta, cos_theta;
 
     // Compute descriptor.
     descriptor.resize(options().kLength, 0);
@@ -308,4 +304,4 @@ std::array<int16_t, 256 * 4> BriefDescriptor::pattern_idx_ = {
     -1,  -6,  0,   -11 /*mean (0.127148), correlation (0.547401)*/
 };
 
-}
+}  // namespace FEATURE_DETECTOR

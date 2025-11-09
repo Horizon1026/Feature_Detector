@@ -20,19 +20,18 @@ using BriefType = std::vector<bool>;
 class BriefDescriptor : public Descriptor<BriefOptions, BriefType> {
 
 public:
-    BriefDescriptor() : Descriptor<BriefOptions, BriefType>() {}
+    BriefDescriptor()
+        : Descriptor<BriefOptions, BriefType>() {}
     virtual ~BriefDescriptor() = default;
 
 private:
-    virtual bool ComputeForOneFeature(const GrayImage &image,
-                                      const Vec2 &pixel_uv,
-                                      BriefType &descriptor) override;
+    virtual bool ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, BriefType &descriptor) override;
 
 private:
     // All indice of [drow1, dcol1, drow2, dcol2].
     static std::array<int16_t, 256 * 4> pattern_idx_;
 };
 
-}
+}  // namespace FEATURE_DETECTOR
 
-#endif // end of _FEATURE_DESCRIPTOR_BRIEF_H_
+#endif  // end of _FEATURE_DESCRIPTOR_BRIEF_H_

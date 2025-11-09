@@ -14,9 +14,7 @@ public:
     Descriptor() = default;
     virtual ~Descriptor() = default;
 
-    bool Compute(const GrayImage &image,
-                 const std::vector<Vec2> &pixel_uv,
-                 std::vector<DescriptorType> &descriptor);
+    bool Compute(const GrayImage &image, const std::vector<Vec2> &pixel_uv, std::vector<DescriptorType> &descriptor);
 
     // Reference for member variables.
     OptionsType &options() { return options_; }
@@ -25,20 +23,15 @@ public:
     const OptionsType &options() const { return options_; }
 
 private:
-    virtual bool ComputeForOneFeature(const GrayImage &image,
-                                      const Vec2 &pixel_uv,
-                                      DescriptorType &descriptor) = 0;
+    virtual bool ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, DescriptorType &descriptor) = 0;
 
 private:
     OptionsType options_;
-
 };
 
 /* Class Descriptor Definition. */
 template <typename OptionsType, typename DescriptorType>
-bool Descriptor<OptionsType, DescriptorType>::Compute(const GrayImage &image,
-                                                      const std::vector<Vec2> &pixel_uv,
-                                                      std::vector<DescriptorType> &descriptor) {
+bool Descriptor<OptionsType, DescriptorType>::Compute(const GrayImage &image, const std::vector<Vec2> &pixel_uv, std::vector<DescriptorType> &descriptor) {
     if (pixel_uv.empty() || image.data() == nullptr) {
         return false;
     }
@@ -55,6 +48,6 @@ bool Descriptor<OptionsType, DescriptorType>::Compute(const GrayImage &image,
     return true;
 }
 
-}
+}  // namespace FEATURE_DETECTOR
 
-#endif // end of _FEATURE_DESCRIPTOR_H_
+#endif  // end of _FEATURE_DESCRIPTOR_H_

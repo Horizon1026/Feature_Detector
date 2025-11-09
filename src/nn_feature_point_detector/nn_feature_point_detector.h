@@ -3,8 +3,8 @@
 
 #include "basic_type.h"
 #include "datatype_image.h"
-#include "onnx_run_time.h"
 #include "map"
+#include "onnx_run_time.h"
 
 namespace FEATURE_DETECTOR {
 
@@ -36,9 +36,7 @@ public:
 
     bool Initialize();
     template <typename NNFeatureDescriptorType>
-    bool DetectGoodFeaturesWithDescriptor(const GrayImage &image,
-                                          std::vector<Vec2> &all_pixel_uv,
-                                          std::vector<NNFeatureDescriptorType> &descriptors);
+    bool DetectGoodFeaturesWithDescriptor(const GrayImage &image, std::vector<Vec2> &all_pixel_uv, std::vector<NNFeatureDescriptorType> &descriptors);
 
     // Reference for member variables.
     Options &options() { return options_; }
@@ -51,32 +49,23 @@ private:
     void DrawRectangleInMask(const int32_t row, const int32_t col, const int32_t radius);
     void UpdateMaskByFeatures(const GrayImage &image, const std::vector<Vec2> &features);
 
-    bool DetectGoodFeaturesWithDescriptorBySuperpoint(const GrayImage &image,
-                                                      std::vector<Vec2> &all_pixel_uv,
+    bool DetectGoodFeaturesWithDescriptorBySuperpoint(const GrayImage &image, std::vector<Vec2> &all_pixel_uv,
                                                       std::vector<SuperpointDescriptorType> &descriptors);
-    bool DetectGoodFeaturesWithDescriptorBySuperpointNms(const GrayImage &image,
-                                                         std::vector<Vec2> &all_pixel_uv,
+    bool DetectGoodFeaturesWithDescriptorBySuperpointNms(const GrayImage &image, std::vector<Vec2> &all_pixel_uv,
                                                          std::vector<SuperpointDescriptorType> &descriptors);
-    bool DetectGoodFeaturesWithDescriptorByDisk(const GrayImage &image,
-                                                std::vector<Vec2> &all_pixel_uv,
-                                                std::vector<DiskDescriptorType> &descriptors);
-    bool DetectGoodFeaturesWithDescriptorByDiskNms(const GrayImage &image,
-                                                   std::vector<Vec2> &all_pixel_uv,
-                                                   std::vector<DiskDescriptorType> &descriptors);
+    bool DetectGoodFeaturesWithDescriptorByDisk(const GrayImage &image, std::vector<Vec2> &all_pixel_uv, std::vector<DiskDescriptorType> &descriptors);
+    bool DetectGoodFeaturesWithDescriptorByDiskNms(const GrayImage &image, std::vector<Vec2> &all_pixel_uv, std::vector<DiskDescriptorType> &descriptors);
 
     bool SelectKeypointCandidatesFromHeatMap(const MatImgF &heatmap);
     bool SelectGoodFeaturesFromCandidates(std::vector<Vec2> &features);
 
     template <typename NNFeatureDescriptorType>
-    bool ExtractDescriptorsForSelectedFeatures(const std::vector<Vec2> &features,
-                                               const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices,
+    bool ExtractDescriptorsForSelectedFeatures(const std::vector<Vec2> &features, const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices,
                                                std::vector<NNFeatureDescriptorType> &descriptors);
     template <typename NNFeatureDescriptorType>
     bool DirectlySelectGoodFeaturesWithDescriptors(const Eigen::Map<const TMatImg<int64_t>> &candidates_pixel_uv,
-                                                   const Eigen::Map<const MatImgF> &candidates_score,
-                                                   const Eigen::Map<const MatImgF> &candidates_descriptor,
-                                                   const std::vector<int32_t> sorted_indices,
-                                                   std::vector<Vec2> &all_pixel_uv,
+                                                   const Eigen::Map<const MatImgF> &candidates_score, const Eigen::Map<const MatImgF> &candidates_descriptor,
+                                                   const std::vector<int32_t> sorted_indices, std::vector<Vec2> &all_pixel_uv,
                                                    std::vector<NNFeatureDescriptorType> &descriptors);
 
 private:
@@ -84,8 +73,8 @@ private:
 
     static Ort::Env onnx_environment_;
     Ort::SessionOptions session_options_;
-    Ort::Session session_{nullptr};
-    Ort::MemoryInfo memory_info_{nullptr};
+    Ort::Session session_ {nullptr};
+    Ort::MemoryInfo memory_info_ {nullptr};
     Ort::RunOptions run_options_;
     std::vector<std::string> input_names_;
     std::vector<std::string> output_names_;
@@ -96,6 +85,6 @@ private:
     MatImg mask_;
 };
 
-} // namespace FEATURE_DETECTOR
+}  // namespace FEATURE_DETECTOR
 
-#endif // end of _NN_FEATURE_POINT_DETECTOR_H_
+#endif  // end of _NN_FEATURE_POINT_DETECTOR_H_

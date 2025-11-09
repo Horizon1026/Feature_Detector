@@ -6,8 +6,7 @@
 namespace FEATURE_DETECTOR {
 
 template <>
-bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptor(const GrayImage &image,
-                                                              std::vector<Vec2> &all_pixel_uv,
+bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptor(const GrayImage &image, std::vector<Vec2> &all_pixel_uv,
                                                               std::vector<SuperpointDescriptorType> &descriptors) {
     RETURN_FALSE_IF(!session_);
 
@@ -28,8 +27,7 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptor(const GrayImage &i
     return true;
 }
 
-bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorBySuperpoint(const GrayImage &image,
-                                                                          std::vector<Vec2> &all_pixel_uv,
+bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorBySuperpoint(const GrayImage &image, std::vector<Vec2> &all_pixel_uv,
                                                                           std::vector<SuperpointDescriptorType> &descriptors) {
     if (output_tensors_.size() != 2) {
         ReportError("[NNFeaturePointDetector] Model kSuperpointHeatmap error: output tensors size is not 2.");
@@ -75,8 +73,7 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorBySuperpoint(const 
     return true;
 }
 
-bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorBySuperpointNms(const GrayImage &image,
-                                                                             std::vector<Vec2> &all_pixel_uv,
+bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorBySuperpointNms(const GrayImage &image, std::vector<Vec2> &all_pixel_uv,
                                                                              std::vector<SuperpointDescriptorType> &descriptors) {
     if (output_tensors_.size() != 3) {
         ReportError("[NNFeaturePointDetector] Model kSuperpointNms error: output tensors size is not 3.");
@@ -108,9 +105,10 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorBySuperpointNms(con
 
     std::vector<int32_t> sorted_indices;
     SlamOperation::ArgSort(scores_matrices[0].data(), scores_matrices[0].cols(), sorted_indices);
-    DirectlySelectGoodFeaturesWithDescriptors(candidates_keypoints_matrices[0], scores_matrices[0], descriptors_matrices[0], sorted_indices, all_pixel_uv, descriptors);
+    DirectlySelectGoodFeaturesWithDescriptors(candidates_keypoints_matrices[0], scores_matrices[0], descriptors_matrices[0], sorted_indices, all_pixel_uv,
+                                              descriptors);
 
     return true;
 }
 
-}
+}  // namespace FEATURE_DETECTOR

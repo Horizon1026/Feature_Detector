@@ -3,8 +3,8 @@
 
 #include "basic_type.h"
 #include "datatype_image.h"
-#include "slam_operations.h"
 #include "slam_log_reporter.h"
+#include "slam_operations.h"
 
 namespace FEATURE_DETECTOR {
 
@@ -23,16 +23,10 @@ public:
     virtual ~FeaturePointDetector() = default;
     FeaturePointDetector(const FeaturePointDetector &detecor) = delete;
 
-    bool DetectGoodFeatures(const GrayImage &image,
-                            const uint32_t needed_feature_num,
-                            std::vector<Vec2> &features);
+    bool DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec2> &features);
 
-    void SparsifyFeatures(const std::vector<Vec2> &features,
-                          const int32_t image_rows,
-                          const int32_t image_cols,
-                          const uint8_t status_need_filter,
-                          const uint8_t status_after_filter,
-                          std::vector<uint8_t> &status);
+    void SparsifyFeatures(const std::vector<Vec2> &features, const int32_t image_rows, const int32_t image_cols, const uint8_t status_need_filter,
+                          const uint8_t status_after_filter, std::vector<uint8_t> &status);
 
     // Reference for member variables.
     Options &options() { return options_; }
@@ -45,15 +39,11 @@ public:
 private:
     bool SelectCandidates(const GrayImage &image);
 
-    bool SelectGoodFeatures(const GrayImage &image,
-                            const uint32_t needed_feature_num,
-                            std::vector<Vec2> &features);
+    bool SelectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec2> &features);
 
-    void DrawRectangleInMask(const int32_t row,
-                             const int32_t col);
+    void DrawRectangleInMask(const int32_t row, const int32_t col);
 
-    void UpdateMaskByFeatures(const GrayImage &image,
-                              const std::vector<Vec2> &features);
+    void UpdateMaskByFeatures(const GrayImage &image, const std::vector<Vec2> &features);
 
 private:
     std::map<float, Pixel> candidates_;
@@ -64,9 +54,7 @@ private:
 
 /* Class Feature Point Detector Definition. */
 template <typename FeatureType>
-bool FeaturePointDetector<FeatureType>::DetectGoodFeatures(const GrayImage &image,
-                                                           const uint32_t needed_feature_num,
-                                                           std::vector<Vec2> &features) {
+bool FeaturePointDetector<FeatureType>::DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec2> &features) {
     // Check input image.
     RETURN_FALSE_IF(image.data() == nullptr);
 
@@ -87,12 +75,8 @@ bool FeaturePointDetector<FeatureType>::DetectGoodFeatures(const GrayImage &imag
 }
 
 template <typename FeatureType>
-void FeaturePointDetector<FeatureType>::SparsifyFeatures(const std::vector<Vec2> &features,
-                                                         const int32_t image_rows,
-                                                         const int32_t image_cols,
-                                                         const uint8_t status_need_filter,
-                                                         const uint8_t status_after_filter,
-                                                         std::vector<uint8_t> &status) {
+void FeaturePointDetector<FeatureType>::SparsifyFeatures(const std::vector<Vec2> &features, const int32_t image_rows, const int32_t image_cols,
+                                                         const uint8_t status_need_filter, const uint8_t status_after_filter, std::vector<uint8_t> &status) {
     if (features.size() != status.size()) {
         status.resize(features.size(), 1);
     }
@@ -100,9 +84,7 @@ void FeaturePointDetector<FeatureType>::SparsifyFeatures(const std::vector<Vec2>
     // Grid filter to make points sparsely.
     const float grid_row_step = image_rows / (options_.kGridFilterRowDivideNumber - 1);
     const float grid_col_step = image_cols / (options_.kGridFilterColDivideNumber - 1);
-    mask_.setConstant(options_.kGridFilterRowDivideNumber,
-                      options_.kGridFilterColDivideNumber,
-                      1);
+    mask_.setConstant(options_.kGridFilterRowDivideNumber, options_.kGridFilterColDivideNumber, 1);
     for (uint32_t i = 0; i < features.size(); ++i) {
         const int32_t row = static_cast<int32_t>(features[i].y() / grid_row_step);
         const int32_t col = static_cast<int32_t>(features[i].x() / grid_col_step);
@@ -126,9 +108,7 @@ bool FeaturePointDetector<FeatureType>::SelectCandidates(const GrayImage &image)
 }
 
 template <typename FeatureType>
-bool FeaturePointDetector<FeatureType>::SelectGoodFeatures(const GrayImage &image,
-                                                           const uint32_t needed_feature_num,
-                                                           std::vector<Vec2> &features) {
+bool FeaturePointDetector<FeatureType>::SelectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec2> &features) {
     for (auto it = candidates_.crbegin(); it != candidates_.crend(); ++it) {
         const Pixel pixel = it->second;
         const int32_t row = pixel.y();
@@ -148,10 +128,9 @@ bool FeaturePointDetector<FeatureType>::SelectGoodFeatures(const GrayImage &imag
 }
 
 template <typename FeatureType>
-void FeaturePointDetector<FeatureType>::DrawRectangleInMask(const int32_t row,
-                                                            const int32_t col) {
-    for (int32_t drow = - options_.kMinFeatureDistance; drow <= options_.kMinFeatureDistance; ++drow) {
-        for (int32_t dcol = - options_.kMinFeatureDistance; dcol <= options_.kMinFeatureDistance; ++dcol) {
+void FeaturePointDetector<FeatureType>::DrawRectangleInMask(const int32_t row, const int32_t col) {
+    for (int32_t drow = -options_.kMinFeatureDistance; drow <= options_.kMinFeatureDistance; ++drow) {
+        for (int32_t dcol = -options_.kMinFeatureDistance; dcol <= options_.kMinFeatureDistance; ++dcol) {
             const int32_t sub_row = drow + row;
             const int32_t sub_col = dcol + col;
             if (sub_row < 0 || sub_col < 0 || sub_row > mask_.rows() - 1 || sub_col > mask_.cols() - 1) {
@@ -164,8 +143,7 @@ void FeaturePointDetector<FeatureType>::DrawRectangleInMask(const int32_t row,
 }
 
 template <typename FeatureType>
-void FeaturePointDetector<FeatureType>::UpdateMaskByFeatures(const GrayImage &image,
-                                                             const std::vector<Vec2> &features) {
+void FeaturePointDetector<FeatureType>::UpdateMaskByFeatures(const GrayImage &image, const std::vector<Vec2> &features) {
     mask_.setConstant(image.rows(), image.cols(), 1);
 
     for (const auto &feature: features) {
@@ -175,6 +153,6 @@ void FeaturePointDetector<FeatureType>::UpdateMaskByFeatures(const GrayImage &im
     }
 }
 
-}
+}  // namespace FEATURE_DETECTOR
 
-#endif // end of _FEATURE_POINT_DETECTOR_H_
+#endif  // end of _FEATURE_POINT_DETECTOR_H_

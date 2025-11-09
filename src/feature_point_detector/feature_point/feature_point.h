@@ -6,20 +6,16 @@
 
 namespace FEATURE_DETECTOR {
 
-template<typename OptionsType>
+template <typename OptionsType>
 class Feature {
 
 public:
     Feature() = default;
     virtual ~Feature() = default;
 
-    virtual bool SelectAllCandidates(const GrayImage &image,
-                                     const MatInt &mask,
-                                     std::map<float, Pixel> &candidates) = 0;
+    virtual bool SelectAllCandidates(const GrayImage &image, const MatInt &mask, std::map<float, Pixel> &candidates) = 0;
 
-    virtual float ComputeResponse(const GrayImage &image,
-                                  const int32_t row,
-                                  const int32_t col) = 0;
+    virtual float ComputeResponse(const GrayImage &image, const int32_t row, const int32_t col) = 0;
 
     // Reference for member variables.
     OptionsType &options() { return options_; }
@@ -29,9 +25,8 @@ public:
 
 private:
     OptionsType options_;
-
 };
 
-}
+}  // namespace FEATURE_DETECTOR
 
-#endif // end of _FEATURE_POINT_H_
+#endif  // end of _FEATURE_POINT_H_

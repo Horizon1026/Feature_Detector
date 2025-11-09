@@ -1,5 +1,3 @@
 #include "feature_point_detector.h"
 
-namespace FEATURE_DETECTOR {
-
-}
+namespace FEATURE_DETECTOR {}

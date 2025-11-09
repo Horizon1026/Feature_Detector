@@ -1,12 +1,12 @@
-#include "feature_point_detector.h"
-#include "feature_harris.h"
-#include "feature_shi_tomas.h"
 #include "feature_fast.h"
+#include "feature_harris.h"
+#include "feature_point_detector.h"
+#include "feature_shi_tomas.h"
 
+#include "image_painter.h"
 #include "slam_log_reporter.h"
 #include "slam_memory.h"
 #include "tick_tock.h"
-#include "image_painter.h"
 #include "visualizor_2d.h"
 
 using namespace FEATURE_DETECTOR;

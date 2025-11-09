@@ -1,8 +1,8 @@
 #include "feature_line_detector.h"
+#include "image_painter.h"
 #include "slam_log_reporter.h"
 #include "slam_memory.h"
 #include "tick_tock.h"
-#include "image_painter.h"
 #include "visualizor_2d.h"
 
 using namespace FEATURE_DETECTOR;
@@ -78,7 +78,8 @@ void ShowDetectedRectangles(const GrayImage &image, const std::string &title, co
         ImagePainter::DrawSolidCircle(show_image, rect.center_point.x(), rect.center_point.y(), 2, RgbColor::kRed);
         ImagePainter::DrawBressenhanLine(show_image, rect.start_point.x(), rect.start_point.y(), rect.end_point.x(), rect.end_point.y(), RgbColor::kBlue);
         const Vec2 dir_vector = rect.dir_vector * 10.0f;
-        ImagePainter::DrawBressenhanLine(show_image, rect.center_point.x(), rect.center_point.y(), rect.center_point.x() + dir_vector.x(), rect.center_point.y() + dir_vector.y(), RgbColor::kGreen);
+        ImagePainter::DrawBressenhanLine(show_image, rect.center_point.x(), rect.center_point.y(), rect.center_point.x() + dir_vector.x(),
+                                         rect.center_point.y() + dir_vector.y(), RgbColor::kGreen);
         Visualizor2D::ShowImage(title, show_image);
     }
 }
@@ -89,7 +90,7 @@ void ShowDetectResult(const GrayImage &image, const std::string &title, const st
     ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
     for (unsigned long i = 0; i < features.size(); ++i) {
         ImagePainter::DrawBressenhanLine(show_image, static_cast<int32_t>(features[i][0]), static_cast<int32_t>(features[i][1]),
-            static_cast<int32_t>(features[i][2]), static_cast<int32_t>(features[i][3]), RgbColor::kCyan);
+                                         static_cast<int32_t>(features[i][2]), static_cast<int32_t>(features[i][3]), RgbColor::kCyan);
     }
     Visualizor2D::ShowImage(title, show_image);
 }

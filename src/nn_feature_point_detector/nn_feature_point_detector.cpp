@@ -1,6 +1,6 @@
 #include "nn_feature_point_detector.h"
-#include "slam_operations.h"
 #include "slam_log_reporter.h"
+#include "slam_operations.h"
 #include "tick_tock.h"
 
 namespace FEATURE_DETECTOR {
@@ -120,9 +120,8 @@ bool NNFeaturePointDetector::InferenceSession(const GrayImage &image) {
     }
 
     // Infer session.
-    output_tensors_ = session_.Run(run_options_,
-        input_names_ptr_.data(), &input_tensor_.value, input_names_ptr_.size(),
-        output_names_ptr_.data(), output_names_ptr_.size());
+    output_tensors_ =
+        session_.Run(run_options_, input_names_ptr_.data(), &input_tensor_.value, input_names_ptr_.size(), output_names_ptr_.data(), output_names_ptr_.size());
     return true;
 }
 
@@ -156,10 +155,10 @@ bool NNFeaturePointDetector::SelectGoodFeaturesFromCandidates(std::vector<Vec2> 
 }
 
 
-template bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures<SuperpointDescriptorType>(const std::vector<Vec2> &features,
-    const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices, std::vector<SuperpointDescriptorType> &descriptors);
-template bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures<DiskDescriptorType>(const std::vector<Vec2> &features,
-    const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices, std::vector<DiskDescriptorType> &descriptors);
+template bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures<SuperpointDescriptorType>(
+    const std::vector<Vec2> &features, const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices, std::vector<SuperpointDescriptorType> &descriptors);
+template bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures<DiskDescriptorType>(
+    const std::vector<Vec2> &features, const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices, std::vector<DiskDescriptorType> &descriptors);
 template <typename NNFeatureDescriptorType>
 bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures(const std::vector<Vec2> &features,
                                                                    const std::vector<Eigen::Map<const MatImgF>> &descriptors_matrices,
@@ -175,38 +174,33 @@ bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures(const std::ve
         const float sub_col = col - std::floor(col);
         const float inv_sub_row = 1.0f - sub_row;
         const float inv_sub_col = 1.0f - sub_col;
-        const std::array<float, 4> weights = {
-            inv_sub_col * inv_sub_row,
-            sub_col * inv_sub_row,
-            inv_sub_col * sub_row,
-            sub_col * sub_row
-        };
+        const std::array<float, 4> weights = {inv_sub_col * inv_sub_row, sub_col * inv_sub_row, inv_sub_col * sub_row, sub_col * sub_row};
 
         // using SuperpointDescriptorType = Eigen::Matrix<float, 256, 1>;
         NNFeatureDescriptorType &descriptor = descriptors[i];
         for (uint32_t j = 0; j < descriptor.rows(); ++j) {
             const auto &descriptor_map = descriptors_matrices[j];
             const float *map_ptr = descriptor_map.data() + int_row * descriptor_map.cols() + int_col;
-            descriptor(j) = static_cast<float>(
-                weights[0] * map_ptr[0] + weights[1] * map_ptr[1] +
-                weights[2] * map_ptr[descriptor_map.cols()] + weights[3] * map_ptr[descriptor_map.cols() + 1]);
+            descriptor(j) = static_cast<float>(weights[0] * map_ptr[0] + weights[1] * map_ptr[1] + weights[2] * map_ptr[descriptor_map.cols()] +
+                                               weights[3] * map_ptr[descriptor_map.cols() + 1]);
         }
     }
     return true;
 }
 
-template bool NNFeaturePointDetector::DirectlySelectGoodFeaturesWithDescriptors<SuperpointDescriptorType>(const Eigen::Map<const TMatImg<int64_t>> &candidates_pixel_uv,
-    const Eigen::Map<const MatImgF> &candidates_score, const Eigen::Map<const MatImgF> &candidates_descriptor, const std::vector<int32_t> sorted_indices,
-    std::vector<Vec2> &all_pixel_uv, std::vector<SuperpointDescriptorType> &descriptors);
-template bool NNFeaturePointDetector::DirectlySelectGoodFeaturesWithDescriptors<DiskDescriptorType>(const Eigen::Map<const TMatImg<int64_t>> &candidates_pixel_uv,
-    const Eigen::Map<const MatImgF> &candidates_score, const Eigen::Map<const MatImgF> &candidates_descriptor, const std::vector<int32_t> sorted_indices,
-    std::vector<Vec2> &all_pixel_uv, std::vector<DiskDescriptorType> &descriptors);
+template bool NNFeaturePointDetector::DirectlySelectGoodFeaturesWithDescriptors<SuperpointDescriptorType>(
+    const Eigen::Map<const TMatImg<int64_t>> &candidates_pixel_uv, const Eigen::Map<const MatImgF> &candidates_score,
+    const Eigen::Map<const MatImgF> &candidates_descriptor, const std::vector<int32_t> sorted_indices, std::vector<Vec2> &all_pixel_uv,
+    std::vector<SuperpointDescriptorType> &descriptors);
+template bool NNFeaturePointDetector::DirectlySelectGoodFeaturesWithDescriptors<DiskDescriptorType>(
+    const Eigen::Map<const TMatImg<int64_t>> &candidates_pixel_uv, const Eigen::Map<const MatImgF> &candidates_score,
+    const Eigen::Map<const MatImgF> &candidates_descriptor, const std::vector<int32_t> sorted_indices, std::vector<Vec2> &all_pixel_uv,
+    std::vector<DiskDescriptorType> &descriptors);
 template <typename NNFeatureDescriptorType>
 bool NNFeaturePointDetector::DirectlySelectGoodFeaturesWithDescriptors(const Eigen::Map<const TMatImg<int64_t>> &candidates_pixel_uv,
                                                                        const Eigen::Map<const MatImgF> &candidates_score,
                                                                        const Eigen::Map<const MatImgF> &candidates_descriptor,
-                                                                       const std::vector<int32_t> sorted_indices,
-                                                                       std::vector<Vec2> &all_pixel_uv,
+                                                                       const std::vector<int32_t> sorted_indices, std::vector<Vec2> &all_pixel_uv,
                                                                        std::vector<NNFeatureDescriptorType> &descriptors) {
     // Extract features with high score.
     all_pixel_uv.reserve(options_.kMaxNumberOfDetectedFeatures);
@@ -231,4 +225,4 @@ bool NNFeaturePointDetector::DirectlySelectGoodFeaturesWithDescriptors(const Eig
     return true;
 }
 
-} // End of namespace FEATURE_DETECTOR.
+}  // End of namespace FEATURE_DETECTOR.
