@@ -1,6 +1,6 @@
 #include "feature_harris.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 bool HarrisFeature::ComputeGradient(const GrayImage &image) {
     Ix_.setZero(image.rows(), image.cols());
@@ -58,4 +58,4 @@ bool HarrisFeature::SelectAllCandidates(const GrayImage &image, const MatInt &ma
     return true;
 }
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector

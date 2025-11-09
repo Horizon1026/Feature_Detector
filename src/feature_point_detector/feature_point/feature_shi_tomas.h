@@ -5,7 +5,7 @@
 #include "datatype_image.h"
 #include "feature_point.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 struct ShiTomasOptions {
     int32_t kHalfPatchSize = 1;
@@ -30,6 +30,6 @@ private:
     Mat Iy_;
 };
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector
 
 #endif  // end of _FEATURE_SHI_TOMAS_H_

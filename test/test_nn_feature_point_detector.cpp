@@ -8,10 +8,10 @@
 #include "enable_stack_backward.h"
 #include "nn_feature_point_detector.h"
 
-using namespace SLAM_UTILITY;
-using namespace SLAM_VISUALIZOR;
-using namespace FEATURE_DETECTOR;
-using namespace IMAGE_PAINTER;
+using namespace slam_utility;
+using namespace slam_visualizor;
+using namespace feature_detector;
+using namespace image_painter;
 
 void ShowImage(const GrayImage &image, const std::string &title, const std::vector<Vec2> &features) {
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));

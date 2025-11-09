@@ -6,7 +6,7 @@
 #include "slam_log_reporter.h"
 #include "slam_operations.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 template <typename FeatureType>
 class FeaturePointDetector {
@@ -153,6 +153,6 @@ void FeaturePointDetector<FeatureType>::UpdateMaskByFeatures(const GrayImage &im
     }
 }
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector
 
 #endif  // end of _FEATURE_POINT_DETECTOR_H_

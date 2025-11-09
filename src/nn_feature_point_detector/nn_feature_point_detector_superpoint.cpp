@@ -3,7 +3,7 @@
 #include "slam_operations.h"
 #include "tick_tock.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 template <>
 bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptor(const GrayImage &image, std::vector<Vec2> &all_pixel_uv,
@@ -111,4 +111,4 @@ bool NNFeaturePointDetector::DetectGoodFeaturesWithDescriptorBySuperpointNms(con
     return true;
 }
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector

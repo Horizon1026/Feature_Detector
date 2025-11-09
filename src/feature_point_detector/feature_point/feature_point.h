@@ -4,7 +4,7 @@
 #include "basic_type.h"
 #include "datatype_image.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 template <typename OptionsType>
 class Feature {
@@ -27,6 +27,6 @@ private:
     OptionsType options_;
 };
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector
 
 #endif  // end of _FEATURE_POINT_H_

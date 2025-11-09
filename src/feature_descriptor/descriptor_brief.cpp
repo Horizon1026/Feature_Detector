@@ -3,7 +3,7 @@
 #include "slam_log_reporter.h"
 #include "slam_operations.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, BriefType &descriptor) {
     const float max_bound = static_cast<float>(options().kHalfPatchSize) * 1.5f;
@@ -304,4 +304,4 @@ std::array<int16_t, 256 * 4> BriefDescriptor::pattern_idx_ = {
     -1,  -6,  0,   -11 /*mean (0.127148), correlation (0.547401)*/
 };
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector

@@ -9,9 +9,9 @@
 #include "tick_tock.h"
 #include "visualizor_2d.h"
 
-using namespace FEATURE_DETECTOR;
-using namespace SLAM_VISUALIZOR;
-using namespace IMAGE_PAINTER;
+using namespace feature_detector;
+using namespace slam_visualizor;
+using namespace image_painter;
 
 std::string image_file_path = "../examples/image.png";
 

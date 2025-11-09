@@ -1,6 +1,6 @@
 #include "feature_fast.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 constexpr int32_t fast_indice[][2] = {{0, -3}, {1, -3}, {2, -2}, {3, -1}, {3, 0},  {3, 1},   {2, 2},   {1, 3},
                                       {0, 3},  {-1, 3}, {-2, 2}, {-3, 1}, {-3, 0}, {-3, -1}, {-2, -2}, {-1, -3}};
@@ -95,4 +95,4 @@ bool FastFeature::SelectAllCandidates(const GrayImage &image, const MatInt &mask
     return true;
 }
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector

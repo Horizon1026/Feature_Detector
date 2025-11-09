@@ -3,7 +3,7 @@
 #include "slam_operations.h"
 #include "tick_tock.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 Ort::Env NNFeaturePointDetector::onnx_environment_ = Ort::Env(ORT_LOGGING_LEVEL_WARNING, "NNFeaturePointDetector");
 
@@ -225,4 +225,4 @@ bool NNFeaturePointDetector::DirectlySelectGoodFeaturesWithDescriptors(const Eig
     return true;
 }
 
-}  // End of namespace FEATURE_DETECTOR.
+}  // End of namespace feature_detector.

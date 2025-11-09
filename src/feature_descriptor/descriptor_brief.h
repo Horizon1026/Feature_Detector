@@ -6,7 +6,7 @@
 
 #include "descriptor.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 struct BriefOptions {
     int32_t kLength = 256;
@@ -32,6 +32,6 @@ private:
     static std::array<int16_t, 256 * 4> pattern_idx_;
 };
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector
 
 #endif  // end of _FEATURE_DESCRIPTOR_BRIEF_H_

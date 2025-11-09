@@ -4,7 +4,7 @@
 #include "basic_type.h"
 #include "datatype_image.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 /* Class Descriptor Declaration. */
 template <typename OptionsType, typename DescriptorType>
@@ -48,6 +48,6 @@ bool Descriptor<OptionsType, DescriptorType>::Compute(const GrayImage &image, co
     return true;
 }
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector
 
 #endif  // end of _FEATURE_DESCRIPTOR_H_

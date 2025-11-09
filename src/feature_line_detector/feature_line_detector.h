@@ -6,7 +6,7 @@
 #include "datatype_image.h"
 #include "slam_basic_math.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 class FeatureLineDetector {
 
@@ -78,6 +78,6 @@ private:
     std::vector<RectangleParam> rectangles_;
 };
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector
 
 #endif  // end of _FEATURE_LINE_DETECTOR_H_

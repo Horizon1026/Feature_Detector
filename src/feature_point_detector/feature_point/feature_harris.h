@@ -5,7 +5,7 @@
 #include "datatype_image.h"
 #include "feature_point.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 struct HarrisOptions {
     float k = 0.0f;
@@ -31,6 +31,6 @@ private:
     Mat Iy_;
 };
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector
 
 #endif  // end of _FEATURE_HARRIS_H_

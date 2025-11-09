@@ -6,7 +6,7 @@
 #include "map"
 #include "onnx_run_time.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 /* Class NNFeaturePointDetector Declaration. */
 class NNFeaturePointDetector {
@@ -85,6 +85,6 @@ private:
     MatImg mask_;
 };
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector
 
 #endif  // end of _NN_FEATURE_POINT_DETECTOR_H_

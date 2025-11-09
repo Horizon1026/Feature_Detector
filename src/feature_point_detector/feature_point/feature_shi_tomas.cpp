@@ -1,6 +1,6 @@
 #include "feature_shi_tomas.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 bool ShiTomasFeature::ComputeGradient(const GrayImage &image) {
     Ix_.setZero(image.rows(), image.cols());
@@ -57,4 +57,4 @@ bool ShiTomasFeature::SelectAllCandidates(const GrayImage &image, const MatInt &
     return true;
 }
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector

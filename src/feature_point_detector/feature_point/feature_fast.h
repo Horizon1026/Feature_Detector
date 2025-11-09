@@ -5,7 +5,7 @@
 #include "datatype_image.h"
 #include "feature_point.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 struct FastOptions {
     int32_t kN = 12;  // Fast-12 default.
@@ -26,6 +26,6 @@ public:
     virtual float ComputeResponse(const GrayImage &image, const int32_t row, const int32_t col) override;
 };
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector
 
 #endif  // end of _FEATURE_FAST_H_

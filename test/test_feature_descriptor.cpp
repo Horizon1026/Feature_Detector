@@ -8,15 +8,15 @@
 #include "tick_tock.h"
 #include "visualizor_2d.h"
 
-using namespace SLAM_VISUALIZOR;
-using namespace IMAGE_PAINTER;
+using namespace slam_visualizor;
+using namespace image_painter;
 
 std::string image_file_path = "../examples/image.png";
 
 std::vector<Vec2> TestHarrisFeatureDetector(const GrayImage &image, const int32_t feature_num_need) {
     ReportInfo(">> Test Harris Feature Detector.");
 
-    FEATURE_DETECTOR::FeaturePointDetector<FEATURE_DETECTOR::HarrisFeature> detector;
+    feature_detector::FeaturePointDetector<feature_detector::HarrisFeature> detector;
     detector.options().kMinFeatureDistance = 20;
     detector.feature().options().kMinValidResponse = 20.0f;
 
@@ -38,13 +38,13 @@ std::vector<Vec2> TestHarrisFeatureDetector(const GrayImage &image, const int32_
 void TestBriefDescriptor(const GrayImage &image, const std::vector<Vec2> &features) {
     ReportInfo(">> Test Brief Feature Descriptor.");
 
-    FEATURE_DETECTOR::BriefDescriptor descriptor;
+    feature_detector::BriefDescriptor descriptor;
     descriptor.options().kHalfPatchSize = 8;
     descriptor.options().kLength = 128;
     descriptor.options().kValidBoundary = 16;
 
     TickTock timer;
-    std::vector<FEATURE_DETECTOR::BriefType> descriptors;
+    std::vector<feature_detector::BriefType> descriptors;
     descriptor.Compute(image, features, descriptors);
     ReportDebug("Compute descriptor cost time " << timer.TockTickInMillisecond() << " ms.");
 

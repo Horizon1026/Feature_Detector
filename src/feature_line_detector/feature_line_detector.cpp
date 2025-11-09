@@ -2,7 +2,7 @@
 #include "slam_log_reporter.h"
 #include "slam_operations.h"
 
-namespace FEATURE_DETECTOR {
+namespace feature_detector {
 
 FeatureLineDetector::FeatureLineDetector() {
     sorted_pixels_.clear();
@@ -227,4 +227,4 @@ FeatureLineDetector::RectangleParam FeatureLineDetector::ConvertRegionToRectangl
     return rect;
 }
 
-}  // namespace FEATURE_DETECTOR
+}  // namespace feature_detector
