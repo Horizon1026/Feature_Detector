@@ -5,7 +5,7 @@
 
 namespace feature_detector {
 
-class FeaturePointShiTomasDetector : public FeaturePointDetector {
+class FeaturePointShiTomasDetector: public FeaturePointDetector {
 
 public:
     struct FeatureOptions {

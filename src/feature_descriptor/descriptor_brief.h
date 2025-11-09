@@ -17,11 +17,10 @@ struct BriefOptions {
 using BriefType = std::vector<bool>;
 
 /* Class Descriptor Declaration. */
-class BriefDescriptor : public Descriptor<BriefOptions, BriefType> {
+class BriefDescriptor: public Descriptor<BriefOptions, BriefType> {
 
 public:
-    BriefDescriptor()
-        : Descriptor<BriefOptions, BriefType>() {}
+    BriefDescriptor(): Descriptor<BriefOptions, BriefType>() {}
     virtual ~BriefDescriptor() = default;
 
 private:

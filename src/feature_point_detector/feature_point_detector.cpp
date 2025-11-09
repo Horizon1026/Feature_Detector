@@ -24,7 +24,7 @@ bool FeaturePointDetector::DetectGoodFeatures(const GrayImage &image, const uint
 }
 
 void FeaturePointDetector::SparsifyFeatures(const std::vector<Vec2> &features, const int32_t image_rows, const int32_t image_cols,
-                                                         const uint8_t status_need_filter, const uint8_t status_after_filter, std::vector<uint8_t> &status) {
+                                            const uint8_t status_need_filter, const uint8_t status_after_filter, std::vector<uint8_t> &status) {
     if (features.size() != status.size()) {
         status.resize(features.size(), 1);
     }
@@ -93,4 +93,4 @@ void FeaturePointDetector::UpdateMaskByFeatures(const GrayImage &image, const st
     }
 }
 
-}
+}  // namespace feature_detector

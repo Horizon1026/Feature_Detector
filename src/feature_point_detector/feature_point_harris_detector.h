@@ -5,7 +5,7 @@
 
 namespace feature_detector {
 
-class FeaturePointHarrisDetector : public FeaturePointDetector {
+class FeaturePointHarrisDetector: public FeaturePointDetector {
 
 public:
     struct FeatureOptions {
