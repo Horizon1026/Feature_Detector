@@ -1,25 +1,27 @@
-#include "feature_fast.h"
+#include "feature_point_fast_detector.h"
 
 namespace feature_detector {
 
-constexpr int32_t fast_indice[][2] = {{0, -3}, {1, -3}, {2, -2}, {3, -1}, {3, 0},  {3, 1},   {2, 2},   {1, 3},
-                                      {0, 3},  {-1, 3}, {-2, 2}, {-3, 1}, {-3, 0}, {-3, -1}, {-2, -2}, {-1, -3}};
+namespace {
+    constexpr int32_t kHalfPatchSize = 3;
+    constexpr int32_t kFastIndice[][2] = {{0, -3}, {1, -3}, {2, -2}, {3, -1}, {3, 0},  {3, 1},   {2, 2},   {1, 3},
+                                          {0, 3},  {-1, 3}, {-2, 2}, {-3, 1}, {-3, 0}, {-3, -1}, {-2, -2}, {-1, -3}};
+}  // namespace
 
-float FastFeature::ComputeResponse(const GrayImage &image, const int32_t row, const int32_t col) {
-
-    int32_t pixel_value = image.GetPixelValueNoCheck<int32_t>(row, col);
-    int32_t max_pixel_value = pixel_value + options().kMinPixelDiffValue;
-    int32_t min_pixel_value = pixel_value - options().kMinPixelDiffValue;
+float FeaturePointFastDetector::ComputeResponseOfPixel(const GrayImage &image, const int32_t row, const int32_t col) {
+    const int32_t pixel_value = image.GetPixelValueNoCheck<int32_t>(row, col);
+    const int32_t max_pixel_value = pixel_value + feature_options_.kMinPixelDiffValue;
+    const int32_t min_pixel_value = pixel_value - feature_options_.kMinPixelDiffValue;
 
     int32_t larger_cnt = 0;
     int32_t smaller_cnt = 0;
 
     // If Fast-12 or more, it can be precheck if it can be FAST corner.
-    if (options().kN >= 12) {
+    if (feature_options_.kN >= 12) {
         int32_t idx[4] = {0, 4, 8, 12};
 
         for (uint32_t i = 0; i < 4; ++i) {
-            int32_t pixel_arounded_value = image.GetPixelValueNoCheck<int32_t>(row + fast_indice[idx[i]][1], col + fast_indice[idx[i]][0]);
+            int32_t pixel_arounded_value = image.GetPixelValueNoCheck<int32_t>(row + kFastIndice[idx[i]][1], col + kFastIndice[idx[i]][0]);
 
             if (pixel_arounded_value > max_pixel_value) {
                 ++larger_cnt;
@@ -41,7 +43,7 @@ float FastFeature::ComputeResponse(const GrayImage &image, const int32_t row, co
 
     std::vector<int32_t> compare_results(16, 0);
     for (uint32_t i = 0; i < 16; ++i) {
-        int32_t pixel_arounded_value = image.GetPixelValueNoCheck<int32_t>(row + fast_indice[i][1], col + fast_indice[i][0]);
+        int32_t pixel_arounded_value = image.GetPixelValueNoCheck<int32_t>(row + kFastIndice[i][1], col + kFastIndice[i][0]);
         if (pixel_arounded_value > max_pixel_value) {
             compare_results[i] = 1;
         } else if (pixel_arounded_value < min_pixel_value) {
@@ -78,15 +80,15 @@ float FastFeature::ComputeResponse(const GrayImage &image, const int32_t row, co
     return static_cast<float>(best_cnt);
 }
 
-bool FastFeature::SelectAllCandidates(const GrayImage &image, const MatInt &mask, std::map<float, Pixel> &candidates) {
-    const int32_t &bound = options().kHalfPatchSize;
+bool FeaturePointFastDetector::ComputeCandidates(const GrayImage &image) {
+    const int32_t &bound = kHalfPatchSize;
     float offset = 1e-5f;
     for (int32_t row = bound; row < image.rows() - bound; ++row) {
         for (int32_t col = bound; col < image.cols() - bound; ++col) {
-            if (mask(row, col)) {
-                const float response = ComputeResponse(image, row, col) + offset;
+            if (this->mask()(row, col)) {
+                const float response = ComputeResponseOfPixel(image, row, col) + offset;
                 if (response > options().kMinValidResponse) {
-                    candidates.insert(std::make_pair(response, Eigen::Matrix<int32_t, 2, 1>(col, row)));
+                    this->candidates().insert(std::make_pair(response, Pixel(col, row)));
                 }
                 offset += 1e-5f;
             }

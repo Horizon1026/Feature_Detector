@@ -1,7 +1,7 @@
-#include "feature_fast.h"
-#include "feature_harris.h"
 #include "feature_point_detector.h"
-#include "feature_shi_tomas.h"
+#include "feature_point_fast_detector.h"
+#include "feature_point_harris_detector.h"
+#include "feature_point_shi_tomas_detector.h"
 
 #include "image_painter.h"
 #include "slam_log_reporter.h"
@@ -28,9 +28,9 @@ void ShowImage(const GrayImage &image, const std::string &title, const std::vect
 void TestHarrisFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Harris Feature Detector." RESET_COLOR);
 
-    FeaturePointDetector<HarrisFeature> detector;
+    FeaturePointHarrisDetector detector;
     detector.options().kMinFeatureDistance = 20;
-    detector.feature().options().kMinValidResponse = 30.0f;
+    detector.options().kMinValidResponse = 30.0f;
 
     TickTock timer;
     std::vector<Vec2> features;
@@ -44,9 +44,9 @@ void TestHarrisFeatureDetector(GrayImage &image, int32_t feature_num_need) {
 void TestUpdateMaskWithDetectedFeatures(GrayImage &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Harris Feature Detector, but some features has been detected." RESET_COLOR);
 
-    FeaturePointDetector<HarrisFeature> detector;
+    FeaturePointHarrisDetector detector;
     detector.options().kMinFeatureDistance = 20;
-    detector.feature().options().kMinValidResponse = 30.0f;
+    detector.options().kMinValidResponse = 30.0f;
 
     std::vector<Vec2> features;
     features.reserve(feature_num_need);
@@ -67,9 +67,9 @@ void TestUpdateMaskWithDetectedFeatures(GrayImage &image, int32_t feature_num_ne
 void TestShiTomasFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Shi-Tomas Feature Detector." RESET_COLOR);
 
-    FeaturePointDetector<ShiTomasFeature> detector;
+    FeaturePointShiTomasDetector detector;
     detector.options().kMinFeatureDistance = 20;
-    detector.feature().options().kMinValidResponse = 40.0f;
+    detector.options().kMinValidResponse = 40.0f;
 
     TickTock timer;
     std::vector<Vec2> features;
@@ -83,9 +83,9 @@ void TestShiTomasFeatureDetector(GrayImage &image, int32_t feature_num_need) {
 void TestFastFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     ReportInfo(YELLOW ">> Test Fast Feature Detector." RESET_COLOR);
 
-    FeaturePointDetector<FastFeature> detector;
+    FeaturePointFastDetector detector;
     detector.options().kMinFeatureDistance = 20;
-    detector.feature().options().kMinValidResponse = 10.0f;
+    detector.options().kMinValidResponse = 10.0f;
 
     TickTock timer;
     std::vector<Vec2> features;

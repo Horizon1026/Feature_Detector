@@ -1,13 +1,14 @@
-#include "feature_shi_tomas.h"
+#include "feature_point_shi_tomas_detector.h"
 
 namespace feature_detector {
 
-bool ShiTomasFeature::ComputeGradient(const GrayImage &image) {
+bool FeaturePointShiTomasDetector::ComputeGradient(const GrayImage &image) {
+    RETURN_FALSE_IF(image.data() == nullptr);
     Ix_.setZero(image.rows(), image.cols());
     Iy_.setZero(image.rows(), image.cols());
 
-    for (int32_t row = options().kHalfPatchSize; row < image.rows() - options().kHalfPatchSize; ++row) {
-        for (int32_t col = options().kHalfPatchSize; col < image.cols() - options().kHalfPatchSize; ++col) {
+    for (int32_t row = feature_options_.kHalfPatchSize; row < image.rows() - feature_options_.kHalfPatchSize; ++row) {
+        for (int32_t col = feature_options_.kHalfPatchSize; col < image.cols() - feature_options_.kHalfPatchSize; ++col) {
             Ix_(row, col) = image.GetPixelValueNoCheck<float>(row, col + 1) - image.GetPixelValueNoCheck<float>(row, col - 1);
             Iy_(row, col) = image.GetPixelValueNoCheck<float>(row + 1, col) - image.GetPixelValueNoCheck<float>(row - 1, col);
         }
@@ -16,11 +17,11 @@ bool ShiTomasFeature::ComputeGradient(const GrayImage &image) {
     return true;
 }
 
-float ShiTomasFeature::ComputeResponse(const GrayImage &image, const int32_t row, const int32_t col) {
+float FeaturePointShiTomasDetector::ComputeResponseOfPixel(const GrayImage &image, const int32_t row, const int32_t col) {
     Mat2 M = Mat2::Zero();
     int32_t cnt = 0;
-    for (int32_t drow = -options().kHalfPatchSize; drow <= options().kHalfPatchSize; ++drow) {
-        for (int32_t dcol = -options().kHalfPatchSize; dcol <= options().kHalfPatchSize; ++dcol) {
+    for (int32_t drow = -feature_options_.kHalfPatchSize; drow <= feature_options_.kHalfPatchSize; ++drow) {
+        for (int32_t dcol = -feature_options_.kHalfPatchSize; dcol <= feature_options_.kHalfPatchSize; ++dcol) {
             const int32_t sub_row = row + drow;
             const int32_t sub_col = col + dcol;
             M(0, 0) += Ix_(sub_row, sub_col) * Ix_(sub_row, sub_col);
@@ -38,18 +39,18 @@ float ShiTomasFeature::ComputeResponse(const GrayImage &image, const int32_t row
     return std::max(eig(0), eig(1));
 }
 
-bool ShiTomasFeature::SelectAllCandidates(const GrayImage &image, const MatInt &mask, std::map<float, Pixel> &candidates) {
+bool FeaturePointShiTomasDetector::ComputeCandidates(const GrayImage &image) {
     if (ComputeGradient(image) == false) {
         return false;
     }
 
-    const int32_t bound = options().kHalfPatchSize;
+    const int32_t bound = feature_options_.kHalfPatchSize;
     for (int32_t row = bound; row < image.rows() - bound; ++row) {
         for (int32_t col = bound; col < image.cols() - bound; ++col) {
-            if (mask(row, col)) {
-                const float response = ComputeResponse(image, row, col);
+            if (this->mask()(row, col)) {
+                const float response = ComputeResponseOfPixel(image, row, col);
                 if (response > options().kMinValidResponse) {
-                    candidates.insert(std::make_pair(response, Pixel(col, row)));
+                    this->candidates().insert(std::make_pair(response, Pixel(col, row)));
                 }
             }
         }

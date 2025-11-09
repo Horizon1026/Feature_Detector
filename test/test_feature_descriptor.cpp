@@ -1,6 +1,6 @@
 #include "descriptor_brief.h"
-#include "feature_harris.h"
 #include "feature_point_detector.h"
+#include "feature_point_harris_detector.h"
 
 #include "image_painter.h"
 #include "slam_log_reporter.h"
@@ -16,9 +16,9 @@ std::string image_file_path = "../examples/image.png";
 std::vector<Vec2> TestHarrisFeatureDetector(const GrayImage &image, const int32_t feature_num_need) {
     ReportInfo(">> Test Harris Feature Detector.");
 
-    feature_detector::FeaturePointDetector<feature_detector::HarrisFeature> detector;
+    feature_detector::FeaturePointHarrisDetector detector;
     detector.options().kMinFeatureDistance = 20;
-    detector.feature().options().kMinValidResponse = 20.0f;
+    detector.options().kMinValidResponse = 20.0f;
 
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
