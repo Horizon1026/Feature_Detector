@@ -17,6 +17,8 @@ public:
     FeaturePointFastDetector() = default;
     virtual ~FeaturePointFastDetector() = default;
 
+    virtual std::string DetectorTypeName() const override { return "Fast"; }
+
 private:
     virtual bool ComputeCandidates(const GrayImage &image) override;
     float ComputeResponseOfPixel(const GrayImage &image, const int32_t row, const int32_t col);

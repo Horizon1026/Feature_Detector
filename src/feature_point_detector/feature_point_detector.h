@@ -23,6 +23,8 @@ public:
     virtual ~FeaturePointDetector() = default;
     FeaturePointDetector(const FeaturePointDetector &detecor) = delete;
 
+    virtual std::string DetectorTypeName() const { return "None"; }
+
     bool DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec2> &features);
 
     void SparsifyFeatures(const std::vector<Vec2> &features, const int32_t image_rows, const int32_t image_cols, const uint8_t status_need_filter,

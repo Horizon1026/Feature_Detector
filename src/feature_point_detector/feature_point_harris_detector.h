@@ -17,6 +17,8 @@ public:
     FeaturePointHarrisDetector() = default;
     virtual ~FeaturePointHarrisDetector() = default;
 
+    virtual std::string DetectorTypeName() const override { return "Harris"; }
+
 private:
     virtual bool ComputeCandidates(const GrayImage &image) override;
     bool ComputeGradient(const GrayImage &image);

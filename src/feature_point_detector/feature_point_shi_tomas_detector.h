@@ -16,6 +16,8 @@ public:
     FeaturePointShiTomasDetector() = default;
     virtual ~FeaturePointShiTomasDetector() = default;
 
+    virtual std::string DetectorTypeName() const override { return "Shi-Tomas"; }
+
 private:
     virtual bool ComputeCandidates(const GrayImage &image) override;
     bool ComputeGradient(const GrayImage &image);
