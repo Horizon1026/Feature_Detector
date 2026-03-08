@@ -13,16 +13,16 @@ class Descriptor {
 public:
     Descriptor() = default;
     virtual ~Descriptor() = default;
-    bool Compute(const GrayImage &image, const std::vector<Vec2> &pixel_uv, std::vector<DescriptorType> &descriptor);
+    bool Compute(const GrayImage &image, const std::vector<Vec2> &pixel_uv, std::vector<DescriptorType> &descriptor) const;
 
 private:
-    virtual bool ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, DescriptorType &descriptor) = 0;
+    virtual bool ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, DescriptorType &descriptor) const = 0;
 
 };
 
 /* Class Descriptor Definition. */
 template <typename DescriptorType>
-bool Descriptor<DescriptorType>::Compute(const GrayImage &image, const std::vector<Vec2> &pixel_uv, std::vector<DescriptorType> &descriptor) {
+bool Descriptor<DescriptorType>::Compute(const GrayImage &image, const std::vector<Vec2> &pixel_uv, std::vector<DescriptorType> &descriptor) const {
     if (pixel_uv.empty() || image.data() == nullptr) {
         return false;
     }

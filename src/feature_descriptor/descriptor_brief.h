@@ -27,7 +27,7 @@ public:
     const Options &options() const { return options_; }
 
 private:
-    virtual bool ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, BriefType &descriptor) override;
+    virtual bool ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, BriefType &descriptor) const override;
 
 private:
     Options options_;

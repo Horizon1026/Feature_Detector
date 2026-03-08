@@ -5,7 +5,7 @@
 
 namespace feature_detector {
 
-bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, BriefType &descriptor) {
+bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, BriefType &descriptor) const {
     const float max_bound = static_cast<float>(options().kHalfPatchSize) * 1.5f;
     if (pixel_uv.x() < max_bound || pixel_uv.x() > image.cols() - max_bound || pixel_uv.y() < max_bound || pixel_uv.y() > image.rows() - max_bound) {
         return false;
