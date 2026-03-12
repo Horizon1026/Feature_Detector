@@ -180,6 +180,10 @@ bool NNFeaturePointDetector::ExtractDescriptorsForSelectedFeatures(const std::ve
         NNFeatureDescriptorType &descriptor = descriptors[i];
         for (uint32_t j = 0; j < descriptor.rows(); ++j) {
             const auto &descriptor_map = descriptors_matrices[j];
+            if (int_row < 0 || int_row >= descriptor_map.rows() - 1 || int_col < 0 || int_col >= descriptor_map.cols() - 1) {
+                descriptor(j) = 0.0f;
+                continue;
+            }
             const float *map_ptr = descriptor_map.data() + int_row * descriptor_map.cols() + int_col;
             descriptor(j) = static_cast<float>(weights[0] * map_ptr[0] + weights[1] * map_ptr[1] + weights[2] * map_ptr[descriptor_map.cols()] +
                                                weights[3] * map_ptr[descriptor_map.cols() + 1]);
