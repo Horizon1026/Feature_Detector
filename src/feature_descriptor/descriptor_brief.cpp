@@ -30,7 +30,7 @@ bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &p
     rot << cos_theta, -sin_theta, sin_theta, cos_theta;
 
     // Compute descriptor.
-    descriptor.resize(options().kLength, 0);
+    descriptor.assign(options().kLength, 0);
     for (int32_t i = 0; i < options().kLength; ++i) {
         const int32_t idx_4 = i * 4;
         const Vec2 point_1 = rot * Vec2(pattern_idx_[idx_4], pattern_idx_[idx_4 + 1]) + pixel_uv;
