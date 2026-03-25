@@ -45,7 +45,7 @@ void TestBriefDescriptor(const GrayImage &image, const std::vector<Vec2> &featur
     TickTock timer;
     std::vector<feature_detector::BriefType> descriptors;
     descriptor.Compute(image, features, descriptors);
-    ReportDebug("Compute descriptor cost time " << timer.TockTickInMillisecond() << " ms.");
+    ReportInfo("Compute descriptor cost time " << timer.TockTickInMillisecond() << " ms.");
 
     for (const auto &item: descriptors) {
         ReportText("descriptor is ");

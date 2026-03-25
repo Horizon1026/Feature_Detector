@@ -35,7 +35,7 @@ void TestHarrisFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     TickTock timer;
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
-    ReportDebug("harris detect time cost " << timer.TockTickInMillisecond() << " ms.");
+    ReportInfo("harris detect time cost " << timer.TockTickInMillisecond() << " ms.");
 
     ShowImage(image, "harris detected features", features);
     ReportInfo("harris detected " << features.size());
@@ -58,7 +58,7 @@ void TestUpdateMaskWithDetectedFeatures(GrayImage &image, int32_t feature_num_ne
 
     TickTock timer;
     detector.DetectGoodFeatures(image, feature_num_need, features);
-    ReportDebug("harris detect new features time cost " << timer.TockTickInMillisecond() << " ms.");
+    ReportInfo("harris detect new features time cost " << timer.TockTickInMillisecond() << " ms.");
 
     ShowImage(image, "harris detected new features", features);
     ReportInfo("harris detected " << features.size());
@@ -74,7 +74,7 @@ void TestShiTomasFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     TickTock timer;
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
-    ReportDebug("shi tomas detect new features time cost " << timer.TockTickInMillisecond() << " ms.");
+    ReportInfo("shi tomas detect new features time cost " << timer.TockTickInMillisecond() << " ms.");
 
     ShowImage(image, "shi tomas detected features", features);
     ReportInfo("shi tomas detected " << features.size());
@@ -90,7 +90,7 @@ void TestFastFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     TickTock timer;
     std::vector<Vec2> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
-    ReportDebug("fast detect new features time cost " << timer.TockTickInMillisecond() << " ms.");
+    ReportInfo("fast detect new features time cost " << timer.TockTickInMillisecond() << " ms.");
 
     ShowImage(image, "fast detected features", features);
     ReportInfo("fast detected " << features.size());
