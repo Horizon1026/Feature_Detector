@@ -17,10 +17,15 @@ Intergration of some simple sparse feature detect method.
     - [ ] Disk with nms.
 
 # Dependence
+
+### 项目仓库依赖（源码在 repo 中）
 - Slam_Utility
 - Image_Painter
 - Visualizor2D
-- libtorch(nn feature needed)
+
+### 第三方仓库依赖
+- Eigen3 (>= 3.3.7)（`sudo apt install libeigen3-dev`）
+- libtorch（NN feature 需要，需下载后放至 `Slam_Utility/3rd_libraries/libtorch`，官网：https://pytorch.org）
 
 # Compile and Run
 - 第三方仓库的话需要自行 apt-get install 安装
