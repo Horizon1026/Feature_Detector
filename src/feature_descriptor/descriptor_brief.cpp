@@ -6,6 +6,10 @@
 namespace feature_detector {
 
 bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, BriefType &descriptor) const {
+    // Initialize descriptor.
+    descriptor.assign(options().kLength, 0);
+
+    // Check if the feature is out of the image.
     const float max_bound = static_cast<float>(options().kHalfPatchSize) * 1.5f;
     if (pixel_uv.x() < max_bound || pixel_uv.x() > image.cols() - max_bound || pixel_uv.y() < max_bound || pixel_uv.y() > image.rows() - max_bound) {
         return false;
@@ -26,11 +30,10 @@ bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &p
 
     const float sin_theta = m01 / m;
     const float cos_theta = m10 / m;
-    Mat2 rot;
+    Mat2 rot = Mat2::Zero();
     rot << cos_theta, -sin_theta, sin_theta, cos_theta;
 
     // Compute descriptor.
-    descriptor.assign(options().kLength, 0);
     for (int32_t i = 0; i < options().kLength; ++i) {
         const int32_t idx_4 = i * 4;
         const Vec2 point_1 = rot * Vec2(pattern_idx_[idx_4], pattern_idx_[idx_4 + 1]) + pixel_uv;

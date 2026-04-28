@@ -39,8 +39,8 @@ void TestBriefDescriptor(const GrayImage &image, const std::vector<Vec2> &featur
     ReportInfo(">> Test Brief Feature Descriptor.");
 
     feature_detector::BriefDescriptor descriptor;
-    descriptor.options().kHalfPatchSize = 8;
     descriptor.options().kLength = 128;
+    descriptor.options().kHalfPatchSize = 8;
 
     TickTock timer;
     std::vector<feature_detector::BriefType> descriptors;
