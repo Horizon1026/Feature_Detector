@@ -8,6 +8,7 @@
 
 namespace feature_detector {
 
+/* Class FeaturePointDetector Declaration. */
 class FeaturePointDetector {
 
 public:
@@ -32,11 +33,11 @@ public:
 
     // Reference for member variables.
     Options &options() { return options_; }
-    std::map<float, Pixel> &candidates() { return candidates_; }
+    std::vector<std::pair<float, Pixel>> &candidates() { return candidates_; }
     MatInt &mask() { return mask_; }
     // Const reference for member variables.
     const Options &options() const { return options_; }
-    const std::map<float, Pixel> &candidates() const { return candidates_; }
+    const std::vector<std::pair<float, Pixel>> &candidates() const { return candidates_; }
     const MatInt &mask() const { return mask_; }
 
 private:
@@ -47,7 +48,7 @@ private:
 
 private:
     Options options_;
-    std::map<float, Pixel> candidates_;
+    std::vector<std::pair<float, Pixel>> candidates_;
     MatInt mask_;
 };
 

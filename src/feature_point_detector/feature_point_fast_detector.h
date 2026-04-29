@@ -5,10 +5,11 @@
 
 namespace feature_detector {
 
+/* Class FeaturePointFastDetector Declaration. */
 class FeaturePointFastDetector: public FeaturePointDetector {
 
 public:
-    struct FeatureOptions {
+    struct SubOptions {
         int32_t kN = 12;
         uint8_t kMinPixelDiffValue = 15;
     };
@@ -24,7 +25,7 @@ private:
     float ComputeResponseOfPixel(const GrayImage &image, const int32_t row, const int32_t col);
 
 private:
-    FeatureOptions feature_options_;
+    SubOptions sub_options_;
 };
 
 }  // namespace feature_detector

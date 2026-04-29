@@ -5,10 +5,11 @@
 
 namespace feature_detector {
 
+/* Class FeaturePointHarrisDetector Declaration. */
 class FeaturePointHarrisDetector: public FeaturePointDetector {
 
 public:
-    struct FeatureOptions {
+    struct SubOptions {
         float kAlpha = 0.04f;
         int32_t kHalfPatchSize = 1;
     };
@@ -21,13 +22,22 @@ public:
 
 private:
     virtual bool ComputeCandidates(const GrayImage &image) override;
-    bool ComputeGradient(const GrayImage &image);
-    float ComputeResponseOfPixel(const GrayImage &image, const int32_t row, const int32_t col);
+    void ComputeHorizontalGradientSums(const GrayImage &image);
+    void ComputeResponseMap();
+    void PerformNMSAndExtractCandidates();
 
 private:
-    FeatureOptions feature_options_;
+    SubOptions sub_options_;
     MatImgF Ix_;
     MatImgF Iy_;
+    MatImgF Ixx_;
+    MatImgF Iyy_;
+    MatImgF Ixy_;
+    MatImgF Sxx_;
+    MatImgF Syy_;
+    MatImgF Sxy_;
+    MatImgF tmp_;
+    MatImgF responses_;
 };
 
 }  // namespace feature_detector

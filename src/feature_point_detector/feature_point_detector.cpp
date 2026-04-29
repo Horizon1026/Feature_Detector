@@ -1,4 +1,5 @@
 #include "feature_point_detector.h"
+#include "slam_operations.h"
 
 namespace feature_detector {
 
@@ -51,17 +52,20 @@ void FeaturePointDetector::SparsifyFeatures(const std::vector<Vec2> &features, c
 }
 
 bool FeaturePointDetector::SelectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec2> &features) {
-    for (auto it = candidates_.crbegin(); it != candidates_.crend(); ++it) {
-        const Pixel pixel = it->second;
+    RETURN_TRUE_IF(candidates_.empty());
+
+    // Sort candidates by response in descending order.
+    std::sort(candidates_.begin(), candidates_.end(), [](const std::pair<float, Pixel> &a, const std::pair<float, Pixel> &b) {
+        return a.first > b.first;
+    });
+
+    for (const auto &candidate : candidates_) {
+        const Pixel pixel = candidate.second;
         const int32_t row = pixel.y();
         const int32_t col = pixel.x();
         if (mask_(row, col)) {
             features.emplace_back(Vec2(pixel.x(), pixel.y()));
-
-            if (features.size() >= needed_feature_num) {
-                return true;
-            }
-
+            RETURN_TRUE_IF(features.size() >= needed_feature_num);
             DrawRectangleInMask(row, col);
         }
     }

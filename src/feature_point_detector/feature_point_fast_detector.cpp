@@ -10,14 +10,14 @@ namespace {
 
 float FeaturePointFastDetector::ComputeResponseOfPixel(const GrayImage &image, const int32_t row, const int32_t col) {
     const int32_t pixel_value = image.GetPixelValueNoCheck<int32_t>(row, col);
-    const int32_t max_pixel_value = pixel_value + feature_options_.kMinPixelDiffValue;
-    const int32_t min_pixel_value = pixel_value - feature_options_.kMinPixelDiffValue;
+    const int32_t max_pixel_value = pixel_value + sub_options_.kMinPixelDiffValue;
+    const int32_t min_pixel_value = pixel_value - sub_options_.kMinPixelDiffValue;
 
     int32_t larger_cnt = 0;
     int32_t smaller_cnt = 0;
 
     // If Fast-12 or more, it can be precheck if it can be FAST corner.
-    if (feature_options_.kN >= 12) {
+    if (sub_options_.kN >= 12) {
         int32_t idx[4] = {0, 4, 8, 12};
 
         for (uint32_t i = 0; i < 4; ++i) {
@@ -88,7 +88,7 @@ bool FeaturePointFastDetector::ComputeCandidates(const GrayImage &image) {
             if (this->mask()(row, col)) {
                 const float response = ComputeResponseOfPixel(image, row, col) + offset;
                 if (response > options().kMinValidResponse) {
-                    this->candidates().insert(std::make_pair(response, Pixel(col, row)));
+                    this->candidates().emplace_back(response, Pixel(col, row));
                 }
                 offset += 1e-5f;
             }
