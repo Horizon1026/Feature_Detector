@@ -9,9 +9,9 @@ bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &p
     // Initialize descriptor.
     descriptor.assign(options().kLength, 0);
 
-    // Check if the feature is out of the image.
-    const float max_bound = static_cast<float>(options().kHalfPatchSize) * 1.5f;
-    if (pixel_uv.x() < max_bound || pixel_uv.x() > image.cols() - max_bound - 1 || pixel_uv.y() < max_bound || pixel_uv.y() > image.rows() - max_bound - 1) {
+    // Check if the feature is out of the image. Bound is set according to pattern_idx_.
+    const float max_bound = std::max(15.0f, static_cast<float>(options().kHalfPatchSize) * 2.0f);
+    if (pixel_uv.x() < max_bound || pixel_uv.x() > image.cols() - max_bound || pixel_uv.y() < max_bound || pixel_uv.y() > image.rows() - max_bound) {
         return false;
     }
 
