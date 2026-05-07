@@ -11,7 +11,7 @@ bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &p
 
     // Check if the feature is out of the image.
     const float max_bound = static_cast<float>(options().kHalfPatchSize) * 1.5f;
-    if (pixel_uv.x() < max_bound || pixel_uv.x() > image.cols() - max_bound || pixel_uv.y() < max_bound || pixel_uv.y() > image.rows() - max_bound) {
+    if (pixel_uv.x() < max_bound || pixel_uv.x() > image.cols() - max_bound - 1 || pixel_uv.y() < max_bound || pixel_uv.y() > image.rows() - max_bound - 1) {
         return false;
     }
 
