@@ -51,7 +51,7 @@ bool Descriptor<DescriptorType>::Compute(const GrayImage &image, const std::vect
         descriptor.resize(temp_descriptor.size());
         if constexpr (std::is_same_v<DescriptorType, std::vector<bool>>) {
             for (uint32_t j = 0; j < temp_descriptor.size(); ++j) {
-                descriptor[j] = temp_descriptor[j] ? 1.0f : 0.0f;
+                descriptor[j] = temp_descriptor[j] ? 1.0f : -1.0f;
             }
         } else {
             for (uint32_t j = 0; j < temp_descriptor.size(); ++j) {
