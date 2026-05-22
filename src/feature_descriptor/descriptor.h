@@ -3,8 +3,8 @@
 
 #include "basic_type.h"
 #include "datatype_image.h"
-#include "slam_operations.h"
 #include "slam_log_reporter.h"
+#include "slam_operations.h"
 #include "type_traits"
 
 namespace feature_detector {
@@ -21,7 +21,6 @@ public:
 
 private:
     virtual bool ComputeForOneFeature(const GrayImage &image, const Vec2 &pixel_uv, DescriptorType &descriptors) const = 0;
-
 };
 
 /* Class Descriptor Definition. */
@@ -48,7 +47,7 @@ bool Descriptor<DescriptorType>::Compute(const GrayImage &image, const std::vect
     for (uint32_t i = 0; i < temp_descriptors.size(); ++i) {
         Vec &descriptor = descriptors[i];
         auto &temp_descriptor = temp_descriptors[i];
-        descriptor.resize(temp_descriptor.size());
+        descriptor.setZero(temp_descriptor.size(), 1);
         if constexpr (std::is_same_v<DescriptorType, std::vector<bool>>) {
             for (uint32_t j = 0; j < temp_descriptor.size(); ++j) {
                 descriptor[j] = temp_descriptor[j] ? 1.0f : -1.0f;

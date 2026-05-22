@@ -9,8 +9,9 @@ bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &p
     // Initialize descriptor.
     descriptor.assign(options().kLength, 0);
 
-    // Check if the feature is out of the image. Bound is set according to pattern_idx_.
-    const float max_bound = std::max(15.0f, static_cast<float>(options().kHalfPatchSize) * 2.0f);
+    // Check if the feature is out of the image. Pattern max offset is 13; after rotation ~13*sqrt(2).
+    constexpr float kPatternMaxBound = 19.0f;
+    const float max_bound = std::max(kPatternMaxBound, static_cast<float>(options().kHalfPatchSize) * 2.0f);
     if (pixel_uv.x() < max_bound || pixel_uv.x() > image.cols() - max_bound || pixel_uv.y() < max_bound || pixel_uv.y() > image.rows() - max_bound) {
         return false;
     }
@@ -21,8 +22,8 @@ bool BriefDescriptor::ComputeForOneFeature(const GrayImage &image, const Vec2 &p
     for (int32_t dx = -options().kHalfPatchSize; dx <= options().kHalfPatchSize; ++dx) {
         for (int32_t dy = -options().kHalfPatchSize; dy <= options().kHalfPatchSize; ++dy) {
             const float value = image.GetPixelValueNoCheck(pixel_uv.y() + dy, pixel_uv.x() + dx);
-            m01 += dx * value;
-            m10 += dy * value;
+            m10 += dx * value;
+            m01 += dy * value;
         }
     }
     const float m = std::sqrt(m01 * m01 + m10 * m10);

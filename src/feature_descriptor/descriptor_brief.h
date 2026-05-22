@@ -31,7 +31,7 @@ private:
 
 private:
     Options options_;
-    // All indice of [drow1, dcol1, drow2, dcol2].
+    // All indice of [dcol1, drow1, dcol2, drow2].
     static std::array<int16_t, 256 * 4> pattern_idx_;
 };
 
