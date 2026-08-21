@@ -10,11 +10,11 @@ Intergration of some simple sparse feature detect method.
     - [x] Brief.
 - [x] Feature line detector
     - [x] Line Segment Detector(LSD).
-- [ ] NN feature point detector
+- [x] NN feature point detector
     - [x] Superpoint.
-    - [ ] Superpoint with nms.
-    - [ ] Disk.
-    - [ ] Disk with nms.
+    - [x] Superpoint with nms.
+    - [x] Disk.
+    - [x] Disk with nms.
 
 # Dependence
 
@@ -25,7 +25,7 @@ Intergration of some simple sparse feature detect method.
 
 ### 第三方仓库依赖
 - Eigen3 (>= 3.3.7)（`sudo apt install libeigen3-dev`）
-- libtorch（NN feature 需要，需下载后放至 `Slam_Utility/3rd_libraries/libtorch`，官网：https://pytorch.org）
+- onnxruntime（NN feature 需要，需下载后放至指定目录，官网：https://github.com/microsoft/onnxruntime）
 
 # Compile and Run
 - 第三方仓库的话需要自行 apt-get install 安装
