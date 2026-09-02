@@ -3,8 +3,9 @@
 
 #include "basic_type.h"
 #include "datatype_image.h"
-#include "map"
 #include "onnx_run_time.h"
+
+#include "map"
 
 namespace feature_detector {
 

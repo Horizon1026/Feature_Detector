@@ -1,9 +1,10 @@
 #ifndef _FEATURE_DESCRIPTOR_BRIEF_H_
 #define _FEATURE_DESCRIPTOR_BRIEF_H_
 
+#include "descriptor.h"
+
 #include "basic_type.h"
 #include "datatype_image.h"
-#include "descriptor.h"
 
 namespace feature_detector {
 

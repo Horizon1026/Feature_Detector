@@ -1,12 +1,12 @@
+#include "nn_feature_point_detector.h"
+
 #include "basic_type.h"
 #include "image_painter.h"
 #include "slam_log_reporter.h"
 #include "slam_memory.h"
 #include "tick_tock.h"
 #include "visualizor_2d.h"
-
 #include "enable_stack_backward.h"
-#include "nn_feature_point_detector.h"
 
 using namespace slam_utility;
 using namespace slam_visualizor;

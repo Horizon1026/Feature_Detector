@@ -5,6 +5,7 @@
 #include "datatype_image.h"
 #include "slam_log_reporter.h"
 #include "slam_operations.h"
+
 #include "type_traits"
 
 namespace feature_detector {

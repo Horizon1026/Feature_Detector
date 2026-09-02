@@ -1,4 +1,5 @@
 #include "feature_line_detector.h"
+
 #include "image_painter.h"
 #include "slam_log_reporter.h"
 #include "slam_memory.h"

@@ -1,4 +1,5 @@
 #include "feature_point_detector.h"
+
 #include "slam_operations.h"
 
 namespace feature_detector {

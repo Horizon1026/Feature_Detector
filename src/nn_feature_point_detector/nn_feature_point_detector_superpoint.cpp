@@ -1,4 +1,5 @@
 #include "nn_feature_point_detector.h"
+
 #include "slam_log_reporter.h"
 #include "slam_operations.h"
 #include "tick_tock.h"
