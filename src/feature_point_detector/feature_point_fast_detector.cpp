@@ -25,13 +25,8 @@ float FeaturePointFastDetector::ComputeResponseOfPixel(const GrayImage &image, c
 
             if (pixel_arounded_value > max_pixel_value) {
                 ++larger_cnt;
-                smaller_cnt = 0;
             } else if (pixel_arounded_value < min_pixel_value) {
                 ++smaller_cnt;
-                larger_cnt = 0;
-            } else {
-                smaller_cnt = 0;
-                larger_cnt = 0;
             }
         }
 
@@ -77,20 +72,18 @@ float FeaturePointFastDetector::ComputeResponseOfPixel(const GrayImage &image, c
         }
     }
 
-    return static_cast<float>(best_cnt);
+    return best_cnt >= sub_options_.kN ? static_cast<float>(std::min(best_cnt, 16)) : 0.0f;
 }
 
 bool FeaturePointFastDetector::ComputeCandidates(const GrayImage &image) {
     const int32_t &bound = kHalfPatchSize;
-    float offset = 1e-5f;
     for (int32_t row = bound; row < image.rows() - bound; ++row) {
         for (int32_t col = bound; col < image.cols() - bound; ++col) {
             if (this->mask()(row, col)) {
-                const float response = ComputeResponseOfPixel(image, row, col) + offset;
+                const float response = ComputeResponseOfPixel(image, row, col);
                 if (response > options().kMinValidResponse) {
                     this->candidates().emplace_back(response, Pixel(col, row));
                 }
-                offset += 1e-5f;
             }
         }
     }

@@ -13,7 +13,7 @@ using namespace feature_detector;
 using namespace slam_visualizor;
 using namespace image_painter;
 
-std::string image_file_path = "../examples/image.png";
+std::string image_file_path = "../examples/charucodefinition.png";
 
 void ShowImage(const GrayImage &image, const std::string &title, const std::vector<Vec2> &features) {
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));

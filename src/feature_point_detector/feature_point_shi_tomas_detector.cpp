@@ -97,7 +97,7 @@ void FeaturePointShiTomasDetector::ComputeResponseMap() {
                     const float b = sum_xy_vec[c] * inv_cnt;
                     const float diff = a - c_val;
                     const float common = std::sqrt(diff * diff + 4.0f * b * b);
-                    const float res = (a + c_val + common) * 0.5f;
+                    const float res = (a + c_val - common) * 0.5f;
                     if (res > options().kMinValidResponse) {
                         res_row[c] = res;
                     }
@@ -128,8 +128,10 @@ void FeaturePointShiTomasDetector::PerformNMSAndExtractCandidates() {
         for (int32_t c = bound; c < cols - bound; ++c) {
             const float &res = res_row[c];
             CONTINUE_IF(res <= options().kMinValidResponse);
-            if (res > res_row[c - 1] && res > res_row[c + 1] &&
-                res > res_prev[c] && res > res_next[c]) {
+            // Keep tied maxima; SelectGoodFeatures removes nearby duplicates.
+            if (res >= res_row[c - 1] && res >= res_row[c + 1] &&
+                res >= res_prev[c - 1] && res >= res_prev[c] && res >= res_prev[c + 1] &&
+                res >= res_next[c - 1] && res >= res_next[c] && res >= res_next[c + 1]) {
                 this->candidates().emplace_back(res, Pixel(c, r));
             }
         }
