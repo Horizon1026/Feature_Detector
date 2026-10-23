@@ -28,7 +28,7 @@ class AprilTagDetector final {
 
 public:
     struct Options {
-        float kMaxTolerancePixelDistanceToLinkLineEndPoints = 2.0f;
+        float kMaxTolerancePixelDistanceToLinkLineEndPoints = 4.0f;
     };
 
 public:

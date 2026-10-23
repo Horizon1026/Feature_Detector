@@ -5,7 +5,9 @@
 #include "slam_log_reporter.h"
 #include "slam_operations.h"
 
+#include "algorithm"
 #include "numeric"
+#include "set"
 
 namespace feature_detector {
 
@@ -69,8 +71,10 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
     struct LineIndexType {
         uint32_t id = 0;
         bool is_inverse = false;
+        uint32_t next_candidate = 0;
     };
     std::vector<LineIndexType> lines_id_in_rect;
+    std::set<std::array<uint32_t, 4>> unique_rectangles;
     lines_idx_of_rect_.clear();
     for (uint32_t line_id = 0; line_id < detected_lines_.size(); ++line_id) {
         CONTINUE_IF(is_used[line_id]);
@@ -78,7 +82,26 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
         if (lines_id_in_rect.empty()) {
             lines_id_in_rect.emplace_back(LineIndexType {.id = line_id, .is_inverse = false});
         }
-        while (lines_id_in_rect.size() != 4) {
+        while (!lines_id_in_rect.empty()) {
+            if (lines_id_in_rect.size() == 4) {
+                const Vec2 start_point =
+                    lines_id_in_rect[0].is_inverse ? detected_lines_[lines_id_in_rect[0].id].end_point() : detected_lines_[lines_id_in_rect[0].id].start_point();
+                const Vec2 end_point =
+                    lines_id_in_rect[3].is_inverse ? detected_lines_[lines_id_in_rect[3].id].start_point() : detected_lines_[lines_id_in_rect[3].id].end_point();
+                if ((start_point - end_point).norm() < options_.kMaxTolerancePixelDistanceToLinkLineEndPoints) {
+                    const std::array<uint32_t, 4> rect = {
+                        lines_id_in_rect[0].id, lines_id_in_rect[1].id, lines_id_in_rect[2].id, lines_id_in_rect[3].id};
+                    auto sorted_rect = rect;
+                    std::sort(sorted_rect.begin(), sorted_rect.end());
+                    if (unique_rectangles.insert(sorted_rect).second) {
+                        lines_idx_of_rect_.emplace_back(rect);
+                    }
+                }
+                // Release this edge and continue searching other combinations.
+                is_used[lines_id_in_rect.back().id] = false;
+                lines_id_in_rect.pop_back();
+                continue;
+            }
             const uint32_t prev_line_id = lines_id_in_rect.back().id;
             const Vec2 prev_line_end_points =
                 lines_id_in_rect.back().is_inverse ? detected_lines_[prev_line_id].start_point() : detected_lines_[prev_line_id].end_point();
@@ -87,11 +110,18 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
             bool succeed_to_match = false;
             std::multimap<float, int32_t> result_of_radius;
             kd_tree_ptr->SearchRadius(prev_line_end_points, options_.kMaxTolerancePixelDistanceToLinkLineEndPoints, accessor, result_of_radius);
+            uint32_t candidate_index = 0;
             for (const auto &item: result_of_radius) {
+                const uint32_t current_candidate_index = candidate_index;
+                ++candidate_index;
+                CONTINUE_IF(current_candidate_index < lines_id_in_rect.back().next_candidate);
+
+                lines_id_in_rect.back().next_candidate = candidate_index;
                 const uint32_t matched_line_id = item.second / 2;
                 const bool is_start_point_matched = item.second % 2 == 0;
                 CONTINUE_IF(matched_line_id == prev_line_id);
                 CONTINUE_IF(is_used[matched_line_id]);
+
                 lines_id_in_rect.emplace_back(LineIndexType {
                     .id = matched_line_id,
                     .is_inverse = !is_start_point_matched,
@@ -102,32 +132,11 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
             }
             CONTINUE_IF(succeed_to_match);
 
-            // If being here, it means no more lines can be matched.
-            for (auto &item: lines_id_in_rect) {
-                is_used[item.id] = false;
-            }
-            break;
+            // Backtrack and try the parent's next candidate.
+            is_used[lines_id_in_rect.back().id] = false;
+            lines_id_in_rect.pop_back();
         }
 
-        if (lines_id_in_rect.size() == 4) {
-            // Check is head and tail matched.
-            const Vec2 start_point =
-                lines_id_in_rect[0].is_inverse ? detected_lines_[lines_id_in_rect[0].id].end_point() : detected_lines_[lines_id_in_rect[0].id].start_point();
-            const Vec2 end_point =
-                lines_id_in_rect[3].is_inverse ? detected_lines_[lines_id_in_rect[3].id].start_point() : detected_lines_[lines_id_in_rect[3].id].end_point();
-            if ((start_point - end_point).norm() < options_.kMaxTolerancePixelDistanceToLinkLineEndPoints) {
-                lines_idx_of_rect_.emplace_back(
-                    std::array<uint32_t, 4> {lines_id_in_rect[0].id, lines_id_in_rect[1].id, lines_id_in_rect[2].id, lines_id_in_rect[3].id});
-            } else {
-                for (const auto &item: lines_id_in_rect) {
-                    is_used[item.id] = false;
-                }
-            }
-        } else {
-            for (const auto &item: lines_id_in_rect) {
-                is_used[item.id] = false;
-            }
-        }
         lines_id_in_rect.clear();
     }
 
