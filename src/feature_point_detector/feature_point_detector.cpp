@@ -1,5 +1,6 @@
 #include "feature_point_detector.h"
 
+#include "quadratic_plane.h"
 #include "slam_operations.h"
 
 namespace feature_detector {
@@ -60,7 +61,7 @@ bool FeaturePointDetector::SelectGoodFeatures(const GrayImage &image, const uint
         return a.first > b.first;
     });
 
-    for (const auto &candidate : candidates_) {
+    for (const auto &candidate: candidates_) {
         const Pixel pixel = candidate.second;
         const int32_t row = pixel.y();
         const int32_t col = pixel.x();
@@ -96,6 +97,46 @@ void FeaturePointDetector::UpdateMaskByFeatures(const GrayImage &image, const st
         const int32_t col = feature.x();
         DrawRectangleInMask(row, col);
     }
+}
+
+bool FeaturePointDetector::RefineFeatureToSubPixelPrecision(const GrayImage &image, const Vec2 &raw_feature, Vec2 &refined_feature) {
+    RETURN_FALSE_IF(image.data() == nullptr);
+
+    const Pixel mid_pixel = raw_feature.cast<int32_t>();
+    std::vector<Vec3> samples;
+    samples.reserve(options_.kRadiusForSubPixelRefine * options_.kRadiusForSubPixelRefine * 4);
+    for (int32_t dx = -options_.kRadiusForSubPixelRefine; dx <= options_.kRadiusForSubPixelRefine; ++dx) {
+        for (int32_t dy = -options_.kRadiusForSubPixelRefine; dy <= options_.kRadiusForSubPixelRefine; ++dy) {
+            uint8_t value = 0;
+            if (image.GetPixelValue(mid_pixel.y() + dy, mid_pixel.x() + dx, &value)) {
+                samples.emplace_back(Vec3(dx, dy, static_cast<float>(value)));
+            }
+        }
+    }
+
+    QuadraticPlane quadratic_plane;
+    RETURN_FALSE_IF(!quadratic_plane.FitParabolicModel(samples));
+    Vec3 saddle_point = Vec3::Zero();
+    RETURN_FALSE_IF(!quadratic_plane.ComputeSaddlePoint(saddle_point));
+    RETURN_FALSE_IF(saddle_point.head<2>().norm() > options_.kMaxToleranceSubPixelRefineStep);
+
+    QuadraticPlane::Curvatures curvatures;
+    RETURN_FALSE_IF(!quadratic_plane.ComputeCurvaturesAtPoint(saddle_point, curvatures));
+
+    const float k1 = std::fabs(curvatures.max_principal_curvature);
+    const float k2 = std::fabs(curvatures.min_principal_curvature);
+    RETURN_FALSE_IF(!std::isfinite(k1) || !std::isfinite(k2));
+    RETURN_FALSE_IF(!(curvatures.gaussian_curvature < 0.0f));
+
+    const float min_k = std::min(k1, k2);
+    const float max_k = std::max(k1, k2);
+    RETURN_FALSE_IF(min_k < options_.kMinTolarenceCurvatureForSubPixelRefine);
+    RETURN_FALSE_IF(min_k / max_k < options_.kMinToleranceCurvatureRatioForSubPixelRefine);
+
+    const Vec2 result = mid_pixel.cast<float>() + saddle_point.head<2>();
+    RETURN_FALSE_IF(result.x() < 0 || result.x() > image.cols() - 1 || result.y() < 0 || result.y() > image.rows() - 1);
+    refined_feature = result;
+    return true;
 }
 
 }  // namespace feature_detector

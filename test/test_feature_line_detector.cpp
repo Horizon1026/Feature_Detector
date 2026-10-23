@@ -1,6 +1,7 @@
 #include "feature_line_detector.h"
 
 #include "image_painter.h"
+#include "line_segment.h"
 #include "slam_log_reporter.h"
 #include "slam_memory.h"
 #include "tick_tock.h"
@@ -11,7 +12,7 @@ using namespace slam_visualizor;
 using namespace image_painter;
 using namespace slam_utility;
 
-std::string image_file_path = "../examples/image.png";
+std::string image_file_path = "../examples/charucodefinition.png";
 
 void ShowPixelsGradientNorm(const FeatureLineDetector &detector, const std::string &title) {
     const auto &pixels = detector.pixels();
@@ -85,13 +86,13 @@ void ShowDetectedRectangles(const GrayImage &image, const std::string &title, co
     }
 }
 
-void ShowDetectResult(const GrayImage &image, const std::string &title, const std::vector<Vec4> &features) {
+void ShowDetectResult(const GrayImage &image, const std::string &title, const std::vector<LineSegment2D> &features) {
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
     RgbImage show_image(buf, image.rows(), image.cols(), true);
     ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
-    for (unsigned long i = 0; i < features.size(); ++i) {
-        ImagePainter::DrawBressenhanLine(show_image, static_cast<int32_t>(features[i][0]), static_cast<int32_t>(features[i][1]),
-                                         static_cast<int32_t>(features[i][2]), static_cast<int32_t>(features[i][3]), RgbColor::kCyan);
+    for (uint32_t i = 0; i < features.size(); ++i) {
+        ImagePainter::DrawBressenhanLine(show_image, static_cast<int32_t>(features[i].start_point().x()), static_cast<int32_t>(features[i].start_point().y()),
+                                         static_cast<int32_t>(features[i].end_point().x()), static_cast<int32_t>(features[i].end_point().y()), RgbColor::kRed);
     }
     Visualizor2D::ShowImage(title, show_image);
 }
@@ -102,7 +103,7 @@ void TestLsdFeatureLineDetector(GrayImage &image, int32_t feature_num_need) {
     FeatureLineDetector detector;
 
     TickTock timer;
-    std::vector<Vec4> features;
+    std::vector<LineSegment2D> features;
     detector.DetectGoodFeatures(image, feature_num_need, features);
     ReportInfo("LSD line detect time cost " << timer.TockTickInMillisecond() << " ms.");
 

@@ -21,6 +21,9 @@ endif()
 if( NOT TARGET lib_nn_feature_point_detector )
     add_subdirectory( ${FEATURE_DETECTOR_PATH}/src/nn_feature_point_detector ${PROJECT_SOURCE_DIR}/build/lib_nn_feature_point_detector )
 endif()
+if( NOT TARGET lib_april_tag_detector )
+    add_subdirectory( ${FEATURE_DETECTOR_PATH}/src/april_tag_detector ${PROJECT_SOURCE_DIR}/build/lib_april_tag_detector )
+endif()
 
 # Add slam utility log.
 set( SLAM_UTILITY_PATH ${PROJECT_SOURCE_DIR}/../Slam_Utility )
@@ -88,6 +91,18 @@ add_executable( test_nn_feature_point_detector
 )
 target_link_libraries( test_nn_feature_point_detector
     lib_nn_feature_point_detector
+    lib_slam_utility_log
+    lib_image_painter
+    lib_2d_visualizor
+    lib_stack_backward
+)
+
+# Test aptil tag detector.
+add_executable( test_april_tag_detector
+    test/test_april_tag_detector.cpp
+)
+target_link_libraries( test_april_tag_detector
+    lib_april_tag_detector
     lib_slam_utility_log
     lib_image_painter
     lib_2d_visualizor

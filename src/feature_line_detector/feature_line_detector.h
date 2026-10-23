@@ -5,9 +5,11 @@
 #include "circular_buffer.h"
 #include "datatype_image.h"
 #include "slam_basic_math.h"
+#include "line_segment.h"
 
 namespace feature_detector {
 
+/* Class FeatureLineDetector Declaration. */
 class FeatureLineDetector {
 
 public:
@@ -40,7 +42,7 @@ public:
     struct Options {
         float kMinValidGradientNorm = 20.0f;
         float kMinToleranceAngleResidualInRad = 22.5f * kDegToRad;
-        float kMinValidLineLengthInPixel = 20.0f;
+        float kMinValidLineLengthInPixel = 10.0f;
         float kMaxToleranceInlierRation = 0.6f;
     };
 
@@ -48,7 +50,7 @@ public:
     FeatureLineDetector();
     virtual ~FeatureLineDetector() = default;
 
-    bool DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec4> &features);
+    bool DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<LineSegment2D> &features);
 
     // Reference for member variables.
     Options &options() { return options_; }

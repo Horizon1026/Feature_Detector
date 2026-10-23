@@ -20,15 +20,15 @@ endif()
 if( NOT TARGET lib_image )
     add_subdirectory( ${SLAM_UTILITY_PATH}/src/data_type/image ${PROJECT_SOURCE_DIR}/build/lib_image )
 endif()
+if( NOT TARGET lib_quadratic_plane )
+    add_subdirectory( ${SLAM_UTILITY_PATH}/src/data_type/quadratic_plane ${PROJECT_SOURCE_DIR}/build/lib_quadratic_plane )
+endif()
 
 add_library( lib_feature_point_detector
     ${AUX_SRC_FEATURE_POINT_DETECTOR}
     ${AUX_SRC_FEATURE_POINT}
 )
-target_include_directories( lib_feature_point_detector
-    PUBLIC .
-           feature_point
-)
+target_include_directories( lib_feature_point_detector PUBLIC . )
 target_link_libraries( lib_feature_point_detector
     lib_slam_utility_basic_type
     lib_slam_utility_operate
@@ -36,4 +36,5 @@ target_link_libraries( lib_feature_point_detector
     lib_slam_utility_tick_tock
 
     lib_image
+    lib_quadratic_plane
 )

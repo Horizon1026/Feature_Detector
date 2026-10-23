@@ -10,7 +10,7 @@ FeatureLineDetector::FeatureLineDetector() {
     sorted_pixels_.reserve(10000);
 }
 
-bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec4> &features) {
+bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<LineSegment2D> &features) {
     // Validate parameters.
     RETURN_FALSE_IF(image.data() == nullptr || image.rows() < 2 || image.cols() < 2);
     RETURN_TRUE_IF(needed_feature_num == 0);
@@ -38,7 +38,12 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image, const uint3
 
         // Convert region to rectangle.
         RectangleParam rectangle = ConvertRegionToRectangle(region);
-        CONTINUE_IF(rectangle.length < options_.kMinValidLineLengthInPixel || rectangle.inlier_ratio < options_.kMaxToleranceInlierRation);
+        if (rectangle.length < options_.kMinValidLineLengthInPixel || rectangle.inlier_ratio < options_.kMaxToleranceInlierRation) {
+            for (auto &pixel: region.pixels) {
+                pixel->is_used = false;
+            }
+            continue;
+        }
 
         // Compensate the offset.
         rectangle.start_point += Vec2::Constant(0.5f);
@@ -49,21 +54,23 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image, const uint3
     // Output.
     features.clear();
     for (const auto &rect: rectangles_) {
-        features.emplace_back(Vec4(rect.start_point.x(), rect.start_point.y(), rect.end_point.x(), rect.end_point.y()));
+        features.emplace_back(LineSegment2D(rect.start_point, rect.end_point));
     }
     return true;
 }
 
 bool FeatureLineDetector::ComputeLineLevelAngleMap(const GrayImage &image) {
+    sorted_pixels_.clear();
     // The bottom-right boundary of image will be invalid, because gradient is invalid.
     pixels_.resize(image.rows() - 1, image.cols() - 1);
+    pixels_.setConstant(PixelParam {});
     for (int32_t i = 0; i < pixels_.rows(); ++i) {
         pixels_(i, 0).row = i;
         pixels_(i, pixels_.cols() - 1).row = i;
         pixels_(i, pixels_.cols() - 1).col = pixels_.cols() - 1;
     }
     for (int32_t i = 0; i < pixels_.cols(); ++i) {
-        pixels_(0, 1).col = i;
+        pixels_(0, i).col = i;
         pixels_(pixels_.rows() - 1, i).col = i;
         pixels_(pixels_.rows() - 1, i).row = pixels_.rows() - 1;
     }
@@ -105,6 +112,8 @@ void FeatureLineDetector::GrowRegion(PixelParam &seed_pixel, RegionParam &region
 
     // Initialize region with seed pixel.
     region.pixels.clear();
+    region.pixels.emplace_back(&seed_pixel);
+    seed_pixel.is_used = true;
     region.angle = seed_pixel.line_level_angle;
     float sum_dx = std::cos(seed_pixel.line_level_angle);
     float sum_dy = std::sin(seed_pixel.line_level_angle);
@@ -127,9 +136,7 @@ void FeatureLineDetector::GrowRegion(PixelParam &seed_pixel, RegionParam &region
         visited_pixels_.PushBack(pixel_ptr);
         // Check if it is aligned with this region.
         const float angle_residual = Utility::AngleDiffInRad(region.angle, pixel_ptr->line_level_angle);
-        if (std::fabs(angle_residual) > options_.kMinToleranceAngleResidualInRad) {
-            continue;
-        }
+        CONTINUE_IF(std::fabs(angle_residual) > options_.kMinToleranceAngleResidualInRad);
         // Add it into region if aligned. Recompute angle of this region.
         sum_dx += std::cos(pixel_ptr->line_level_angle);
         sum_dy += std::sin(pixel_ptr->line_level_angle);
@@ -186,7 +193,7 @@ FeatureLineDetector::RectangleParam FeatureLineDetector::ConvertRegionToRectangl
         Iyy += dx * dx * pixel->gradient_norm;
         Ixy -= dx * dy * pixel->gradient_norm;
     }
-    if (Ixx == 0 || Iyy == 0 || Ixy == 0) {
+    if (Ixx + Iyy <= kZeroFloat) {
         return rect;
     }
     const float smallest_eiven_value = 0.5f * (Ixx + Iyy - std::sqrt((Ixx - Iyy) * (Ixx - Iyy) + 4.0f * Ixy * Ixy));

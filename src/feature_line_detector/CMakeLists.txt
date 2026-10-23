@@ -22,6 +22,9 @@ endif()
 if( NOT TARGET lib_image )
     add_subdirectory( ${SLAM_UTILITY_PATH}/src/data_type/image ${PROJECT_SOURCE_DIR}/build/lib_image )
 endif()
+if( NOT TARGET lib_line_segment )
+    add_subdirectory( ${SLAM_UTILITY_PATH}/src/data_type/line_segment ${PROJECT_SOURCE_DIR}/build/lib_line_segment )
+endif()
 
 # Add circular buffer of slam utility data struct.
 if( NOT TARGET lib_circular_buffer )
@@ -38,5 +41,6 @@ target_link_libraries( lib_feature_line_detector
     lib_slam_utility_math
 
     lib_image
+    lib_line_segment
     lib_circular_buffer
 )

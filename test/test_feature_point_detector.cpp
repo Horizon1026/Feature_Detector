@@ -62,6 +62,15 @@ void TestUpdateMaskWithDetectedFeatures(GrayImage &image, int32_t feature_num_ne
 
     ShowImage(image, "harris detected new features", features);
     ReportInfo("harris detected " << features.size());
+
+    // Refine features to subpixel.
+    for (auto &feature: features) {
+        Vec2 refined_feature = Vec2::Zero();
+        if (detector.RefineFeatureToSubPixelPrecision(image, feature, refined_feature)) {
+            feature = refined_feature;
+        }
+    }
+    ShowImage(image, "harris detected and refined features", features);
 }
 
 void TestShiTomasFeatureDetector(GrayImage &image, int32_t feature_num_need) {
@@ -78,6 +87,15 @@ void TestShiTomasFeatureDetector(GrayImage &image, int32_t feature_num_need) {
 
     ShowImage(image, "shi tomas detected features", features);
     ReportInfo("shi tomas detected " << features.size());
+
+    // Refine features to subpixel.
+    for (auto &feature: features) {
+        Vec2 refined_feature = Vec2::Zero();
+        if (detector.RefineFeatureToSubPixelPrecision(image, feature, refined_feature)) {
+            feature = refined_feature;
+        }
+    }
+    ShowImage(image, "shi tomas detected and refined features", features);
 }
 
 void TestFastFeatureDetector(GrayImage &image, int32_t feature_num_need) {
@@ -94,6 +112,15 @@ void TestFastFeatureDetector(GrayImage &image, int32_t feature_num_need) {
 
     ShowImage(image, "fast detected features", features);
     ReportInfo("fast detected " << features.size());
+
+    // Refine features to subpixel.
+    for (auto &feature: features) {
+        Vec2 refined_feature = Vec2::Zero();
+        if (detector.RefineFeatureToSubPixelPrecision(image, feature, refined_feature)) {
+            feature = refined_feature;
+        }
+    }
+    ShowImage(image, "fast detected and refined features", features);
 }
 
 int main(int argc, char **argv) {

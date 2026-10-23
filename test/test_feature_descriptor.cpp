@@ -57,7 +57,7 @@ void TestBriefDescriptor(const GrayImage &image, const std::vector<Vec2> &featur
 }
 
 int main(int argc, char **argv) {
-    ReportInfo("Test feature detector.");
+    ReportInfo(">> Test feature detector.");
     int32_t feature_num_need = 10;
 
     GrayImage image;
