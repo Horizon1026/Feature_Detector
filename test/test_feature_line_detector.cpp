@@ -12,8 +12,6 @@ using namespace slam_visualizor;
 using namespace image_painter;
 using namespace slam_utility;
 
-std::string image_file_path = "../examples/charucodefinition.png";
-
 void ShowPixelsGradientNorm(const FeatureLineDetector &detector, const std::string &title) {
     const auto &pixels = detector.pixels();
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(pixels.rows() * pixels.cols() * sizeof(uint8_t));
@@ -118,11 +116,15 @@ void TestLsdFeatureLineDetector(GrayImage &image, int32_t feature_num_need) {
 
 int main(int argc, char **argv) {
     ReportInfo(YELLOW ">> Test feature line detector." RESET_COLOR);
-    int32_t feature_num_need = 200;
+    std::string image_file_path = "../examples/image.png";
+    if (argc >= 2) {
+        image_file_path = argv[1];
+    }
 
     GrayImage image;
     Visualizor2D::LoadImage(image_file_path, image);
 
+    const int32_t feature_num_need = 200;
     TestLsdFeatureLineDetector(image, feature_num_need);
 
     Visualizor2D::WaitKey(0);

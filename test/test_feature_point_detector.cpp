@@ -13,8 +13,6 @@ using namespace feature_detector;
 using namespace slam_visualizor;
 using namespace image_painter;
 
-std::string image_file_path = "../examples/charucodefinition.png";
-
 void ShowImage(const GrayImage &image, const std::string &title, const std::vector<Vec2> &features) {
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
     RgbImage show_image(buf, image.rows(), image.cols(), true);
@@ -125,11 +123,15 @@ void TestFastFeatureDetector(GrayImage &image, int32_t feature_num_need) {
 
 int main(int argc, char **argv) {
     ReportInfo(YELLOW ">> Test feature point detector." RESET_COLOR);
-    int32_t feature_num_need = 200;
+    std::string image_file_path = "../examples/image.png";
+    if (argc >= 2) {
+        image_file_path = argv[1];
+    }
 
     GrayImage image;
     Visualizor2D::LoadImage(image_file_path, image);
 
+    int32_t feature_num_need = 200;
     TestFastFeatureDetector(image, feature_num_need);
     TestHarrisFeatureDetector(image, feature_num_need);
     TestShiTomasFeatureDetector(image, feature_num_need);

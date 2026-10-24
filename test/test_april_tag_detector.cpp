@@ -10,8 +10,6 @@ using namespace feature_detector;
 using namespace slam_visualizor;
 using namespace image_painter;
 
-std::string image_file_path = "../examples/calibration_board_1.png";
-
 void DrawDetectedLinesOnImage(const GrayImage &image, const AprilTagDetector &detector) {
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
     RgbImage show_image(buf, image.rows(), image.cols(), true);
@@ -28,13 +26,14 @@ void DrawDetectedRetanglesOnImage(const GrayImage &image, const AprilTagDetector
     uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
     RgbImage show_image(buf, image.rows(), image.cols(), true);
     ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
-    const auto &lines = detector.detected_lines();
-    const auto &rectangles = detector.lines_idx_of_rect();
+    const auto &rectangles = detector.detected_rectangles();
+    ReportDebug("rectangles.size = " << rectangles.size());
     for (const auto &rect: rectangles) {
         for (uint32_t i = 0; i < rect.size(); ++i) {
-            const auto &line = lines[rect[i]];
-            ImagePainter::DrawBressenhanLine(show_image, static_cast<int32_t>(line.start_point().x()), static_cast<int32_t>(line.start_point().y()),
-                                             static_cast<int32_t>(line.end_point().x()), static_cast<int32_t>(line.end_point().y()), RgbColor::kGreen);
+            ImagePainter::DrawBressenhanLine(show_image, rect[0].x(), rect[0].y(), rect[1].x(), rect[1].y(), RgbColor::kRed);
+            ImagePainter::DrawBressenhanLine(show_image, rect[1].x(), rect[1].y(), rect[2].x(), rect[2].y(), RgbColor::kRed);
+            ImagePainter::DrawBressenhanLine(show_image, rect[2].x(), rect[2].y(), rect[3].x(), rect[3].y(), RgbColor::kRed);
+            ImagePainter::DrawBressenhanLine(show_image, rect[3].x(), rect[3].y(), rect[0].x(), rect[0].y(), RgbColor::kRed);
         }
     }
 
@@ -43,6 +42,10 @@ void DrawDetectedRetanglesOnImage(const GrayImage &image, const AprilTagDetector
 
 int main(int argc, char **argv) {
     ReportColorWarn(">> Test april tag detector");
+    std::string image_file_path = "../examples/image.png";
+    if (argc >= 2) {
+        image_file_path = argv[1];
+    }
 
     GrayImage image;
     Visualizor2D::LoadImage(image_file_path, image);

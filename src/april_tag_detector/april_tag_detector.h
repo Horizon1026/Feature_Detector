@@ -39,10 +39,10 @@ public:
 
     // Reference for member variables.
     std::vector<LineSegment2D> &detected_lines() { return detected_lines_; }
-    std::vector<std::array<uint32_t, 4>> &lines_idx_of_rect() { return lines_idx_of_rect_; }
+    std::vector<std::array<Vec2, 4>> &detected_rectangles() { return detected_rectangles_; }
     // Const reference for member variables.
     const std::vector<LineSegment2D> &detected_lines() const { return detected_lines_; }
-    const std::vector<std::array<uint32_t, 4>> &lines_idx_of_rect() const { return lines_idx_of_rect_; }
+    const std::vector<std::array<Vec2, 4>> &detected_rectangles() const { return detected_rectangles_; }
 
 private:
     void Reset();
@@ -55,7 +55,7 @@ private:
     FeaturePointShiTomasDetector point_detector_;
 
     std::vector<LineSegment2D> detected_lines_;
-    std::vector<std::array<uint32_t, 4>> lines_idx_of_rect_;
+    std::vector<std::array<Vec2, 4>> detected_rectangles_;
 };
 
 }  // namespace feature_detector

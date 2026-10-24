@@ -11,8 +11,6 @@
 using namespace slam_visualizor;
 using namespace image_painter;
 
-std::string image_file_path = "../examples/image.png";
-
 std::vector<Vec2> TestHarrisFeatureDetector(const GrayImage &image, const int32_t feature_num_need) {
     ReportInfo(">> Test Harris Feature Detector.");
 
@@ -58,11 +56,15 @@ void TestBriefDescriptor(const GrayImage &image, const std::vector<Vec2> &featur
 
 int main(int argc, char **argv) {
     ReportInfo(">> Test feature detector.");
-    int32_t feature_num_need = 10;
+    std::string image_file_path = "../examples/image.png";
+    if (argc >= 2) {
+        image_file_path = argv[1];
+    }
 
     GrayImage image;
     Visualizor2D::LoadImage(image_file_path, image);
 
+    const int32_t feature_num_need = 10;
     std::vector<Vec2> features = TestHarrisFeatureDetector(image, feature_num_need);
     TestBriefDescriptor(image, features);
 

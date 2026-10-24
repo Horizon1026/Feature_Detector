@@ -70,10 +70,14 @@ void TestNNFeaturePointDetector(const GrayImage &image, const std::string &model
 
 int main(int argc, char **argv) {
     ReportInfo(YELLOW ">> Test nn feature point detector." RESET_COLOR);
+    std::string image_file_path = "../examples/image.png";
+    if (argc >= 2) {
+        image_file_path = argv[1];
+    }
 
     // Load image and test each model.
     GrayImage image;
-    Visualizor2D::LoadImage("../examples/image2.png", image);
+    Visualizor2D::LoadImage(image_file_path, image);
     TestNNFeaturePointDetector(image, "superpoint.onnx", NNFeaturePointDetector::ModelType::kSuperpointHeatmap);
     TestNNFeaturePointDetector(image, "superpoint_nms.onnx", NNFeaturePointDetector::ModelType::kSuperpointNms);
     TestNNFeaturePointDetector(image, "disk.onnx", NNFeaturePointDetector::ModelType::kDiskHeatmap);

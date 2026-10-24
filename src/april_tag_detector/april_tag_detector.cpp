@@ -13,7 +13,7 @@ namespace feature_detector {
 
 void AprilTagDetector::Reset() {
     detected_lines_.clear();
-    lines_idx_of_rect_.clear();
+    detected_rectangles_.clear();
 }
 
 bool AprilTagDetector::DetectAprilTags(const GrayImage &image, std::vector<AprilTag> &april_tags) {
@@ -55,8 +55,8 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
         end_points.emplace_back(PointType {.pixel_uv = line.start_point(), .line_id = i});
         end_points.emplace_back(PointType {.pixel_uv = line.end_point(), .line_id = i});
     }
-    // Lambda accessor to get position from data unit.
-    auto accessor = [&](int32_t index) -> Vec2 {
+    // Lambda KdtreeAccessor to get position from data unit.
+    auto KdtreeAccessor = [&](int32_t index) -> Vec2 {
         return end_points[index].pixel_uv;
     };
     // Prepare indices.
@@ -65,7 +65,7 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
     // Build extend kd-tree.
     using KdTreeType = ExtendKdTreeNode<float, 2>;
     std::unique_ptr<KdTreeType> kd_tree_ptr = std::make_unique<KdTreeType>();
-    kd_tree_ptr->Construct(indices, accessor);
+    kd_tree_ptr->Construct(indices, KdtreeAccessor);
 
     // Search rectangles.
     struct LineIndexType {
@@ -73,9 +73,16 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
         bool is_inverse = false;
         uint32_t next_candidate = 0;
     };
+    auto GetEndPoint = [&](LineIndexType line_index, bool need_start_point) -> Vec2 {
+        if (line_index.is_inverse == need_start_point) {
+            return detected_lines_[line_index.id].end_point();
+        } else {
+            return detected_lines_[line_index.id].start_point();
+        }
+    };
     std::vector<LineIndexType> lines_id_in_rect;
     std::set<std::array<uint32_t, 4>> unique_rectangles;
-    lines_idx_of_rect_.clear();
+    detected_rectangles_.clear();
     for (uint32_t line_id = 0; line_id < detected_lines_.size(); ++line_id) {
         CONTINUE_IF(is_used[line_id]);
         is_used[line_id] = true;
@@ -84,17 +91,20 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
         }
         while (!lines_id_in_rect.empty()) {
             if (lines_id_in_rect.size() == 4) {
-                const Vec2 start_point =
-                    lines_id_in_rect[0].is_inverse ? detected_lines_[lines_id_in_rect[0].id].end_point() : detected_lines_[lines_id_in_rect[0].id].start_point();
-                const Vec2 end_point =
-                    lines_id_in_rect[3].is_inverse ? detected_lines_[lines_id_in_rect[3].id].start_point() : detected_lines_[lines_id_in_rect[3].id].end_point();
+                const Vec2 start_point = GetEndPoint(lines_id_in_rect[0], true);
+                const Vec2 end_point = GetEndPoint(lines_id_in_rect[3], false);
                 if ((start_point - end_point).norm() < options_.kMaxTolerancePixelDistanceToLinkLineEndPoints) {
                     const std::array<uint32_t, 4> rect = {
                         lines_id_in_rect[0].id, lines_id_in_rect[1].id, lines_id_in_rect[2].id, lines_id_in_rect[3].id};
                     auto sorted_rect = rect;
                     std::sort(sorted_rect.begin(), sorted_rect.end());
                     if (unique_rectangles.insert(sorted_rect).second) {
-                        lines_idx_of_rect_.emplace_back(rect);
+                        detected_rectangles_.emplace_back(std::array<Vec2, 4>{
+                            0.5f * (GetEndPoint(lines_id_in_rect[0], true) + GetEndPoint(lines_id_in_rect[3], false)),
+                            0.5f * (GetEndPoint(lines_id_in_rect[1], true) + GetEndPoint(lines_id_in_rect[0], false)),
+                            0.5f * (GetEndPoint(lines_id_in_rect[2], true) + GetEndPoint(lines_id_in_rect[1], false)),
+                            0.5f * (GetEndPoint(lines_id_in_rect[3], true) + GetEndPoint(lines_id_in_rect[2], false)),
+                        });
                     }
                 }
                 // Release this edge and continue searching other combinations.
@@ -109,7 +119,7 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
             // Try to find next line with nearby start_points.
             bool succeed_to_match = false;
             std::multimap<float, int32_t> result_of_radius;
-            kd_tree_ptr->SearchRadius(prev_line_end_points, options_.kMaxTolerancePixelDistanceToLinkLineEndPoints, accessor, result_of_radius);
+            kd_tree_ptr->SearchRadius(prev_line_end_points, options_.kMaxTolerancePixelDistanceToLinkLineEndPoints, KdtreeAccessor, result_of_radius);
             uint32_t candidate_index = 0;
             for (const auto &item: result_of_radius) {
                 const uint32_t current_candidate_index = candidate_index;
@@ -144,7 +154,7 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
 }
 
 bool AprilTagDetector::TryToFindAprilTagsInDetectedRectangles() {
-    RETURN_FALSE_IF(lines_idx_of_rect_.empty());
+    RETURN_FALSE_IF(detected_rectangles_.empty());
 
     return true;
 }
