@@ -24,13 +24,13 @@ bool AprilTagDetector::DetectAprilTags(const GrayImage &image, std::vector<April
     line_detector_.DetectGoodFeatures(image, 300, detected_lines_);
 
     // Find rectangles in lines.
-    if (!TryToFindRectanglesInDetectedLines()) {
+    if (!TryToFindRectanglesInDetectedLines(image)) {
         ReportWarn("[AprilTagDetector] Failed to detect rectangles in lines.");
         return false;
     }
 
     // Find apriltags in rectangles.
-    if (!TryToFindAprilTagsInDetectedRectangles()) {
+    if (!TryToFindAprilTagsInDetectedRectangles(image)) {
         ReportWarn("[AprilTagDetector] Failed to detect apriltags in rectangles.");
         return false;
     }
@@ -38,7 +38,7 @@ bool AprilTagDetector::DetectAprilTags(const GrayImage &image, std::vector<April
     return true;
 }
 
-bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
+bool AprilTagDetector::TryToFindRectanglesInDetectedLines(const GrayImage &image) {
     RETURN_FALSE_IF(detected_lines_.size() < 4);
     std::vector<bool> is_used;
     is_used.resize(detected_lines_.size(), false);
@@ -94,12 +94,11 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
                 const Vec2 start_point = GetEndPoint(lines_id_in_rect[0], true);
                 const Vec2 end_point = GetEndPoint(lines_id_in_rect[3], false);
                 if ((start_point - end_point).norm() < options_.kMaxTolerancePixelDistanceToLinkLineEndPoints) {
-                    const std::array<uint32_t, 4> rect = {
-                        lines_id_in_rect[0].id, lines_id_in_rect[1].id, lines_id_in_rect[2].id, lines_id_in_rect[3].id};
+                    const std::array<uint32_t, 4> rect = {lines_id_in_rect[0].id, lines_id_in_rect[1].id, lines_id_in_rect[2].id, lines_id_in_rect[3].id};
                     auto sorted_rect = rect;
                     std::sort(sorted_rect.begin(), sorted_rect.end());
                     if (unique_rectangles.insert(sorted_rect).second) {
-                        detected_rectangles_.emplace_back(std::array<Vec2, 4>{
+                        detected_rectangles_.emplace_back(std::array<Vec2, 4> {
                             0.5f * (GetEndPoint(lines_id_in_rect[0], true) + GetEndPoint(lines_id_in_rect[3], false)),
                             0.5f * (GetEndPoint(lines_id_in_rect[1], true) + GetEndPoint(lines_id_in_rect[0], false)),
                             0.5f * (GetEndPoint(lines_id_in_rect[2], true) + GetEndPoint(lines_id_in_rect[1], false)),
@@ -150,10 +149,19 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines() {
         lines_id_in_rect.clear();
     }
 
+    // Refine vertices of each rectangle.
+    for (auto &rectangle: detected_rectangles_) {
+        for (auto &point: rectangle) {
+            Vec2 refined_point = point;
+            CONTINUE_IF(!point_detector_.RefineFeatureToSubPixelPrecision(image, point, refined_point));
+            point = refined_point;
+        }
+    }
+
     return true;
 }
 
-bool AprilTagDetector::TryToFindAprilTagsInDetectedRectangles() {
+bool AprilTagDetector::TryToFindAprilTagsInDetectedRectangles(const GrayImage &image) {
     RETURN_FALSE_IF(detected_rectangles_.empty());
 
     return true;

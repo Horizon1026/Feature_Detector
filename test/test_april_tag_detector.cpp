@@ -27,7 +27,6 @@ void DrawDetectedRetanglesOnImage(const GrayImage &image, const AprilTagDetector
     RgbImage show_image(buf, image.rows(), image.cols(), true);
     ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
     const auto &rectangles = detector.detected_rectangles();
-    ReportDebug("rectangles.size = " << rectangles.size());
     for (const auto &rect: rectangles) {
         for (uint32_t i = 0; i < rect.size(); ++i) {
             ImagePainter::DrawBressenhanLine(show_image, rect[0].x(), rect[0].y(), rect[1].x(), rect[1].y(), RgbColor::kRed);

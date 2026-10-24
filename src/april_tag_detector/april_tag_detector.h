@@ -46,8 +46,8 @@ public:
 
 private:
     void Reset();
-    bool TryToFindRectanglesInDetectedLines();
-    bool TryToFindAprilTagsInDetectedRectangles();
+    bool TryToFindRectanglesInDetectedLines(const GrayImage &image);
+    bool TryToFindAprilTagsInDetectedRectangles(const GrayImage &image);
 
 private:
     Options options_;
