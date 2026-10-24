@@ -11,4 +11,7 @@ cd build/
 ./test_april_tag_detector ../examples/calibration_board_5.png aruco_mip_36h12 1
 ./test_april_tag_detector ../examples/calibration_board_6.png tag_36h11 2
 ./test_april_tag_detector ../examples/calibration_board_7.png tag_36h11 2
+./test_april_tag_detector ../examples/tag_36h11_family.png tag_36h11 1
+./test_april_tag_detector ../examples/tag_41h12_family.png tag_standard_41h12 1
+
 cd ..

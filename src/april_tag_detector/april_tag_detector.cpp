@@ -190,6 +190,7 @@ bool AprilTagDetector::TryToFindAprilTagsInDetectedRectangles(const GrayImage &i
     for (const auto &rect_vertices: detected_rectangles_) {
         int32_t best_april_tag_id = -1;
         int32_t min_hamming_distance = 100;
+        int32_t best_direction = 0;
         std::vector<Vec2> sample_points;
         std::vector<Vec2> best_sample_points;
 
@@ -211,6 +212,7 @@ bool AprilTagDetector::TryToFindAprilTagsInDetectedRectangles(const GrayImage &i
                     min_hamming_distance = distance;
                     best_april_tag_id = id;
                     best_sample_points = sample_points;
+                    best_direction = static_cast<int32_t>(direction);
                 }
             }
         }
@@ -225,6 +227,9 @@ bool AprilTagDetector::TryToFindAprilTagsInDetectedRectangles(const GrayImage &i
             .sample_points = best_sample_points,
             .hamming_distance = min_hamming_distance,
         });
+        for (int32_t i = 0; i < 4; ++i) {
+            april_tags.back().vertices[i] = rect_vertices[(i + best_direction) % 4];
+        }
     }
     return true;
 }

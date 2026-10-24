@@ -52,12 +52,9 @@ namespace feature_detector {
 
 // https://github.com/AprilRobotics/apriltag/blob/master/tagStandard41h12.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_standard_41h12_ = {
-    {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, -2},
-    {1, 1}, {2, 1}, {6, -2}, {6, -1}, {6, 0}, {6, 1}, {6, 2}, {6, 3},
-    {6, 4}, {6, 5}, {3, 1}, {3, 2}, {6, 6}, {5, 6}, {4, 6}, {3, 6},
-    {2, 6}, {1, 6}, {0, 6}, {-1, 6}, {3, 3}, {2, 3}, {-2, 6}, {-2, 5},
-    {-2, 4}, {-2, 3}, {-2, 2}, {-2, 1}, {-2, 0}, {-2, -1}, {1, 3}, {1, 2},
-    {2, 2},
+    {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, -2}, {1, 1},  {2, 1},   {6, -2}, {6, -1}, {6, 0}, {6, 1},
+    {6, 2},   {6, 3},   {6, 4},  {6, 5},  {3, 1},  {3, 2},  {6, 6},  {5, 6},  {4, 6},  {3, 6},   {2, 6},  {1, 6},  {0, 6}, {-1, 6},
+    {3, 3},   {2, 3},   {-2, 6}, {-2, 5}, {-2, 4}, {-2, 3}, {-2, 2}, {-2, 1}, {-2, 0}, {-2, -1}, {1, 3},  {1, 2},  {2, 2},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_standard_41h12_ = {
@@ -416,16 +413,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_standard_41h12_ = {
     0x000000352cb6ab16ULL, 0x0000015cff6a6f12ULL, 0x000001ee40155a64ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_standard_41h12_ = {
-    &bits_standard_41h12_, 5.0f, &codes_standard_41h12_, 12, true};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_standard_41h12_ = {&bits_standard_41h12_, 5.0f, &codes_standard_41h12_, 12, true};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/tag36h11.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_36h11_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2},
-    {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3},
-    {5, 4}, {4, 3}, {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5},
-    {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2},
-    {2, 5}, {2, 4}, {2, 3}, {3, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2}, {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3}, {5, 4}, {4, 3},
+    {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5}, {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 5}, {2, 4}, {2, 3}, {3, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_36h11_ = {
@@ -529,16 +522,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_36h11_ = {
     0x00000002867718c7ULL, 0x000000035815525bULL, 0x00000007cd35c550ULL, 0x00000002164f73a0ULL, 0x0000000e8b772fe0ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_36h11_ = {
-    &bits_36h11_, 8.0f, &codes_36h11_, 11, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_36h11_ = {&bits_36h11_, 8.0f, &codes_36h11_, 11, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagArucoMIP36h12.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_mip_36h12_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2},
-    {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3},
-    {5, 4}, {4, 3}, {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5},
-    {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2},
-    {2, 5}, {2, 4}, {2, 3}, {3, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2}, {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3}, {5, 4}, {4, 3},
+    {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5}, {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 5}, {2, 4}, {2, 3}, {3, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_mip_36h12_ = {
@@ -586,13 +575,11 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_mip_36h12_ = {
     0x000000043740b8dcULL, 0x000000033ad60c5dULL, 0x0000000713b480ceULL, 0x00000004d79815adULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_mip_36h12_ = {
-    &bits_aruco_mip_36h12_, 8.0f, &codes_aruco_mip_36h12_, 12, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_mip_36h12_ = {&bits_aruco_mip_36h12_, 8.0f, &codes_aruco_mip_36h12_, 12, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco4x4_100.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_4x4_100_ = {
-    {1, 1}, {2, 1}, {3, 1}, {2, 2}, {4, 1}, {4, 2}, {4, 3}, {3, 2},
-    {4, 4}, {3, 4}, {2, 4}, {3, 3}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
+    {1, 1}, {2, 1}, {3, 1}, {2, 2}, {4, 1}, {4, 2}, {4, 3}, {3, 2}, {4, 4}, {3, 4}, {2, 4}, {3, 3}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_4x4_100_ = {
@@ -615,13 +602,11 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_4x4_100_ = {
     0x0000000000005772ULL, 0x00000000000057c7ULL, 0x0000000000006437ULL, 0x00000000000068e5ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_4x4_100_ = {
-    &bits_aruco_4x4_100_, 6.0f, &codes_aruco_4x4_100_, 3, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_4x4_100_ = {&bits_aruco_4x4_100_, 6.0f, &codes_aruco_4x4_100_, 3, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/tag16h5.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_16h5_ = {
-    {1, 1}, {2, 1}, {3, 1}, {2, 2}, {4, 1}, {4, 2}, {4, 3}, {3, 2},
-    {4, 4}, {3, 4}, {2, 4}, {3, 3}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
+    {1, 1}, {2, 1}, {3, 1}, {2, 2}, {4, 1}, {4, 2}, {4, 3}, {3, 2}, {4, 4}, {3, 4}, {2, 4}, {3, 3}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_16h5_ = {
@@ -632,15 +617,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_16h5_ = {
     0x000000000000e62fULL, 0x0000000000006dbcULL, 0x000000000000b6ebULL, 0x000000000000de10ULL, 0x000000000000154dULL, 0x000000000000b57aULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_16h5_ = {
-    &bits_16h5_, 6.0f, &codes_16h5_, 5, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_16h5_ = {&bits_16h5_, 6.0f, &codes_16h5_, 5, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/tag25h9.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_25h9_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {2, 2}, {3, 2}, {5, 1}, {5, 2},
-    {5, 3}, {5, 4}, {4, 2}, {4, 3}, {5, 5}, {4, 5}, {3, 5}, {2, 5},
-    {4, 4}, {3, 4}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 4}, {2, 3},
-    {3, 3},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {2, 2}, {3, 2}, {5, 1}, {5, 2}, {5, 3}, {5, 4}, {4, 2}, {4, 3}, {5, 5},
+    {4, 5}, {3, 5}, {2, 5}, {4, 4}, {3, 4}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 4}, {2, 3}, {3, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_25h9_ = {
@@ -652,16 +634,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_25h9_ = {
     0x000000000044df5fULL, 0x0000000001360159ULL, 0x0000000000ec31e8ULL, 0x0000000001bcc0f6ULL, 0x0000000000a64f8dULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_25h9_ = {
-    &bits_25h9_, 7.0f, &codes_25h9_, 9, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_25h9_ = {&bits_25h9_, 7.0f, &codes_25h9_, 9, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/tag36h10.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_36h10_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2},
-    {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3},
-    {5, 4}, {4, 3}, {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5},
-    {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2},
-    {2, 5}, {2, 4}, {2, 3}, {3, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2}, {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3}, {5, 4}, {4, 3},
+    {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5}, {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 5}, {2, 4}, {2, 3}, {3, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_36h10_ = {
@@ -1054,14 +1032,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_36h10_ = {
     0x00000007b3ca3761ULL, 0x000000064fae3ebfULL, 0x0000000447b9e7acULL, 0x0000000d9f564f30ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_36h10_ = {
-    &bits_36h10_, 8.0f, &codes_36h10_, 10, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_36h10_ = {&bits_36h10_, 8.0f, &codes_36h10_, 10, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/tagCircle21h7.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_circle_21h7_ = {
-    {1, -2}, {2, -2}, {3, -2}, {1, 1}, {2, 1}, {6, 1}, {6, 2}, {6, 3},
-    {3, 1}, {3, 2}, {3, 6}, {2, 6}, {1, 6}, {3, 3}, {2, 3}, {-2, 3},
-    {-2, 2}, {-2, 1}, {1, 3}, {1, 2}, {2, 2},
+    {1, -2}, {2, -2}, {3, -2}, {1, 1}, {2, 1},  {6, 1},  {6, 2},  {6, 3}, {3, 1}, {3, 2}, {3, 6},
+    {2, 6},  {1, 6},  {3, 3},  {2, 3}, {-2, 3}, {-2, 2}, {-2, 1}, {1, 3}, {1, 2}, {2, 2},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_circle_21h7_ = {
@@ -1074,18 +1050,13 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_circle_21h7_ = {
     0x0000000000015b39ULL, 0x00000000001ec1e3ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_circle_21h7_ = {
-    &bits_circle_21h7_, 5.0f, &codes_circle_21h7_, 7, true};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_circle_21h7_ = {&bits_circle_21h7_, 5.0f, &codes_circle_21h7_, 7, true};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/tagCircle49h12.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_circle_49h12_ = {
-    {1, -3}, {2, -3}, {3, -3}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2},
-    {4, -2}, {5, -2}, {1, 1}, {2, 1}, {7, 1}, {7, 2}, {7, 3}, {6, -1},
-    {6, 0}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {3, 1}, {3, 2},
-    {3, 7}, {2, 7}, {1, 7}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {1, 6},
-    {0, 6}, {-1, 6}, {3, 3}, {2, 3}, {-3, 3}, {-3, 2}, {-3, 1}, {-2, 5},
-    {-2, 4}, {-2, 3}, {-2, 2}, {-2, 1}, {-2, 0}, {-2, -1}, {1, 3}, {1, 2},
-    {2, 2},
+    {1, -3}, {2, -3}, {3, -3}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, -2}, {1, 1},  {2, 1},   {7, 1}, {7, 2}, {7, 3}, {6, -1}, {6, 0},
+    {6, 1},  {6, 2},  {6, 3},  {6, 4},   {6, 5},  {3, 1},  {3, 2},  {3, 7},  {2, 7},  {1, 7},  {5, 6},  {4, 6},   {3, 6}, {2, 6}, {1, 6}, {0, 6},  {-1, 6},
+    {3, 3},  {2, 3},  {-3, 3}, {-3, 2},  {-3, 1}, {-2, 5}, {-2, 4}, {-2, 3}, {-2, 2}, {-2, 1}, {-2, 0}, {-2, -1}, {1, 3}, {1, 2}, {2, 2},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_circle_49h12_ = {
@@ -12014,17 +11985,13 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_circle_49h12_ = {
     0x0000333ab7d7726dULL, 0x0001719f5eec237fULL, 0x0001e520c2997b43ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_circle_49h12_ = {
-    &bits_circle_49h12_, 5.0f, &codes_circle_49h12_, 12, true};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_circle_49h12_ = {&bits_circle_49h12_, 5.0f, &codes_circle_49h12_, 12, true};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/tagCustom48h12.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_custom_48h12_ = {
-    {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, -2},
-    {6, -2}, {1, 1}, {2, 1}, {3, 1}, {7, -2}, {7, -1}, {7, 0}, {7, 1},
-    {7, 2}, {7, 3}, {7, 4}, {7, 5}, {7, 6}, {4, 1}, {4, 2}, {4, 3},
-    {7, 7}, {6, 7}, {5, 7}, {4, 7}, {3, 7}, {2, 7}, {1, 7}, {0, 7},
-    {-1, 7}, {4, 4}, {3, 4}, {2, 4}, {-2, 7}, {-2, 6}, {-2, 5}, {-2, 4},
-    {-2, 3}, {-2, 2}, {-2, 1}, {-2, 0}, {-2, -1}, {1, 4}, {1, 3}, {1, 2},
+    {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, -2}, {6, -2}, {1, 1},  {2, 1},  {3, 1},  {7, -2},  {7, -1}, {7, 0}, {7, 1},
+    {7, 2},   {7, 3},   {7, 4},  {7, 5},  {7, 6},  {4, 1},  {4, 2},  {4, 3},  {7, 7},  {6, 7},  {5, 7},  {4, 7},  {3, 7},   {2, 7},  {1, 7}, {0, 7},
+    {-1, 7},  {4, 4},   {3, 4},  {2, 4},  {-2, 7}, {-2, 6}, {-2, 5}, {-2, 4}, {-2, 3}, {-2, 2}, {-2, 1}, {-2, 0}, {-2, -1}, {1, 4},  {1, 3}, {1, 2},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_custom_48h12_ = {
@@ -19066,18 +19033,14 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_custom_48h12_ = {
     0x000018bccac8b0f5ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_custom_48h12_ = {
-    &bits_custom_48h12_, 6.0f, &codes_custom_48h12_, 12, true};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_custom_48h12_ = {&bits_custom_48h12_, 6.0f, &codes_custom_48h12_, 12, true};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/tagStandard52h13.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_standard_52h13_ = {
-    {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, -2},
-    {6, -2}, {1, 1}, {2, 1}, {3, 1}, {2, 2}, {7, -2}, {7, -1}, {7, 0},
-    {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5}, {7, 6}, {4, 1}, {4, 2},
-    {4, 3}, {3, 2}, {7, 7}, {6, 7}, {5, 7}, {4, 7}, {3, 7}, {2, 7},
-    {1, 7}, {0, 7}, {-1, 7}, {4, 4}, {3, 4}, {2, 4}, {3, 3}, {-2, 7},
-    {-2, 6}, {-2, 5}, {-2, 4}, {-2, 3}, {-2, 2}, {-2, 1}, {-2, 0}, {-2, -1},
-    {1, 4}, {1, 3}, {1, 2}, {2, 3},
+    {-2, -2}, {-1, -2}, {0, -2}, {1, -2}, {2, -2}, {3, -2}, {4, -2}, {5, -2}, {6, -2},  {1, 1}, {2, 1}, {3, 1}, {2, 2},
+    {7, -2},  {7, -1},  {7, 0},  {7, 1},  {7, 2},  {7, 3},  {7, 4},  {7, 5},  {7, 6},   {4, 1}, {4, 2}, {4, 3}, {3, 2},
+    {7, 7},   {6, 7},   {5, 7},  {4, 7},  {3, 7},  {2, 7},  {1, 7},  {0, 7},  {-1, 7},  {4, 4}, {3, 4}, {2, 4}, {3, 3},
+    {-2, 7},  {-2, 6},  {-2, 5}, {-2, 4}, {-2, 3}, {-2, 2}, {-2, 1}, {-2, 0}, {-2, -1}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_standard_52h13_ = {
@@ -27202,13 +27165,11 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_standard_52h13_ = {
     0x000f9fe9545a7ebaULL, 0x000a16a3847adc76ULL, 0x000b08bffe5686e1ULL, 0x000bed69a179fc15ULL, 0x000c0d162da0e26dULL, 0x000cdc7a163acc66ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_standard_52h13_ = {
-    &bits_standard_52h13_, 6.0f, &codes_standard_52h13_, 13, true};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::tag_standard_52h13_ = {&bits_standard_52h13_, 6.0f, &codes_standard_52h13_, 13, true};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco4x4_50.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_4x4_50_ = {
-    {1, 1}, {2, 1}, {3, 1}, {2, 2}, {4, 1}, {4, 2}, {4, 3}, {3, 2},
-    {4, 4}, {3, 4}, {2, 4}, {3, 3}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
+    {1, 1}, {2, 1}, {3, 1}, {2, 2}, {4, 1}, {4, 2}, {4, 3}, {3, 2}, {4, 4}, {3, 4}, {2, 4}, {3, 3}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_4x4_50_ = {
@@ -27223,13 +27184,11 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_4x4_50_ = {
     0x0000000000004878ULL, 0x0000000000004ac0ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_4x4_50_ = {
-    &bits_aruco_4x4_50_, 6.0f, &codes_aruco_4x4_50_, 4, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_4x4_50_ = {&bits_aruco_4x4_50_, 6.0f, &codes_aruco_4x4_50_, 4, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco4x4_250.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_4x4_250_ = {
-    {1, 1}, {2, 1}, {3, 1}, {2, 2}, {4, 1}, {4, 2}, {4, 3}, {3, 2},
-    {4, 4}, {3, 4}, {2, 4}, {3, 3}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
+    {1, 1}, {2, 1}, {3, 1}, {2, 2}, {4, 1}, {4, 2}, {4, 3}, {3, 2}, {4, 4}, {3, 4}, {2, 4}, {3, 3}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_4x4_250_ = {
@@ -27277,13 +27236,11 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_4x4_250_ = {
     0x0000000000007450ULL, 0x00000000000074cfULL, 0x00000000000075acULL, 0x0000000000007692ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_4x4_250_ = {
-    &bits_aruco_4x4_250_, 6.0f, &codes_aruco_4x4_250_, 3, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_4x4_250_ = {&bits_aruco_4x4_250_, 6.0f, &codes_aruco_4x4_250_, 3, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco4x4_1000.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_4x4_1000_ = {
-    {1, 1}, {2, 1}, {3, 1}, {2, 2}, {4, 1}, {4, 2}, {4, 3}, {3, 2},
-    {4, 4}, {3, 4}, {2, 4}, {3, 3}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
+    {1, 1}, {2, 1}, {3, 1}, {2, 2}, {4, 1}, {4, 2}, {4, 3}, {3, 2}, {4, 4}, {3, 4}, {2, 4}, {3, 3}, {1, 4}, {1, 3}, {1, 2}, {2, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_4x4_1000_ = {
@@ -27456,15 +27413,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_4x4_1000_ = {
     0x000000000000ff4bULL, 0x000000000000ff7dULL, 0x000000000000ff82ULL, 0x000000000000fffcULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_4x4_1000_ = {
-    &bits_aruco_4x4_1000_, 6.0f, &codes_aruco_4x4_1000_, 2, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_4x4_1000_ = {&bits_aruco_4x4_1000_, 6.0f, &codes_aruco_4x4_1000_, 2, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco5x5_50.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_5x5_50_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {2, 2}, {3, 2}, {5, 1}, {5, 2},
-    {5, 3}, {5, 4}, {4, 2}, {4, 3}, {5, 5}, {4, 5}, {3, 5}, {2, 5},
-    {4, 4}, {3, 4}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 4}, {2, 3},
-    {3, 3},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {2, 2}, {3, 2}, {5, 1}, {5, 2}, {5, 3}, {5, 4}, {4, 2}, {4, 3}, {5, 5},
+    {4, 5}, {3, 5}, {2, 5}, {4, 4}, {3, 4}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 4}, {2, 3}, {3, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_5x5_50_ = {
@@ -27479,15 +27433,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_5x5_50_ = {
     0x0000000000f6d405ULL, 0x0000000000ff1de7ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_5x5_50_ = {
-    &bits_aruco_5x5_50_, 7.0f, &codes_aruco_5x5_50_, 7, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_5x5_50_ = {&bits_aruco_5x5_50_, 7.0f, &codes_aruco_5x5_50_, 7, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco5x5_100.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_5x5_100_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {2, 2}, {3, 2}, {5, 1}, {5, 2},
-    {5, 3}, {5, 4}, {4, 2}, {4, 3}, {5, 5}, {4, 5}, {3, 5}, {2, 5},
-    {4, 4}, {3, 4}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 4}, {2, 3},
-    {3, 3},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {2, 2}, {3, 2}, {5, 1}, {5, 2}, {5, 3}, {5, 4}, {4, 2}, {4, 3}, {5, 5},
+    {4, 5}, {3, 5}, {2, 5}, {4, 4}, {3, 4}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 4}, {2, 3}, {3, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_5x5_100_ = {
@@ -27510,15 +27461,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_5x5_100_ = {
     0x00000000003bc914ULL, 0x00000000003fb5dfULL, 0x00000000004da1a1ULL, 0x000000000053b7e0ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_5x5_100_ = {
-    &bits_aruco_5x5_100_, 7.0f, &codes_aruco_5x5_100_, 7, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_5x5_100_ = {&bits_aruco_5x5_100_, 7.0f, &codes_aruco_5x5_100_, 7, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco5x5_250.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_5x5_250_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {2, 2}, {3, 2}, {5, 1}, {5, 2},
-    {5, 3}, {5, 4}, {4, 2}, {4, 3}, {5, 5}, {4, 5}, {3, 5}, {2, 5},
-    {4, 4}, {3, 4}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 4}, {2, 3},
-    {3, 3},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {2, 2}, {3, 2}, {5, 1}, {5, 2}, {5, 3}, {5, 4}, {4, 2}, {4, 3}, {5, 5},
+    {4, 5}, {3, 5}, {2, 5}, {4, 4}, {3, 4}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 4}, {2, 3}, {3, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_5x5_250_ = {
@@ -27566,15 +27514,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_5x5_250_ = {
     0x000000000013497eULL, 0x0000000000136d39ULL, 0x000000000015a41bULL, 0x000000000015dac7ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_5x5_250_ = {
-    &bits_aruco_5x5_250_, 7.0f, &codes_aruco_5x5_250_, 6, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_5x5_250_ = {&bits_aruco_5x5_250_, 7.0f, &codes_aruco_5x5_250_, 6, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco5x5_1000.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_5x5_1000_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {2, 2}, {3, 2}, {5, 1}, {5, 2},
-    {5, 3}, {5, 4}, {4, 2}, {4, 3}, {5, 5}, {4, 5}, {3, 5}, {2, 5},
-    {4, 4}, {3, 4}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 4}, {2, 3},
-    {3, 3},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {2, 2}, {3, 2}, {5, 1}, {5, 2}, {5, 3}, {5, 4}, {4, 2}, {4, 3}, {5, 5},
+    {4, 5}, {3, 5}, {2, 5}, {4, 4}, {3, 4}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 4}, {2, 3}, {3, 3},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_5x5_1000_ = {
@@ -27747,16 +27692,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_5x5_1000_ = {
     0x0000000001f709ecULL, 0x0000000001fb4677ULL, 0x0000000001fdc4ffULL, 0x0000000001fe5661ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_5x5_1000_ = {
-    &bits_aruco_5x5_1000_, 7.0f, &codes_aruco_5x5_1000_, 5, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_5x5_1000_ = {&bits_aruco_5x5_1000_, 7.0f, &codes_aruco_5x5_1000_, 5, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco6x6_50.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_6x6_50_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2},
-    {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3},
-    {5, 4}, {4, 3}, {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5},
-    {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2},
-    {2, 5}, {2, 4}, {2, 3}, {3, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2}, {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3}, {5, 4}, {4, 3},
+    {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5}, {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 5}, {2, 4}, {2, 3}, {3, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_6x6_50_ = {
@@ -27771,16 +27712,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_6x6_50_ = {
     0x000000088127e3baULL, 0x000000097924acf5ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_6x6_50_ = {
-    &bits_aruco_6x6_50_, 8.0f, &codes_aruco_6x6_50_, 13, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_6x6_50_ = {&bits_aruco_6x6_50_, 8.0f, &codes_aruco_6x6_50_, 13, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco6x6_100.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_6x6_100_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2},
-    {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3},
-    {5, 4}, {4, 3}, {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5},
-    {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2},
-    {2, 5}, {2, 4}, {2, 3}, {3, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2}, {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3}, {5, 4}, {4, 3},
+    {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5}, {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 5}, {2, 4}, {2, 3}, {3, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_6x6_100_ = {
@@ -27803,16 +27740,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_6x6_100_ = {
     0x000000056f2fca56ULL, 0x0000000586689fceULL, 0x000000059551ef6dULL, 0x000000059db9027bULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_6x6_100_ = {
-    &bits_aruco_6x6_100_, 8.0f, &codes_aruco_6x6_100_, 12, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_6x6_100_ = {&bits_aruco_6x6_100_, 8.0f, &codes_aruco_6x6_100_, 12, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco6x6_250.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_6x6_250_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2},
-    {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3},
-    {5, 4}, {4, 3}, {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5},
-    {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2},
-    {2, 5}, {2, 4}, {2, 3}, {3, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2}, {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3}, {5, 4}, {4, 3},
+    {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5}, {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 5}, {2, 4}, {2, 3}, {3, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_6x6_250_ = {
@@ -27860,16 +27793,12 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_6x6_250_ = {
     0x00000006e7d2691aULL, 0x00000006ed3ac6c7ULL, 0x00000006fd7ba039ULL, 0x00000007026405e7ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_6x6_250_ = {
-    &bits_aruco_6x6_250_, 8.0f, &codes_aruco_6x6_250_, 11, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_6x6_250_ = {&bits_aruco_6x6_250_, 8.0f, &codes_aruco_6x6_250_, 11, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco6x6_1000.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_6x6_1000_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2},
-    {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3},
-    {5, 4}, {4, 3}, {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5},
-    {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2},
-    {2, 5}, {2, 4}, {2, 3}, {3, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {2, 2}, {3, 2}, {4, 2}, {3, 3}, {6, 1}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 2}, {5, 3}, {5, 4}, {4, 3},
+    {6, 6}, {5, 6}, {4, 6}, {3, 6}, {2, 6}, {5, 5}, {4, 5}, {3, 5}, {4, 4}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 5}, {2, 4}, {2, 3}, {3, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_6x6_1000_ = {
@@ -28042,18 +27971,13 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_6x6_1000_ = {
     0x0000000f8124ae2eULL, 0x0000000fa4df729bULL, 0x0000000fb9adb105ULL, 0x0000000fbe4bfb57ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_6x6_1000_ = {
-    &bits_aruco_6x6_1000_, 8.0f, &codes_aruco_6x6_1000_, 9, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_6x6_1000_ = {&bits_aruco_6x6_1000_, 8.0f, &codes_aruco_6x6_1000_, 9, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco7x7_50.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_7x7_50_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {6, 1}, {2, 2}, {3, 2},
-    {4, 2}, {5, 2}, {3, 3}, {4, 3}, {7, 1}, {7, 2}, {7, 3}, {7, 4},
-    {7, 5}, {7, 6}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 3}, {5, 4},
-    {7, 7}, {6, 7}, {5, 7}, {4, 7}, {3, 7}, {2, 7}, {6, 6}, {5, 6},
-    {4, 6}, {3, 6}, {5, 5}, {4, 5}, {1, 7}, {1, 6}, {1, 5}, {1, 4},
-    {1, 3}, {1, 2}, {2, 6}, {2, 5}, {2, 4}, {2, 3}, {3, 5}, {3, 4},
-    {4, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {6, 1}, {2, 2}, {3, 2}, {4, 2}, {5, 2}, {3, 3}, {4, 3}, {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5},
+    {7, 6}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 3}, {5, 4}, {7, 7}, {6, 7}, {5, 7}, {4, 7}, {3, 7}, {2, 7}, {6, 6}, {5, 6}, {4, 6}, {3, 6},
+    {5, 5}, {4, 5}, {1, 7}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 6}, {2, 5}, {2, 4}, {2, 3}, {3, 5}, {3, 4}, {4, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_7x7_50_ = {
@@ -28068,18 +27992,13 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_7x7_50_ = {
     0x0000dc92c446afacULL, 0x0000e575f5c45142ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_7x7_50_ = {
-    &bits_aruco_7x7_50_, 9.0f, &codes_aruco_7x7_50_, 19, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_7x7_50_ = {&bits_aruco_7x7_50_, 9.0f, &codes_aruco_7x7_50_, 19, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco7x7_100.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_7x7_100_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {6, 1}, {2, 2}, {3, 2},
-    {4, 2}, {5, 2}, {3, 3}, {4, 3}, {7, 1}, {7, 2}, {7, 3}, {7, 4},
-    {7, 5}, {7, 6}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 3}, {5, 4},
-    {7, 7}, {6, 7}, {5, 7}, {4, 7}, {3, 7}, {2, 7}, {6, 6}, {5, 6},
-    {4, 6}, {3, 6}, {5, 5}, {4, 5}, {1, 7}, {1, 6}, {1, 5}, {1, 4},
-    {1, 3}, {1, 2}, {2, 6}, {2, 5}, {2, 4}, {2, 3}, {3, 5}, {3, 4},
-    {4, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {6, 1}, {2, 2}, {3, 2}, {4, 2}, {5, 2}, {3, 3}, {4, 3}, {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5},
+    {7, 6}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 3}, {5, 4}, {7, 7}, {6, 7}, {5, 7}, {4, 7}, {3, 7}, {2, 7}, {6, 6}, {5, 6}, {4, 6}, {3, 6},
+    {5, 5}, {4, 5}, {1, 7}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 6}, {2, 5}, {2, 4}, {2, 3}, {3, 5}, {3, 4}, {4, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_7x7_100_ = {
@@ -28102,18 +28021,13 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_7x7_100_ = {
     0x000137c6941cdc3cULL, 0x0001546468139fb3ULL, 0x0001600a6efa37b5ULL, 0x00017705fad153a0ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_7x7_100_ = {
-    &bits_aruco_7x7_100_, 9.0f, &codes_aruco_7x7_100_, 18, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_7x7_100_ = {&bits_aruco_7x7_100_, 9.0f, &codes_aruco_7x7_100_, 18, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco7x7_250.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_7x7_250_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {6, 1}, {2, 2}, {3, 2},
-    {4, 2}, {5, 2}, {3, 3}, {4, 3}, {7, 1}, {7, 2}, {7, 3}, {7, 4},
-    {7, 5}, {7, 6}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 3}, {5, 4},
-    {7, 7}, {6, 7}, {5, 7}, {4, 7}, {3, 7}, {2, 7}, {6, 6}, {5, 6},
-    {4, 6}, {3, 6}, {5, 5}, {4, 5}, {1, 7}, {1, 6}, {1, 5}, {1, 4},
-    {1, 3}, {1, 2}, {2, 6}, {2, 5}, {2, 4}, {2, 3}, {3, 5}, {3, 4},
-    {4, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {6, 1}, {2, 2}, {3, 2}, {4, 2}, {5, 2}, {3, 3}, {4, 3}, {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5},
+    {7, 6}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 3}, {5, 4}, {7, 7}, {6, 7}, {5, 7}, {4, 7}, {3, 7}, {2, 7}, {6, 6}, {5, 6}, {4, 6}, {3, 6},
+    {5, 5}, {4, 5}, {1, 7}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 6}, {2, 5}, {2, 4}, {2, 3}, {3, 5}, {3, 4}, {4, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_7x7_250_ = {
@@ -28161,18 +28075,13 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_7x7_250_ = {
     0x0001cf2f10c0493cULL, 0x0001d0b6d8c778f9ULL, 0x0001d372623fd2b5ULL, 0x0001da5ee84cbec2ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_7x7_250_ = {
-    &bits_aruco_7x7_250_, 9.0f, &codes_aruco_7x7_250_, 17, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_7x7_250_ = {&bits_aruco_7x7_250_, 9.0f, &codes_aruco_7x7_250_, 17, false};
 
 // https://github.com/AprilRobotics/apriltag/blob/master/aruco/tagAruco7x7_1000.c
 const std::vector<AprilTagDefinitions::BitCoordinate> AprilTagDefinitions::bits_aruco_7x7_1000_ = {
-    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {6, 1}, {2, 2}, {3, 2},
-    {4, 2}, {5, 2}, {3, 3}, {4, 3}, {7, 1}, {7, 2}, {7, 3}, {7, 4},
-    {7, 5}, {7, 6}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 3}, {5, 4},
-    {7, 7}, {6, 7}, {5, 7}, {4, 7}, {3, 7}, {2, 7}, {6, 6}, {5, 6},
-    {4, 6}, {3, 6}, {5, 5}, {4, 5}, {1, 7}, {1, 6}, {1, 5}, {1, 4},
-    {1, 3}, {1, 2}, {2, 6}, {2, 5}, {2, 4}, {2, 3}, {3, 5}, {3, 4},
-    {4, 4},
+    {1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {6, 1}, {2, 2}, {3, 2}, {4, 2}, {5, 2}, {3, 3}, {4, 3}, {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5},
+    {7, 6}, {6, 2}, {6, 3}, {6, 4}, {6, 5}, {5, 3}, {5, 4}, {7, 7}, {6, 7}, {5, 7}, {4, 7}, {3, 7}, {2, 7}, {6, 6}, {5, 6}, {4, 6}, {3, 6},
+    {5, 5}, {4, 5}, {1, 7}, {1, 6}, {1, 5}, {1, 4}, {1, 3}, {1, 2}, {2, 6}, {2, 5}, {2, 4}, {2, 3}, {3, 5}, {3, 4}, {4, 4},
 };
 
 const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_7x7_1000_ = {
@@ -28345,8 +28254,7 @@ const std::vector<uint64_t> AprilTagDefinitions::codes_aruco_7x7_1000_ = {
     0x0000bbb6b61e3b81ULL, 0x00010a95357e9afbULL, 0x00018cb610bfbb6aULL, 0x0001cf5833fd8395ULL,
 };
 
-const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_7x7_1000_ = {
-    &bits_aruco_7x7_1000_, 9.0f, &codes_aruco_7x7_1000_, 14, false};
+const AprilTagDefinitions::FamilyInfo AprilTagDefinitions::aruco_7x7_1000_ = {&bits_aruco_7x7_1000_, 9.0f, &codes_aruco_7x7_1000_, 14, false};
 
 const std::array<AprilTagDefinitions::FamilyEntry, 26> AprilTagDefinitions::families_ = {{
     {AprilTagFamily::kTagStandard41h12, "tag_standard_41h12", "tagStandard41h12", &tag_standard_41h12_},
