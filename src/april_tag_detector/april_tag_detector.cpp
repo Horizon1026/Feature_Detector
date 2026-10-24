@@ -214,6 +214,7 @@ bool AprilTagDetector::TryToFindAprilTagsInDetectedRectangles(const GrayImage &i
                     best_sample_points = sample_points;
                     best_direction = static_cast<int32_t>(direction);
                 }
+                BREAK_IF(min_hamming_distance == 0);
             }
         }
 
