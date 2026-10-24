@@ -40,6 +40,12 @@ if( NOT TARGET lib_feature_line_detector )
     add_subdirectory( ${FEATURE_DETECTOR_PATH}/src/feature_line_detector ${PROJECT_SOURCE_DIR}/build/lib_feature_line_detector )
 endif()
 
+# Add image processor.
+set( IMAGE_PROCESSOR_PATH ${PROJECT_SOURCE_DIR}/../Image_Processor )
+if( NOT TARGET lib_image_processor )
+    add_subdirectory( ${IMAGE_PROCESSOR_PATH}/src ${PROJECT_SOURCE_DIR}/build/lib_image_processor )
+endif()
+
 add_library( lib_april_tag_detector ${AUX_SRC_APRIL_TAG_DETECTOR} )
 target_include_directories( lib_april_tag_detector PUBLIC . )
 target_link_libraries( lib_april_tag_detector
@@ -56,4 +62,5 @@ target_link_libraries( lib_april_tag_detector
 
     lib_feature_point_detector
     lib_feature_line_detector
+    lib_image_processor
 )

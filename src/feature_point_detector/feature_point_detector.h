@@ -17,8 +17,8 @@ public:
         int32_t kGridFilterRowDivideNumber = 12;
         int32_t kGridFilterColDivideNumber = 12;
         float kMinValidResponse = 0.1f;
-        int32_t kRadiusForSubPixelRefine = 12;
-        float kMaxToleranceSubPixelRefineStep = 4.0f;
+        int32_t kRadiusForSubPixelRefine = 6;
+        float kMaxToleranceSubPixelRefineStep = 2.0f;
         float kMinTolarenceCurvatureForSubPixelRefine = 0.2f;
         float kMinToleranceCurvatureRatioForSubPixelRefine = 0.2f;
     };

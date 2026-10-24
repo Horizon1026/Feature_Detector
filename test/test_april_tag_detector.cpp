@@ -39,22 +39,67 @@ void DrawDetectedRetanglesOnImage(const GrayImage &image, const AprilTagDetector
     Visualizor2D::ShowImage("Detected rectangles", show_image);
 }
 
+void DrawDetectedAprilTagsOnImage(const GrayImage &image, const std::vector<AprilTag> &april_tags) {
+    uint8_t *buf = (uint8_t *)SlamMemory::Malloc(image.rows() * image.cols() * 3 * sizeof(uint8_t));
+    RgbImage show_image(buf, image.rows(), image.cols(), true);
+    ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
+    for (const auto &tag: april_tags) {
+        // Draw range of april tag.
+        for (uint32_t i = 0; i < tag.vertices.size(); ++i) {
+            ImagePainter::DrawBressenhanLine(show_image, tag.vertices[0].x(), tag.vertices[0].y(), tag.vertices[1].x(), tag.vertices[1].y(), RgbColor::kRed);
+            ImagePainter::DrawBressenhanLine(show_image, tag.vertices[1].x(), tag.vertices[1].y(), tag.vertices[2].x(), tag.vertices[2].y(), RgbColor::kRed);
+            ImagePainter::DrawBressenhanLine(show_image, tag.vertices[2].x(), tag.vertices[2].y(), tag.vertices[3].x(), tag.vertices[3].y(), RgbColor::kRed);
+            ImagePainter::DrawBressenhanLine(show_image, tag.vertices[3].x(), tag.vertices[3].y(), tag.vertices[0].x(), tag.vertices[0].y(), RgbColor::kRed);
+        }
+
+        // Draw april tag id.
+        const Vec2 mid_point = 0.25f * (tag.vertices[0] + tag.vertices[1] + tag.vertices[2] + tag.vertices[3]);
+        ImagePainter::DrawString(show_image, std::to_string(tag.hamming_distance), mid_point.x(), mid_point.y(), RgbColor::kRed);
+
+        // Draw sample points.
+        for (const Vec2 &sample: tag.sample_points) {
+            show_image.SetPixelValue(static_cast<int32_t>(sample.y()), static_cast<int32_t>(sample.x()), RgbColor::kOrange);
+        }
+    }
+
+    Visualizor2D::ShowImage("Detected april tags", show_image);
+    ReportInfo(april_tags.size() << " april tags detected.");
+}
+
 int main(int argc, char **argv) {
-    ReportColorWarn(">> Test april tag detector");
+    ReportColorWarn(">> Test april tag detector.");
     std::string image_file_path = "../examples/image.png";
     if (argc >= 2) {
         image_file_path = argv[1];
+    }
+    std::string family_name = "tag_36h11";
+    if (argc >= 3) {
+        family_name = argv[2];
+    }
+    int32_t black_boundary_width = 1;
+    if (argc >= 4) {
+        black_boundary_width = std::stoi(argv[3]);
     }
 
     GrayImage image;
     Visualizor2D::LoadImage(image_file_path, image);
 
     AprilTagDetector detector;
+    detector.options().kTargetFamily = AprilTagDefinitions::GetFamilyType(family_name);
+    detector.options().kBlackBoundaryWidth = black_boundary_width;
+    ReportInfo("Tag family id: " << static_cast<int32_t>(detector.options().kTargetFamily) << ", black boundary width is "
+                                 << detector.options().kBlackBoundaryWidth);
+    if (detector.options().kTargetFamily == AprilTagFamily::kUnknown) {
+        ReportError("Unknown family type.");
+        return 0;
+    }
+
     std::vector<AprilTag> april_tags;
     detector.DetectAprilTags(image, april_tags);
 
     DrawDetectedLinesOnImage(image, detector);
     DrawDetectedRetanglesOnImage(image, detector);
+    DrawDetectedAprilTagsOnImage(image, april_tags);
     Visualizor2D::WaitKey(0);
     return 0;
 }
