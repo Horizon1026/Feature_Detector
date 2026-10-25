@@ -168,11 +168,27 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines(const GrayImage &image
     }
 
     // Refine vertices of each rectangle.
-    for (auto &rectangle: detected_rectangles_) {
-        for (auto &point: rectangle) {
+    for (auto &vertices: detected_rectangles_) {
+        // Refine vertex to subpixel precision.
+        for (auto &point: vertices) {
             Vec2 refined_point = point;
             CONTINUE_IF(!point_detector_.RefineFeatureToSubPixelPrecision(image, point, refined_point));
             point = refined_point;
+        }
+
+        // Make sure clockwise image winding.
+        float winding = 0.0f;
+        for (uint32_t i = 0; i < 4; ++i) {
+            CONTINUE_IF (!vertices[i].allFinite()) ;
+            const Vec2 edge1 = vertices[(i + 1) % 4] - vertices[i];
+            const Vec2 edge2 = vertices[(i + 2) % 4] - vertices[(i + 1) % 4];
+            const float cross = edge1.x() * edge2.y() - edge1.y() * edge2.x();
+            CONTINUE_IF (!std::isfinite(cross) || cross == 0.0f || (i > 0 && cross * winding <= 0.0f)) ;
+            winding = cross;
+        }
+        auto &corners = vertices;
+        if (winding < 0.0f) {
+            std::swap(corners[1], corners[3]);
         }
     }
 
@@ -228,8 +244,11 @@ bool AprilTagDetector::TryToFindAprilTagsInDetectedRectangles(const GrayImage &i
             .sample_points = best_sample_points,
             .hamming_distance = min_hamming_distance,
         });
+
+        // Make vertices follow: left-bottom, left-top, right-top, right-bottom
+        const int32_t offset = (best_direction + 2) % 4;
         for (int32_t i = 0; i < 4; ++i) {
-            april_tags.back().vertices[i] = rect_vertices[(i + best_direction) % 4];
+            april_tags.back().vertices[i] = rect_vertices[(i + offset) % 4];
         }
     }
     return true;
@@ -258,26 +277,8 @@ std::vector<Vec2> AprilTagDetector::GetSamplePointOfAprilTag(const AprilTagFamil
             return {};
     }
 
-    // Reject non-convex/degenerate quads, then use clockwise image winding.
-    float winding = 0.0f;
-    for (uint32_t i = 0; i < 4; ++i) {
-        if (!vertices[i].allFinite()) {
-            return {};
-        }
-        const Vec2 edge1 = vertices[(i + 1) % 4] - vertices[i];
-        const Vec2 edge2 = vertices[(i + 2) % 4] - vertices[(i + 1) % 4];
-        const float cross = edge1.x() * edge2.y() - edge1.y() * edge2.x();
-        if (!std::isfinite(cross) || cross == 0.0f || (i > 0 && cross * winding <= 0.0f)) {
-            return {};
-        }
-        winding = cross;
-    }
-    auto corners = vertices;
-    if (winding < 0.0f) {
-        std::swap(corners[1], corners[3]);
-    }
-
     // Fit a projective transform from the unit square to the detected border.
+    auto corners = vertices;
     static constexpr float unit_corners[4][2] = {{0, 0}, {1, 0}, {1, 1}, {0, 1}};
     Mat8 matrix_A = Mat8::Zero();
     Vec8 vector_b = Vec8::Zero();
