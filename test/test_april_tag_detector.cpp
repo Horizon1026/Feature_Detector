@@ -51,7 +51,7 @@ void DrawDetectedAprilTagsOnImage(const GrayImage &image, const std::vector<Apri
             ImagePainter::DrawBressenhanLine(show_image, tag.vertices[2].x(), tag.vertices[2].y(), tag.vertices[3].x(), tag.vertices[3].y(), RgbColor::kRed);
             ImagePainter::DrawBressenhanLine(show_image, tag.vertices[3].x(), tag.vertices[3].y(), tag.vertices[0].x(), tag.vertices[0].y(), RgbColor::kRed);
             // Draw first vertex of april tag.
-            ImagePainter::DrawSolidCircle(show_image, tag.vertices[0].x(), tag.vertices[0].y(), 3, RgbColor::kCyan);
+            ImagePainter::DrawSolidCircle(show_image, tag.vertices[0].x(), tag.vertices[0].y(), 3.0f, RgbColor::kCyan);
         }
 
         // Draw april tag id.
