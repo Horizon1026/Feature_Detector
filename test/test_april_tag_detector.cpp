@@ -60,7 +60,7 @@ void DrawDetectedAprilTagsOnImage(const GrayImage &image, const std::vector<Apri
 
         // Draw sample points.
         for (const Vec2 &sample: tag.sample_points) {
-            show_image.SetPixelValue(static_cast<int32_t>(sample.y()), static_cast<int32_t>(sample.x()), RgbColor::kOrange);
+            ImagePainter::DrawSolidCircle(show_image, sample.x(), sample.y(), 1.0f, RgbColor::kOrange);
         }
     }
 
