@@ -64,7 +64,7 @@ void TestUpdateMaskWithDetectedFeatures(GrayImage &image, int32_t feature_num_ne
     // Refine features to subpixel.
     for (auto &feature: features) {
         Vec2 refined_feature = Vec2::Zero();
-        if (detector.RefineFeatureToSubPixelPrecision(image, feature, refined_feature)) {
+        if (detector.RefineFeatureToSubPixelPrecisionByParabolic(image, feature, refined_feature)) {
             feature = refined_feature;
         }
     }
@@ -89,7 +89,7 @@ void TestShiTomasFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     // Refine features to subpixel.
     for (auto &feature: features) {
         Vec2 refined_feature = Vec2::Zero();
-        if (detector.RefineFeatureToSubPixelPrecision(image, feature, refined_feature)) {
+        if (detector.RefineFeatureToSubPixelPrecisionByParabolic(image, feature, refined_feature)) {
             feature = refined_feature;
         }
     }
@@ -114,7 +114,7 @@ void TestFastFeatureDetector(GrayImage &image, int32_t feature_num_need) {
     // Refine features to subpixel.
     for (auto &feature: features) {
         Vec2 refined_feature = Vec2::Zero();
-        if (detector.RefineFeatureToSubPixelPrecision(image, feature, refined_feature)) {
+        if (detector.RefineFeatureToSubPixelPrecisionByParabolic(image, feature, refined_feature)) {
             feature = refined_feature;
         }
     }

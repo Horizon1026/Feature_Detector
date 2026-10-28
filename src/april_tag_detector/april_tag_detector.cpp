@@ -40,6 +40,17 @@ bool AprilTagDetector::DetectAprilTags(const GrayImage &image, std::vector<April
 
     // Detect line segments in image.
     line_detector_.DetectGoodFeatures(blurred_image, 300, detected_lines_);
+    // Refine vertices of each line.
+    for (auto &line: detected_lines_) {
+        Vec2 refined_start_point = line.start_point();
+        if (point_detector_.RefineFeatureToSubPixelPrecisionByGradient(image, line.start_point(), refined_start_point)) {
+            line.start_point() = refined_start_point;
+        }
+        Vec2 refined_end_point = line.end_point();
+        if (point_detector_.RefineFeatureToSubPixelPrecisionByGradient(image, line.end_point(), refined_end_point)) {
+            line.end_point() = refined_end_point;
+        }
+    }
 
     // Find rectangles in lines.
     if (!TryToFindRectanglesInDetectedLines(blurred_image)) {
@@ -172,18 +183,18 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines(const GrayImage &image
         // Refine vertex to subpixel precision.
         for (auto &point: vertices) {
             Vec2 refined_point = point;
-            CONTINUE_IF(!point_detector_.RefineFeatureToSubPixelPrecision(image, point, refined_point));
+            CONTINUE_IF(!point_detector_.RefineFeatureToSubPixelPrecisionByParabolic(image, point, refined_point));
             point = refined_point;
         }
 
         // Make sure clockwise image winding.
         float winding = 0.0f;
         for (uint32_t i = 0; i < 4; ++i) {
-            CONTINUE_IF (!vertices[i].allFinite()) ;
+            CONTINUE_IF(!vertices[i].allFinite());
             const Vec2 edge1 = vertices[(i + 1) % 4] - vertices[i];
             const Vec2 edge2 = vertices[(i + 2) % 4] - vertices[(i + 1) % 4];
             const float cross = edge1.x() * edge2.y() - edge1.y() * edge2.x();
-            CONTINUE_IF (!std::isfinite(cross) || cross == 0.0f || (i > 0 && cross * winding <= 0.0f)) ;
+            CONTINUE_IF(!std::isfinite(cross) || cross == 0.0f || (i > 0 && cross * winding <= 0.0f));
             winding = cross;
         }
         auto &corners = vertices;
@@ -196,8 +207,8 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines(const GrayImage &image
 }
 
 bool AprilTagDetector::TryToFindAprilTagsInDetectedRectangles(const GrayImage &image, std::vector<AprilTag> &april_tags) {
-    RETURN_FALSE_IF(detected_rectangles_.empty());
     april_tags.clear();
+    RETURN_TRUE_IF(detected_rectangles_.empty());
     april_tags.reserve(detected_rectangles_.size());
 
     const AprilTagDefinitions::FamilyInfo *family_info = AprilTagDefinitions::GetFamilyInfo(options_.kTargetFamily);

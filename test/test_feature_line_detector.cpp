@@ -89,8 +89,8 @@ void ShowDetectResult(const GrayImage &image, const std::string &title, const st
     RgbImage show_image(buf, image.rows(), image.cols(), true);
     ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
     for (uint32_t i = 0; i < features.size(); ++i) {
-        ImagePainter::DrawBressenhanLine(show_image, static_cast<int32_t>(features[i].start_point().x()), static_cast<int32_t>(features[i].start_point().y()),
-                                         static_cast<int32_t>(features[i].end_point().x()), static_cast<int32_t>(features[i].end_point().y()), RgbColor::kRed);
+        ImagePainter::DrawBressenhanLine(show_image, features[i].start_point().x(), features[i].start_point().y(), features[i].end_point().x(),
+                                         features[i].end_point().y(), RgbColor::kRed);
     }
     Visualizor2D::ShowImage(title, show_image);
 }

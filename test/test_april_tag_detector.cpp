@@ -16,8 +16,8 @@ void DrawDetectedLinesOnImage(const GrayImage &image, const AprilTagDetector &de
     ImagePainter::ConvertUint8ToRgb(image.data(), show_image.data(), image.rows() * image.cols());
     const auto &lines = detector.detected_lines();
     for (uint32_t i = 0; i < lines.size(); ++i) {
-        ImagePainter::DrawBressenhanLine(show_image, static_cast<int32_t>(lines[i].start_point().x()), static_cast<int32_t>(lines[i].start_point().y()),
-                                         static_cast<int32_t>(lines[i].end_point().x()), static_cast<int32_t>(lines[i].end_point().y()), RgbColor::kRed);
+        ImagePainter::DrawBressenhanLine(show_image, lines[i].start_point().x(), lines[i].start_point().y(), lines[i].end_point().x(), lines[i].end_point().y(),
+                                         RgbColor::kRed);
     }
     Visualizor2D::ShowImage("Detected lines", show_image);
 }
