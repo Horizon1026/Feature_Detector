@@ -17,7 +17,7 @@ bool FeatureLineDetector::DetectGoodFeatures(const GrayImage &image, const uint3
 
     // Compute minimal number of pixels in a region, which can give a meaningful event.
     const float p = options_.kMinToleranceAngleResidualInRad / kPai;
-    const float log_NT = 5.0f * (std::log10(double(image.cols())) + std::log10(double(image.rows()))) / 2.0f + std::log10(11.0f);
+    const float log_NT = 5.0f * (std::log10(static_cast<float>(image.cols())) + std::log10(static_cast<float>(image.rows()))) / 2.0f + std::log10(11.0f);
     const uint32_t min_region_size = static_cast<uint32_t>(-log_NT / std::log10(p));
 
     RETURN_FALSE_IF_FALSE(ComputeLineLevelAngleMap(image));
