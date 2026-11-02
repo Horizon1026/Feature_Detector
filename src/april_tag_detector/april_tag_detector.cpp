@@ -39,6 +39,7 @@ bool AprilTagDetector::DetectAprilTags(const GrayImage &image, std::vector<April
     RETURN_FALSE_IF_FALSE(processor.Process(image, blurred_image));
 
     // Detect line segments in image.
+    line_detector_.options().kMinValidGradientNorm = 10.0f;
     line_detector_.DetectGoodFeatures(blurred_image, 300, detected_lines_);
     // Refine vertices of each line.
     for (auto &line: detected_lines_) {
@@ -183,7 +184,7 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines(const GrayImage &image
         // Refine vertex to subpixel precision.
         for (auto &point: vertices) {
             Vec2 refined_point = point;
-            CONTINUE_IF(!point_detector_.RefineFeatureToSubPixelPrecisionByParabolic(image, point, refined_point));
+            CONTINUE_IF(!point_detector_.RefineFeatureToSubPixelPrecisionByGradient(image, point, refined_point));
             point = refined_point;
         }
 
@@ -353,7 +354,7 @@ uint64_t AprilTagDetector::DecodeAprilTag(const GrayImage &image, const std::vec
     uint64_t code = 0;
     float value = 0;
 
-    // Dynamic threshold.
+    // Get value range.
     float max_value = 0.0f;
     float min_value = 255.0f;
     for (const Vec2 &point: sample_points) {
@@ -362,8 +363,31 @@ uint64_t AprilTagDetector::DecodeAprilTag(const GrayImage &image, const std::vec
             min_value = std::min(min_value, value);
         }
     }
-    const float threshold = 0.5f * (min_value + max_value);
-    if (max_value - min_value < options_.kMinTolerancePixelValueDiffBetweenWhiteAndBlack) {
+
+    // Cluster.
+    float summary_0 = min_value;
+    float summary_1 = max_value;
+    int32_t cnt_0 = 1;
+    int32_t cnt_1 = 1;
+    for (const Vec2 &point: sample_points) {
+        if (image.GetPixelValue(point.y(), point.x(), &value)) {
+            const float mid_0 = summary_0 / static_cast<float>(cnt_0);
+            const float mid_1 = summary_1 / static_cast<float>(cnt_1);
+            if (std::fabs(value - mid_0) < std::fabs(value - mid_1)) {
+                summary_0 += value;
+                ++cnt_0;
+            } else {
+                summary_1 += value;
+                ++cnt_1;
+            }
+        }
+    }
+
+    // Dynamic threshold.
+    const float mean_0 = summary_0 / static_cast<float>(cnt_0);
+    const float mean_1 = summary_1 / static_cast<float>(cnt_1);
+    const float threshold = 0.5f * (mean_0 + mean_1);
+    if (mean_1 - mean_0 < options_.kMinTolerancePixelValueDiffBetweenWhiteAndBlack) {
         return code;
     }
 

@@ -20,7 +20,7 @@ public:
         AprilTagFamily kTargetFamily = AprilTagFamily::kTag36H11;
         float kMaxTolerancePixelDistanceToLinkLineEndPoints = 4.0f;
         int32_t kMaxToleranceHammingDistance = 2;
-        float kMinTolerancePixelValueDiffBetweenWhiteAndBlack = 127.0f;
+        float kMinTolerancePixelValueDiffBetweenWhiteAndBlack = 32.0f;
         int32_t kBlackBoundaryWidth = 1;  // Black border thickness in cells; reversed-border families use 1.
     };
 
