@@ -208,4 +208,101 @@ bool FeaturePointDetector::RefineFeatureToSubPixelPrecisionByGradient(const Gray
     return false;
 }
 
+bool FeaturePointDetector::RefineFeatureToSubPixelPrecisionBySymmetry(const GrayImage &image, const Vec2 &raw_feature, Vec2 &refined_feature) {
+    const auto &config = options_.sub_pixel.symmetry;
+    const int32_t radius = options_.sub_pixel.kRadiusForSubPixelRefine;
+    const float max_shift = options_.sub_pixel.kMaxToleranceSubPixelRefineStep;
+    RETURN_FALSE_IF(image.data() == nullptr || !raw_feature.allFinite());
+    RETURN_FALSE_IF(radius < 1 || image.rows() < 2 || image.cols() < 2);
+    RETURN_FALSE_IF(radius > (std::min(image.rows(), image.cols()) - 2) / 2);
+
+    // Keep the whole (2r + 1)^2 patch and its bilinear interpolation footprint in the image.
+    const auto IsInBounds = [&](const Vec2 &center) {
+        return center.allFinite() && center.x() >= radius && center.y() >= radius && center.x() <= image.cols() - 2.0f - radius &&
+               center.y() <= image.rows() - 2.0f - radius;
+    };
+    RETURN_FALSE_IF(!IsInBounds(raw_feature));
+
+    // Differentiate the same bilinear interpolant used for the photometric residual.
+    const auto Sample = [&](float x, float y, Vec2 &gradient) {
+        const int32_t col = static_cast<int32_t>(x);
+        const int32_t row = static_cast<int32_t>(y);
+        const float fx = x - col;
+        const float fy = y - row;
+        const float a = image.GetPixelValueNoCheck(row, col);
+        const float b = image.GetPixelValueNoCheck(row, col + 1);
+        const float c = image.GetPixelValueNoCheck(row + 1, col);
+        const float d = image.GetPixelValueNoCheck(row + 1, col + 1);
+        gradient = Vec2((1.0f - fy) * (b - a) + fy * (d - c), (1.0f - fx) * (c - a) + fx * (d - b));
+        return (1.0f - fy) * ((1.0f - fx) * a + fx * b) + fy * ((1.0f - fx) * c + fx * d);
+    };
+    const float side = 2.0f * radius + 1.0f;
+    const float count = side * side - 1.0f;
+    const auto evaluate = [&](const Vec2 &center, Mat2 &hessian, Vec2 &rhs) {
+        hessian.setZero();
+        rhs.setZero();
+        float cost = 0.0f;
+        // Use each opposite pair once; the center has identically zero residual and Jacobian.
+        for (int32_t dy = 0; dy <= radius; ++dy) {
+            for (int32_t dx = -radius; dx <= radius; ++dx) {
+                if (dy == 0 && dx <= 0) {
+                    continue;
+                }
+                Vec2 positive_gradient, negative_gradient;
+                const float positive = Sample(center.x() + dx, center.y() + dy, positive_gradient);
+                const float negative = Sample(center.x() - dx, center.y() - dy, negative_gradient);
+                const float residual = positive - negative;
+                // Both samples move with c: d[I(c+d)-I(c-d)]/dc = grad I(c+d)-grad I(c-d).
+                const Vec2 jacobian = positive_gradient - negative_gradient;
+                hessian.noalias() += jacobian * jacobian.transpose();
+                rhs.noalias() += jacobian * residual;
+                cost += residual * residual;
+            }
+        }
+        hessian *= 2.0f / count;
+        rhs *= 2.0f / count;
+        return cost * 2.0f / count;
+    };
+
+    Vec2 result = raw_feature;
+    for (int32_t iter = 0; iter < config.kMaxIteration; ++iter) {
+        Mat2 hessian;
+        Vec2 rhs;
+        const float cost = evaluate(result, hessian, rhs);
+        const float trace = hessian.trace();
+        const float discriminant = std::hypot(hessian(0, 0) - hessian(1, 1), 2.0f * hessian(0, 1));
+        const float max_eigenvalue = 0.5f * (trace + discriminant);
+        const float min_eigenvalue = 0.5f * (trace - discriminant);
+        // Flat patches and single edges cannot determine a unique 2D center.
+        RETURN_FALSE_IF(min_eigenvalue < config.kMinEigenvalue || min_eigenvalue < config.kMinEigenvalueRatio * max_eigenvalue);
+        const Vec2 step = -hessian.ldlt().solve(rhs);
+        RETURN_FALSE_IF(!step.allFinite());
+        if (step.norm() <= config.kConvergeStepNorm) {
+            RETURN_FALSE_IF(cost > config.kMaxRmsPhotometricError * config.kMaxRmsPhotometricError);
+            refined_feature = result;
+            return true;
+        }
+
+        // Backtracking protects against overshooting narrow, blurred edges. A clipped step is never treated as convergence; the next iteration must satisfy the
+        // full GN step.
+        bool accepted = false;
+        float scale = 1.0f;
+        for (int32_t trial = 0; trial < 16; ++trial, scale *= 0.5f) {
+            const Vec2 candidate = result + scale * step;
+            if (!IsInBounds(candidate) || (candidate - raw_feature).norm() > max_shift) {
+                continue;
+            }
+            Mat2 unused_hessian;
+            Vec2 unused_rhs;
+            if (evaluate(candidate, unused_hessian, unused_rhs) < cost) {
+                result = candidate;
+                accepted = true;
+                break;
+            }
+        }
+        RETURN_FALSE_IF(!accepted);
+    }
+    return false;
+}
+
 }  // namespace feature_detector

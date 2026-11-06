@@ -44,17 +44,17 @@ bool AprilTagDetector::DetectAprilTags(const GrayImage &image, std::vector<April
     // Refine vertices of each line.
     for (auto &line: detected_lines_) {
         Vec2 refined_start_point = line.start_point();
-        if (point_detector_.RefineFeatureToSubPixelPrecisionByGradient(image, line.start_point(), refined_start_point)) {
+        if (RefineFeatureToSubPixelPrecision(image, line.start_point(), refined_start_point)) {
             line.start_point() = refined_start_point;
         }
         Vec2 refined_end_point = line.end_point();
-        if (point_detector_.RefineFeatureToSubPixelPrecisionByGradient(image, line.end_point(), refined_end_point)) {
+        if (RefineFeatureToSubPixelPrecision(image, line.end_point(), refined_end_point)) {
             line.end_point() = refined_end_point;
         }
     }
 
     // Find rectangles in lines.
-    if (!TryToFindRectanglesInDetectedLines(blurred_image)) {
+    if (!TryToFindRectanglesInDetectedLines(image)) {
         ReportWarn("[AprilTagDetector] Failed to detect rectangles in lines.");
         return false;
     }
@@ -128,12 +128,19 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines(const GrayImage &image
                     auto sorted_rect = rect;
                     std::sort(sorted_rect.begin(), sorted_rect.end());
                     if (unique_rectangles.insert(sorted_rect).second) {
-                        detected_rectangles_.emplace_back(std::array<Vec2, 4> {
-                            0.5f * (GetEndPoint(lines_id_in_rect[0], true) + GetEndPoint(lines_id_in_rect[3], false)),
-                            0.5f * (GetEndPoint(lines_id_in_rect[1], true) + GetEndPoint(lines_id_in_rect[0], false)),
-                            0.5f * (GetEndPoint(lines_id_in_rect[2], true) + GetEndPoint(lines_id_in_rect[1], false)),
-                            0.5f * (GetEndPoint(lines_id_in_rect[3], true) + GetEndPoint(lines_id_in_rect[2], false)),
-                        });
+                        std::array<Vec2, 4> vertices;
+                        bool valid_intersections = true;
+                        for (uint32_t i = 0; i < 4; ++i) {
+                            const auto &line = detected_lines_[lines_id_in_rect[i].id];
+                            const auto &previous_line = detected_lines_[lines_id_in_rect[(i + 3) % 4].id];
+                            if (!line.ComputeIntersection(previous_line, vertices[i])) {
+                                valid_intersections = false;
+                                break;
+                            }
+                        }
+                        if (valid_intersections) {
+                            detected_rectangles_.emplace_back(vertices);
+                        }
                     }
                 }
                 // Release this edge and continue searching other combinations.
@@ -184,7 +191,7 @@ bool AprilTagDetector::TryToFindRectanglesInDetectedLines(const GrayImage &image
         // Refine vertex to subpixel precision.
         for (auto &point: vertices) {
             Vec2 refined_point = point;
-            CONTINUE_IF(!point_detector_.RefineFeatureToSubPixelPrecisionByGradient(image, point, refined_point));
+            CONTINUE_IF(!RefineFeatureToSubPixelPrecision(image, point, refined_point));
             point = refined_point;
         }
 
@@ -404,5 +411,20 @@ uint64_t AprilTagDetector::DecodeAprilTag(const GrayImage &image, const std::vec
 }
 
 int32_t AprilTagDetector::HammingDistance(const uint64_t code_0, const uint64_t code_1) { return std::popcount(code_0 ^ code_1); }
+
+bool AprilTagDetector::RefineFeatureToSubPixelPrecision(const GrayImage &image, const Vec2 &raw_feature, Vec2 &refined_feature) {
+    switch (options_.kSubPixelRefineMethod) {
+        default:
+        case SubPixelRefineMethod::kParabolic: {
+            return point_detector_.RefineFeatureToSubPixelPrecisionByParabolic(image, raw_feature, refined_feature);
+        }
+        case SubPixelRefineMethod::kGradient: {
+            return point_detector_.RefineFeatureToSubPixelPrecisionByGradient(image, raw_feature, refined_feature);
+        }
+        case SubPixelRefineMethod::kSymmetry: {
+            return point_detector_.RefineFeatureToSubPixelPrecisionBySymmetry(image, raw_feature, refined_feature);
+        }
+    }
+}
 
 }  // namespace feature_detector

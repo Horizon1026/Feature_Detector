@@ -19,7 +19,7 @@ public:
         float kMinValidResponse = 0.1f;
         struct {
             int32_t kRadiusForSubPixelRefine = 6;
-            float kMaxToleranceSubPixelRefineStep = 2.0f;
+            float kMaxToleranceSubPixelRefineStep = 5.0f;
             struct {
                 float kMinTolarenceCurvatureForSubPixelRefine = 0.2f;
                 float kMinToleranceCurvatureRatioForSubPixelRefine = 0.2f;
@@ -28,6 +28,15 @@ public:
                 int32_t kMaxIteration = 30;
                 float kConvergeStepNorm = 1e-3f;
             } gradient;
+            struct {
+                int32_t kMaxIteration = 30;
+                float kConvergeStepNorm = 1e-3f;
+                // Eigenvalues of the mean J^T J, in squared gray levels per pixel squared.
+                float kMinEigenvalue = 1.0f;
+                float kMinEigenvalueRatio = 1e-3f;
+                // RMS of I(c + d) - I(c - d), in gray levels [0, 255].
+                float kMaxRmsPhotometricError = 15.0f;
+            } symmetry;
         } sub_pixel;
     };
 
@@ -45,6 +54,7 @@ public:
 
     bool RefineFeatureToSubPixelPrecisionByParabolic(const GrayImage &image, const Vec2 &raw_feature, Vec2 &refined_feature);
     bool RefineFeatureToSubPixelPrecisionByGradient(const GrayImage &image, const Vec2 &raw_feature, Vec2 &refined_feature);
+    bool RefineFeatureToSubPixelPrecisionBySymmetry(const GrayImage &image, const Vec2 &raw_feature, Vec2 &refined_feature);
 
     // Reference for member variables.
     Options &options() { return options_; }

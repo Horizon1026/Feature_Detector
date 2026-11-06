@@ -16,8 +16,14 @@ namespace feature_detector {
 class AprilTagDetector final {
 
 public:
+    enum class SubPixelRefineMethod: uint8_t {
+        kParabolic = 0,
+        kGradient = 1,
+        kSymmetry = 2,
+    };
     struct Options {
         AprilTagFamily kTargetFamily = AprilTagFamily::kTag36H11;
+        SubPixelRefineMethod kSubPixelRefineMethod = SubPixelRefineMethod::kGradient;
         float kMaxTolerancePixelDistanceToLinkLineEndPoints = 4.0f;
         int32_t kMaxToleranceHammingDistance = 2;
         float kMinTolerancePixelValueDiffBetweenWhiteAndBlack = 32.0f;
@@ -51,6 +57,7 @@ private:
     std::vector<Vec2> GetSamplePointOfAprilTag(const AprilTagFamily &famliy, const AprilTagSampleDirection &direction, const std::array<Vec2, 4> &vertices);
     uint64_t DecodeAprilTag(const GrayImage &image, const std::vector<Vec2> &sample_points);
     int32_t HammingDistance(const uint64_t code_0, const uint64_t code_1);
+    bool RefineFeatureToSubPixelPrecision(const GrayImage &image, const Vec2 &raw_feature, Vec2 &refined_feature);
 
 private:
     Options options_;
