@@ -63,8 +63,8 @@ public:
         const std::vector<BitCoordinate> *bits = nullptr;
         float border_width = 0.0f;
         const std::vector<uint64_t> *codes = nullptr;  // Only the low bit_num bits are used; white = 1, black = 0.
-        int32_t min_valid_hamming_distance = 0;  // Minimum distance between legal codewords, not a correction limit.
-        bool reversed_border = false;          // Flexible layouts require the native border geometry (width 1).
+        int32_t min_valid_hamming_distance = 0;        // Minimum distance between legal codewords, not a correction limit.
+        bool reversed_border = false;                  // Flexible layouts require the native border geometry (width 1).
     };
 
     // Covers all 26 families in the official AprilTag and aruco directories.

@@ -4,8 +4,8 @@
 #include "basic_type.h"
 #include "circular_buffer.h"
 #include "datatype_image.h"
-#include "slam_basic_math.h"
 #include "line_segment.h"
+#include "slam_basic_math.h"
 
 namespace feature_detector {
 

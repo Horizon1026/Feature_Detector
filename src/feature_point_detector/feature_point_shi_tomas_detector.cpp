@@ -129,8 +129,7 @@ void FeaturePointShiTomasDetector::PerformNMSAndExtractCandidates() {
             const float &res = res_row[c];
             CONTINUE_IF(res <= options().kMinValidResponse);
             // Keep tied maxima; SelectGoodFeatures removes nearby duplicates.
-            if (res >= res_row[c - 1] && res >= res_row[c + 1] &&
-                res >= res_prev[c - 1] && res >= res_prev[c] && res >= res_prev[c + 1] &&
+            if (res >= res_row[c - 1] && res >= res_row[c + 1] && res >= res_prev[c - 1] && res >= res_prev[c] && res >= res_prev[c + 1] &&
                 res >= res_next[c - 1] && res >= res_next[c] && res >= res_next[c + 1]) {
                 this->candidates().emplace_back(res, Pixel(c, r));
             }

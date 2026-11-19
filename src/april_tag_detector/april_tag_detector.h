@@ -16,7 +16,7 @@ namespace feature_detector {
 class AprilTagDetector final {
 
 public:
-    enum class SubPixelRefineMethod: uint8_t {
+    enum class SubPixelRefineMethod : uint8_t {
         kParabolic = 0,
         kGradient = 1,
         kSymmetry = 2,
