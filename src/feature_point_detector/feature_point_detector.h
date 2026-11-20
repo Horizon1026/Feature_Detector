@@ -47,7 +47,7 @@ public:
 
     virtual std::string DetectorTypeName() const { return "None"; }
 
-    bool DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec2> &features);
+    bool DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec2> &features, const MatImg &allowed_mask = MatImg {});
 
     void SparsifyFeatures(const std::vector<Vec2> &features, const int32_t image_rows, const int32_t image_cols, const uint8_t status_need_filter,
                           const uint8_t status_after_filter, std::vector<uint8_t> &status);

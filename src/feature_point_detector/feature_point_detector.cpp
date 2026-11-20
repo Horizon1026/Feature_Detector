@@ -7,15 +7,27 @@
 namespace feature_detector {
 
 /* Class Feature Point Detector Definition. */
-bool FeaturePointDetector::DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec2> &features) {
-    // Check input image.
+bool FeaturePointDetector::DetectGoodFeatures(const GrayImage &image, const uint32_t needed_feature_num, std::vector<Vec2> &features,
+                                              const MatImg &allowed_mask) {
+    // Check input image and mask.
     RETURN_FALSE_IF(image.data() == nullptr);
+    RETURN_FALSE_IF(allowed_mask.size() != 0 && (allowed_mask.rows() != image.rows() || allowed_mask.cols() != image.cols()));
 
     // If there are already some detected features, do not detect new features besiding them.
     if (features.empty()) {
         mask_.setConstant(image.rows(), image.cols(), 1);
     } else {
         UpdateMaskByFeatures(image, features);
+    }
+
+    if (allowed_mask.size() != 0) {
+        for (int32_t row = 0; row < image.rows(); ++row) {
+            for (int32_t col = 0; col < image.cols(); ++col) {
+                if (allowed_mask(row, col) == 0) {
+                    mask_(row, col) = 0;
+                }
+            }
+        }
     }
 
     // Detect all features to be candidates.
