@@ -31,7 +31,7 @@ bool AprilTagDetector::DetectAprilTags(const GrayImage &image, std::vector<April
     CorrectOptions();
 
     // Keep the input and boundary pixels intact; Process() writes only the interior.
-    std::vector<uint8_t> blurred_buffer(image.data(), image.data() + static_cast<size_t>(image.rows()) * image.cols());
+    std::vector<uint8_t> blurred_buffer(image.data(), image.data() + static_cast<uint32_t>(image.rows()) * image.cols());
     GrayImage blurred_image(blurred_buffer.data(), image.rows(), image.cols());
     image_processor::ImageProcessor processor;
     processor.kernel() = (Mat5() << 1, 4, 6, 4, 1, 4, 16, 24, 16, 4, 6, 24, 36, 24, 6, 4, 16, 24, 16, 4, 1, 4, 6, 4, 1).finished();
